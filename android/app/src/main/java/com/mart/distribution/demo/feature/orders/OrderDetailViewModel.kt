@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mart.distribution.demo.data.api.MartApi
 import com.mart.distribution.demo.data.api.dto.OrderDto
-import com.mart.distribution.demo.data.cart.CartRepository
+import com.mart.distribution.demo.data.demo.DemoFlowRepository
 import com.mart.distribution.demo.feature.home.LoadState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,14 +13,9 @@ import kotlinx.coroutines.launch
 
 class OrderDetailViewModel(
     private val martApi: MartApi,
-    private val sessionRepository: SessionRepository,
-    private val cartRepository: CartRepository,
+    private val demoFlowRepository: DemoFlowRepository,
     private val orderId: String,
 ) : ViewModel() {
-    companion object {
-        const val ARG_ORDER_ID = "orderId"
-    }
-
     private val _order = MutableStateFlow<LoadState<OrderDto>>(LoadState.Loading)
     val orderState: StateFlow<LoadState<OrderDto>> = _order.asStateFlow()
 
@@ -63,6 +58,7 @@ class OrderDetailViewModel(
             _actionMessage.value = null
             try {
                 val res = martApi.mockPayment(orderId)
+                demoFlowRepository.markMockPaid(orderId)
                 _actionMessage.value = res.message ?: "Payment ${res.status ?: "OK"}"
                 load()
             } catch (e: Exception) {
@@ -85,7 +81,4 @@ class OrderDetailViewModel(
         }
     }
 
-    fun currentUserRole(): String? = sessionRepository.sessionUserFlow.value?.role
-
-    // snapshot without collecting flow in VM init — use passed role from UI instead
 }

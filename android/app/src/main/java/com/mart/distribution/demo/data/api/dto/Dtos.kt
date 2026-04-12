@@ -82,3 +82,25 @@ data class MockPaymentResponse(
     val status: String? = null,
     val message: String? = null,
 )
+
+data class InvoiceDocumentDto(
+    val invoiceNumber: String,
+    val generatedAt: String?,
+    val pdfUrl: String?,
+    val order: OrderDto?,
+)
+
+data class StockRowDto(
+    val id: String,
+    val quantity: Int,
+    val product: ProductDto?,
+    val dealer: UserBriefDto? = null,
+)
+
+data class UserRowDto(
+    val id: String,
+    val name: String,
+    val email: String,
+    val role: String,
+    val phone: String? = null,
+)

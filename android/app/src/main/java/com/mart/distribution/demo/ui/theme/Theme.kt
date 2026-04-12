@@ -8,20 +8,45 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val LightColors =
-    lightColorScheme(
-        primary = MartBlue,
-        secondary = MartBlueLight,
-        tertiary = MartBlueLight,
+private val MartDark =
+    darkColorScheme(
+        primary = MartGold,
+        onPrimary = MartInk,
+        primaryContainer = MartGoldDim,
+        onPrimaryContainer = MartCream,
+        secondary = MartChampagne,
+        onSecondary = MartInk,
+        tertiary = MartSuccess,
+        onTertiary = MartInk,
+        background = MartBg,
+        onBackground = MartCream,
+        surface = MartSurface,
+        onSurface = MartCream,
+        surfaceVariant = MartSurfaceElevated,
+        onSurfaceVariant = MartMuted,
+        outline = MartOutline,
+        error = MartError,
+        onError = Color.White,
     )
 
-private val DarkColors =
-    darkColorScheme(
-        primary = MartBlueLight,
-        secondary = MartBlue,
-        tertiary = MartBlueLight,
+private val MartLight =
+    lightColorScheme(
+        primary = Color(0xFF7A6228),
+        onPrimary = Color.White,
+        primaryContainer = MartChampagne,
+        onPrimaryContainer = MartInk,
+        secondary = Color(0xFF5C5A66),
+        onSecondary = Color.White,
+        background = Color(0xFFF8F6F2),
+        onBackground = MartInk,
+        surface = Color.White,
+        onSurface = MartInk,
+        surfaceVariant = Color(0xFFECE8E0),
+        onSurfaceVariant = Color(0xFF5C5A66),
+        outline = Color(0xFFC4BFB5),
     )
 
 @Composable
@@ -36,12 +61,13 @@ fun MartTheme(
                 val ctx = LocalContext.current
                 if (darkTheme) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx)
             }
-            darkTheme -> DarkColors
-            else -> LightColors
+            darkTheme -> MartDark
+            else -> MartLight
         }
 
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = MartTypography,
         content = content,
     )
 }

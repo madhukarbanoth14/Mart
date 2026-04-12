@@ -7,11 +7,14 @@ import com.mart.distribution.demo.data.api.dto.CreateOrderItemDto
 import com.mart.distribution.demo.data.api.dto.CreateOrderRequest
 import com.mart.distribution.demo.data.api.dto.OrderDto
 import com.mart.distribution.demo.data.api.dto.ProductDto
+import com.mart.distribution.demo.data.api.dto.StockRowDto
+import com.mart.distribution.demo.data.api.dto.UserRowDto
 import com.mart.distribution.demo.data.cart.CartRepository
 import com.mart.distribution.demo.data.session.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -32,8 +35,11 @@ sealed class LoadState<out T> {
 data class MainUiState(
     val products: LoadState<List<ProductDto>> = LoadState.Idle,
     val orders: LoadState<List<OrderDto>> = LoadState.Idle,
+    val stock: LoadState<List<StockRowDto>> = LoadState.Idle,
+    val users: LoadState<List<UserRowDto>> = LoadState.Idle,
     val placeOrderResult: String? = null,
     val placeOrderError: String? = null,
+    val placedOrder: OrderDto? = null,
 )
 
 class MainViewModel(
@@ -46,13 +52,28 @@ class MainViewModel(
 
     val cartLines = cartRepository.lines
 
-    init {
-        refreshAll()
+    fun refreshForRole() {
+        viewModelScope.launch {
+            val user = sessionRepository.sessionUserFlow.first() ?: return@launch
+            loadProducts()
+            loadOrders()
+            when (user.role.uppercase()) {
+                "DEALER" -> loadStock()
+                "ADMIN", "EMPLOYEE" -> loadUsers()
+                else -> {
+                    _ui.update {
+                        it.copy(
+                            stock = LoadState.Idle,
+                            users = LoadState.Idle,
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun refreshAll() {
-        loadProducts()
-        loadOrders()
+        refreshForRole()
     }
 
     fun loadProducts() {
@@ -83,8 +104,42 @@ class MainViewModel(
         }
     }
 
+    fun loadStock() {
+        viewModelScope.launch {
+            _ui.update { it.copy(stock = LoadState.Loading) }
+            try {
+                val list = martApi.stock()
+                _ui.update { it.copy(stock = LoadState.Ok(list)) }
+            } catch (e: Exception) {
+                _ui.update {
+                    it.copy(stock = LoadState.Err(e.message ?: "Stock unavailable"))
+                }
+            }
+        }
+    }
+
+    fun loadUsers() {
+        viewModelScope.launch {
+            _ui.update { it.copy(users = LoadState.Loading) }
+            try {
+                val list = martApi.users()
+                _ui.update { it.copy(users = LoadState.Ok(list)) }
+            } catch (e: Exception) {
+                _ui.update {
+                    it.copy(users = LoadState.Err(e.message ?: "Users unavailable"))
+                }
+            }
+        }
+    }
+
     fun clearOrderFeedback() {
-        _ui.update { it.copy(placeOrderResult = null, placeOrderError = null) }
+        _ui.update {
+            it.copy(
+                placeOrderResult = null,
+                placeOrderError = null,
+                placedOrder = null,
+            )
+        }
     }
 
     fun placeOrderFromCart() {
@@ -94,7 +149,7 @@ class MainViewModel(
             return
         }
         viewModelScope.launch {
-            _ui.update { it.copy(placeOrderError = null, placeOrderResult = null) }
+            _ui.update { it.copy(placeOrderError = null, placeOrderResult = null, placedOrder = null) }
             try {
                 val body =
                     CreateOrderRequest(
@@ -106,10 +161,10 @@ class MainViewModel(
                                 )
                             },
                     )
-                martApi.createOrder(body)
+                val created = martApi.createOrder(body)
                 cartRepository.clear()
                 _ui.update {
-                    it.copy(placeOrderResult = "Order placed successfully")
+                    it.copy(placedOrder = created)
                 }
                 loadOrders()
             } catch (e: Exception) {
@@ -125,5 +180,20 @@ class MainViewModel(
             sessionRepository.clear()
             onDone()
         }
+    }
+
+    fun addToCart(product: ProductDto) {
+        cartRepository.addOne(product)
+    }
+
+    fun setCartQuantity(
+        productId: String,
+        quantity: Int,
+    ) {
+        cartRepository.setQuantity(productId, quantity)
+    }
+
+    fun removeCartLine(productId: String) {
+        cartRepository.remove(productId)
     }
 }

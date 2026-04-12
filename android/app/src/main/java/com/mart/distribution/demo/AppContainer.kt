@@ -4,7 +4,9 @@ import android.content.Context
 import com.mart.distribution.demo.data.api.AuthInterceptor
 import com.mart.distribution.demo.data.api.MartApi
 import com.mart.distribution.demo.data.cart.CartRepository
+import com.mart.distribution.demo.data.demo.DemoFlowRepository
 import com.mart.distribution.demo.data.session.SessionRepository
+import com.mart.distribution.demo.BuildConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -20,9 +22,16 @@ class AppContainer(context: Context) {
 
     val cartRepository = CartRepository()
 
+    val demoFlowRepository = DemoFlowRepository()
+
     private val logging =
         HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level =
+                if (BuildConfig.DEBUG) {
+                    HttpLoggingInterceptor.Level.BODY
+                } else {
+                    HttpLoggingInterceptor.Level.NONE
+                }
         }
 
     private val okHttp: OkHttpClient =
