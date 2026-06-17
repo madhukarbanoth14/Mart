@@ -89,6 +89,7 @@ trap 'rm -f "$ENV_FILE"' EXIT
   [[ -n "${SMTP_SECURE:-}" ]] && echo "SMTP_SECURE: $SMTP_SECURE"
   [[ -n "${SMTP_USER:-}" ]] && echo "SMTP_USER: $SMTP_USER"
   [[ -n "${SMTP_PASS:-}" ]] && echo "SMTP_PASS: $SMTP_PASS"
+  [[ -n "${BREVO_API_KEY:-}" ]] && echo "BREVO_API_KEY: $BREVO_API_KEY"
   [[ -n "${MAIL_FROM:-}" ]] && echo "MAIL_FROM: $MAIL_FROM"
   [[ -n "${MAIL_APP_NAME:-}" ]] && echo "MAIL_APP_NAME: $MAIL_APP_NAME"
 } > "$ENV_FILE"
