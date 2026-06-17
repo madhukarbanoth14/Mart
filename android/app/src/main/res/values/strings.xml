@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">KNSR Mart</string>
+    <string name="app_name">FlashMart</string>
+    <string name="razorpay_key_id" translatable="false">rzp_test_YOUR_KEY_HERE</string>
 </resources>

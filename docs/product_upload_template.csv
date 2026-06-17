@@ -1,0 +1,4 @@
+sku,name,brand,manufacturer,brandType,shelf,weight,mrp,dealerPrice,caseQty,gstRate,gstPercentage,dealerDiscount,shopkeeperDiscount,isActive,imageUrl
+ITC-AASH-001,Aashirvaad Superior MP Atta,Aashirvaad,ITC Limited,OTHER,STAPLES,1kg,74,60.65,30,5,5,10,5,true,https://images.openfoodfacts.org/images/products/890/172/512/3123/front_en.13.400.jpg
+BRIT-GD-001,Britannia Good Day Butter Cookies,Britannia Good Day,Britannia Industries Limited,OTHER,SNACKS_BISCUITS,30g,5,4.5,180,5,5,10,5,true,https://images.openfoodfacts.org/images/products/890/106/309/2822/front_en.4.400.jpg
+MAGGI-001,Maggi 2-Minute Noodles Masala,Maggi,Nestle India Ltd,OTHER,SNACKS_BISCUITS,75g,15,13.58,96,5,5,10,5,true,https://images.openfoodfacts.org/images/products/890/105/800/2090/front_en.23.400.jpg

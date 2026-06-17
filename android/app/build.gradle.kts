@@ -1,25 +1,108 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val martApiBaseUrl: String = run {
+    val f = rootProject.file("local.properties")
+    if (!f.exists()) return@run "http://10.0.2.2:3000"
+    val fromFile =
+        f.inputStream().use { stream ->
+            Properties().apply { load(stream) }.getProperty("mart.api.base.url")?.trim()
+        }
+    fromFile.takeUnless { it.isNullOrEmpty() } ?: "http://10.0.2.2:3000"
+}
+
+val martApiBaseUrlRelease: String = run {
+    val f = rootProject.file("local.properties")
+    val defaultRelease = "https://mart-api-95628498734.asia-south1.run.app"
+    if (!f.exists()) return@run defaultRelease
+    val props = f.inputStream().use { stream -> Properties().apply { load(stream) } }
+    val releaseUrl = props.getProperty("mart.api.base.url.release")?.trim()
+    if (!releaseUrl.isNullOrEmpty()) return@run releaseUrl
+    // Safety: avoid shipping emulator-only URL in release.
+    val commonUrl = props.getProperty("mart.api.base.url")?.trim()
+    if (!commonUrl.isNullOrEmpty() && !commonUrl.contains("10.0.2.2")) {
+        return@run commonUrl
+    }
+    defaultRelease
+}
+
+/** Production release: false unless local.properties sets mart.use.local.demo.auth=true */
+val martUseLocalDemoAuth: Boolean = run {
+    val f = rootProject.file("local.properties")
+    if (!f.exists()) return@run false
+    f.inputStream().use { stream ->
+        Properties().apply { load(stream) }.getProperty("mart.use.local.demo.auth")?.trim()
+    }.equals("true", ignoreCase = true)
+}
+
+/** Production release: false unless local.properties sets mart.demo.mode=true */
+val martDemoMode: Boolean = run {
+    val f = rootProject.file("local.properties")
+    if (!f.exists()) return@run false
+    f.inputStream().use { stream ->
+        Properties().apply { load(stream) }.getProperty("mart.demo.mode")?.trim()
+    }.equals("true", ignoreCase = true)
+}
+
+val keystoreProperties: Properties =
+    Properties().apply {
+        val f = rootProject.file("keystore.properties")
+        if (f.exists()) {
+            f.inputStream().use { load(it) }
+        }
+    }
+
 android {
     namespace = "com.mart.distribution.demo"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.mart.distribution.demo"
+        applicationId = "com.knsrmart.flashmart"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0-demo"
-        buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:3000\"")
+        versionName = "1.0.0"
+        // Emulator: default. Real device / client APK: set mart.api.base.url in local.properties (no trailing slash).
+        buildConfigField("String", "API_BASE_URL", "\"$martApiBaseUrl\"")
+        // Client investor APK: mart.use.local.demo.auth=true → email + Password@123, no server (any network).
+        buildConfigField("boolean", "USE_LOCAL_DEMO_AUTH", "$martUseLocalDemoAuth")
+        buildConfigField("boolean", "DEMO_MODE", "$martDemoMode")
+    }
+
+    signingConfigs {
+        create("release") {
+            val storeFilePath = keystoreProperties.getProperty("storeFile")
+            if (!storeFilePath.isNullOrBlank()) {
+                storeFile = rootProject.file(storeFilePath)
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"$martApiBaseUrl\"")
+            buildConfigField("boolean", "REQUIRE_ONBOARDING_DOCUMENTS", "false")
+        }
         release {
             isMinifyEnabled = false
+            buildConfigField("String", "API_BASE_URL", "\"$martApiBaseUrlRelease\"")
+            buildConfigField("boolean", "REQUIRE_ONBOARDING_DOCUMENTS", "true")
+            val releaseKeystore = keystoreProperties.getProperty("storeFile")
+            signingConfig =
+                if (!releaseKeystore.isNullOrBlank() && rootProject.file(releaseKeystore).exists()) {
+                    signingConfigs.getByName("release")
+                } else {
+                    println("WARNING: keystore.properties missing — release signed with debug key (not for Play Store).")
+                    signingConfigs.getByName("debug")
+                }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -59,6 +142,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("com.razorpay:checkout:1.6.41")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

@@ -15,10 +15,15 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.getOrThrow<string>('jwt.secret'),
-        signOptions: { expiresIn: config.get<string>('jwt.expiresIn', '7d') },
-      }),
+      useFactory: (config: ConfigService) => {
+        const expiresIn = config.get<string>('jwt.expiresIn', '7d') ?? '7d';
+        return {
+          secret: config.getOrThrow<string>('jwt.secret'),
+          signOptions: {
+            expiresIn,
+          } as import('jsonwebtoken').SignOptions,
+        };
+      },
     }),
   ],
   controllers: [AuthController],

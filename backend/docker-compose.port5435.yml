@@ -1,0 +1,7 @@
+# Merge with base so Postgres is reachable on host port 5435 (avoids conflict with local Postgres on 5432).
+# Usage: docker compose -f docker-compose.yml -f docker-compose.port5435.yml up -d
+# DATABASE_URL: postgresql://postgres:postgres@localhost:5435/mart?schema=public
+services:
+  db:
+    ports:
+      - "5435:5432"

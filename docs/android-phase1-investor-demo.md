@@ -128,18 +128,40 @@ flowchart TB
 
 ---
 
-## 5. Screens (Phase 1)
+## 5. Functional requirements (Phase 1)
 
-### 5.1 Auth
+### 5.1 User authentication
 
-- **Login:** email, password, “Sign in”, error message from API.  
+- **Role-based login:** Super Admin, Employee, Dealer, Shopkeeper.  
+- **Credentials:** secure sign in with `email + password` (mobile/email input can be added as a future extension if backend adds mobile auth endpoint).  
+- **Role-based access control:** server-side RBAC via guards; client-side role navigation hides unauthorized modules.  
 - **Profile / me:** show name, email, role (from JWT or `GET /auth/me`).
 
-### 5.2 Product listing (all roles that can buy or browse)
+### 5.2 Product management
 
-- **List:** `GET /products` — name, brand type (OWN/OTHER), `basePrice`, `gstPercentage`, discount fields for transparency.  
-- **Detail (optional):** explain “OWN brand: shopkeeper discount from server config” in a **short helper text** for investors.  
-- **Search/filter (demo):** client-side filter by name; no backend requirement.
+Super Admin can:
+
+- Add / edit / delete products.  
+- Set per-SKU `Price`, `GST %`, and discount percentages.  
+- Configure brand-specific discount behavior and category metadata.
+
+Current API/UI support:
+
+- `GET /products` for listing by role.
+- `POST /products`, `PATCH /products/:id`, `DELETE /products/:id` for admin management.
+- Discount fields available in product model (`dealerDiscount`, `shopkeeperDiscount`) and applied server-side in order pricing.
+
+Planned extension (post-Phase 1 hardening):
+
+- Upload SKU sheet (Excel/CSV).
+- Product image upload pipeline and media hosting.
+- Rich product category management UI (beyond lightweight metadata).
+
+Discount rule baseline:
+
+- Dealers: default 10% (configurable per SKU/admin settings).
+- Shopkeepers: default 5% (configurable per SKU/admin settings).
+- Other brands: admin-configurable discount.
 
 ### 5.3 Order placement (SHOPKEEPER)
 
@@ -154,13 +176,52 @@ flowchart TB
 - After order created (`PENDING`): button **“Pay (demo)”** → `POST /orders/{id}/payment/mock` → show success animation + message from API (`MOCK` / `SUCCESS`).  
 - No card UI required; optional fake “Processing…” 800ms delay for drama.
 
-### 5.5 Dealer / ops — confirm & stock
+### 5.4 Area & dealer assignment
+
+- Admin defines geographical areas.
+- Each area is assigned to one dealer.
+- Shopkeepers map to dealer through area.
+- Orders from shopkeepers auto-route to assigned dealer.
+
+Current mapping path:
+
+- `Area.dealerId` binds an area to a dealer.
+- Shopkeeper has `areaId`.
+- Order creation resolves dealer from shopkeeper area on server.
+
+### 5.5 Order management
+
+#### Shopkeeper flow
+
+- Browse products.
+- Add to cart.
+- View discounted price.
+- GST calculated.
+- Checkout.
+- Online payment (mock in Phase 1 via API endpoint).
+- Order confirmation.
+
+#### Dealer flow
+
+- Receive order in queue.
+- View order details.
+- Accept/confirm order.
+- Update delivery status (demo tracking flow).
+- Mark delivered (as endpoint/state support is enabled).
+
+#### Super Admin flow
+
+- View all orders.
+- Filter by dealer/shopkeeper/date (progressive enhancement on top of list APIs).
+- View sales performance and revenue cards.
+
+### 5.6 Dealer / ops — confirm & stock
 
 - **Order queue:** `GET /orders` (scoped by role on server).  
 - **Confirm:** `PATCH /orders/{id}/confirm` — show stock errors if API returns conflict.  
 - **Stock view:** `GET /stock` — list product + quantity for logged-in dealer (server-scoped).
 
-### 5.6 Basic invoice PDF
+### 5.7 Basic invoice PDF
 
 - **Data:** `GET /invoices/by-order/{orderId}` (after confirm generates invoice server-side) — use returned JSON (invoice number, dates, order lines).  
 - **PDF generation (pick one):**  
@@ -168,14 +229,14 @@ flowchart TB
   - **B — WebView + print:** HTML template filled from JSON → Android print / save as PDF.  
 - **Scope:** 1–2 pages, company name from static demo config or from order payload.
 
-### 5.7 Demo delivery tracking
+### 5.8 Demo delivery tracking
 
 - **No GPS.** UI: vertical **stepper** or **timeline**:  
   - Placed → Payment (mock) OK → Confirmed by dealer → Out for delivery (demo) → Delivered.  
 - **State source:** map `Order.status` from API (`PENDING`, `ACCEPTED`, `DELIVERED`). For steps without API yet, use **local demo flags** or time-based auto-advance **only in demo build** (clearly labeled “Demo mode”).  
 - Optional: `PATCH` for `DELIVERED` if/when backend adds it; otherwise a **“Simulate delivery complete”** button (demo only) that calls a future endpoint or updates local state for the pitch.
 
-### 5.8 Basic dashboards
+### 5.9 Basic dashboards
 
 - **SHOPKEEPER:** count of open orders, last order amount, quick link to catalog.  
 - **DEALER:** pending confirmations count, low-stock hint (client-side: quantity &lt; threshold).  
@@ -260,6 +321,8 @@ Same codebase; `BuildConfig.DEMO_MODE` toggles UI behavior.
 4. Open **invoice** → generate/share PDF.  
 5. Show **tracking** timeline (demo).  
 6. Login as **admin** → dashboard counts → users list.  
+
+**Demo logins, stable user IDs, and tab-by-role mapping:** see [`demo-accounts-and-dashboards.md`](./demo-accounts-and-dashboards.md) (seed: `Mart/backend/prisma/seed.ts`).
 
 ---
 

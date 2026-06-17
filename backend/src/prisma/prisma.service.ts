@@ -2,21 +2,29 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
 
 /**
- * Prisma 7: runtime connection uses the PostgreSQL driver adapter (see Prisma docs).
- * Migrations read DATABASE_URL from prisma.config.ts.
+ * Prisma 7 runtime uses PostgreSQL driver adapter.
  */
 @Injectable()
 export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
+  private readonly pool: Pool;
+
   constructor(config: ConfigService) {
     const url = config.getOrThrow<string>('database.url');
-    super({
-      adapter: new PrismaPg(url),
+    const pool = new Pool({
+      connectionString: url,
+      max: 10,
+      connectionTimeoutMillis: 15_000,
     });
+    super({
+      adapter: new PrismaPg(pool),
+    });
+    this.pool = pool;
   }
 
   async onModuleInit(): Promise<void> {
@@ -25,5 +33,6 @@ export class PrismaService
 
   async onModuleDestroy(): Promise<void> {
     await this.$disconnect();
+    await this.pool.end();
   }
 }

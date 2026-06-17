@@ -14,6 +14,8 @@ class OrderDetailViewModelFactory(
             return OrderDetailViewModel(
                 container.martApi,
                 container.demoFlowRepository,
+                container.sessionRepository,
+                container.localDemoMartStore,
                 orderId,
             ) as T
         }

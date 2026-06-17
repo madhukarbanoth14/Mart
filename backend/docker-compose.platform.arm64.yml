@@ -1,0 +1,8 @@
+# Optional: native ARM64 Postgres on Apple Silicon (slightly faster than default amd64 emulation).
+# Use if default compose works but you want native arch, or if your Docker setup prefers arm64.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.platform.arm64.yml up -d
+#   docker compose -f docker-compose.yml -f docker-compose.port5435.yml -f docker-compose.platform.arm64.yml up -d
+services:
+  db:
+    platform: linux/arm64

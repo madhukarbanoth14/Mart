@@ -54,7 +54,12 @@ fun InvoiceScreen(
         err = null
         doc = null
         try {
-            doc = container.martApi.invoiceByOrder(orderId)
+            doc =
+                if (container.sessionRepository.isLocalDemoMode()) {
+                    container.localDemoMartStore.invoiceByOrder(orderId)
+                } else {
+                    container.martApi.invoiceByOrder(orderId)
+                }
         } catch (e: Exception) {
             err = e.message ?: "Could not load invoice"
         }
@@ -127,7 +132,7 @@ fun InvoiceScreen(
                         }
                     }
                     GradientGoldButton(
-                        text = if (busy) "Preparing PDF…" else "Share PDF",
+                        text = if (busy) "Preparing PDF…" else "Download / share PDF",
                         onClick = {
                             if (busy) return@GradientGoldButton
                             busy = true

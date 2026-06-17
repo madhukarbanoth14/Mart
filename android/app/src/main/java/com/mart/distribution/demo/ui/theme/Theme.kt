@@ -49,6 +49,36 @@ private val MartLight =
         outline = Color(0xFFC4BFB5),
     )
 
+private val WholesaleLight =
+    lightColorScheme(
+        primary = WholesaleBlue,
+        onPrimary = Color.White,
+        primaryContainer = WholesaleBlueTint,
+        onPrimaryContainer = WholesaleBlue,
+        secondary = WholesaleGreen,
+        onSecondary = Color.White,
+        secondaryContainer = WholesaleGreenTint,
+        onSecondaryContainer = WholesaleGreen,
+        background = WholesaleBg,
+        onBackground = WholesaleText,
+        surface = Color.White,
+        onSurface = WholesaleText,
+        surfaceVariant = WholesaleSearchBg,
+        onSurfaceVariant = WholesaleMuted,
+        outline = WholesaleBorder,
+        error = WholesaleRed,
+        onError = Color.White,
+    )
+
+@Composable
+fun WholesaleTheme(content: @Composable () -> Unit) {
+    MaterialTheme(
+        colorScheme = WholesaleLight,
+        typography = MartTypography,
+        content = content,
+    )
+}
+
 @Composable
 fun MartTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

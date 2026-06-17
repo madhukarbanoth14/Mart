@@ -30,6 +30,50 @@ class EnvironmentVariables {
   @IsOptional()
   @IsString()
   JWT_EXPIRES_IN?: string;
+
+  @IsOptional()
+  @IsString()
+  RAZORPAY_KEY_ID?: string;
+
+  @IsOptional()
+  @IsString()
+  RAZORPAY_KEY_SECRET?: string;
+
+  @IsOptional()
+  @IsString()
+  RAZORPAY_WEBHOOK_SECRET?: string;
+
+  @IsOptional()
+  @IsString()
+  FCM_SERVER_KEY?: string;
+
+  @IsOptional()
+  @IsString()
+  SMTP_HOST?: string;
+
+  @IsOptional()
+  @IsString()
+  SMTP_PORT?: string;
+
+  @IsOptional()
+  @IsString()
+  SMTP_SECURE?: string;
+
+  @IsOptional()
+  @IsString()
+  SMTP_USER?: string;
+
+  @IsOptional()
+  @IsString()
+  SMTP_PASS?: string;
+
+  @IsOptional()
+  @IsString()
+  MAIL_FROM?: string;
+
+  @IsOptional()
+  @IsString()
+  MAIL_APP_NAME?: string;
 }
 
 export function validateEnv(
@@ -38,7 +82,7 @@ export function validateEnv(
   const merged = { ...process.env, ...config };
   const validated = plainToInstance(EnvironmentVariables, merged, {
     enableImplicitConversion: true,
-  });
+  }) as EnvironmentVariables;
   const errors = validateSync(validated, {
     skipMissingProperties: false,
   });
@@ -48,5 +92,8 @@ export function validateEnv(
       .join('; ');
     throw new Error(`Environment validation failed: ${messages}`);
   }
-  return { ...config, ...validated } as Record<string, unknown>;
+  return {
+    ...config,
+    ...(validated as unknown as Record<string, unknown>),
+  } as Record<string, unknown>;
 }

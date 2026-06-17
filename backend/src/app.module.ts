@@ -13,6 +13,10 @@ import { DealerAssignmentsModule } from './dealer-assignments/dealer-assignments
 import { OrdersModule } from './orders/orders.module';
 import { StockModule } from './stock/stock.module';
 import { InvoicesModule } from './invoices/invoices.module';
+import { BrandsModule } from './brands/brands.module';
+import { PaymentsModule } from './payments/payments.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -22,6 +26,7 @@ import { InvoicesModule } from './invoices/invoices.module';
       validate: validateEnv,
     }),
     PrismaModule,
+    EmailModule,
     HealthModule,
     AuthModule,
     UsersModule,
@@ -32,6 +37,9 @@ import { InvoicesModule } from './invoices/invoices.module';
     OrdersModule,
     StockModule,
     InvoicesModule,
+    BrandsModule,
+    PaymentsModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

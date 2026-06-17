@@ -1,0 +1,557 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		84CA3424E172CD651235AF0783D01D39 /* razorpay-pod */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = EDB64A7BD8BC53C38270DF30BDFA7B79 /* Build configuration list for PBXAggregateTarget "razorpay-pod" */;
+			buildPhases = (
+				635C94D36B1E5F7124C378459E5D3FEE /* [CP] Copy XCFrameworks */,
+			);
+			dependencies = (
+			);
+			name = "razorpay-pod";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		8B8E502D66831268A1039A8CF9C38533 /* Pods-Flashmart-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C0CB0F0F43B4DD1F4B7ABF4B1A1FC9E /* Pods-Flashmart-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C64DE55B1604B8AEB613123B26618546 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
+		F6DB54FFE6618717ABC28D1DF7FA0601 /* Pods-Flashmart-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5570A5CD9640EE0CD8A953625DE30CD5 /* Pods-Flashmart-dummy.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A6CD04907375B727120FC0B5884B8BBC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84CA3424E172CD651235AF0783D01D39;
+			remoteInfo = "razorpay-pod";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		067BA70468F53A76F9D5E3546D5B95E2 /* Pods-Flashmart-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Flashmart-frameworks.sh"; sourceTree = "<group>"; };
+		080C11D2D8319FE180F262BF3D38FA4C /* Razorpay.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = Razorpay.xcframework; path = Pod/Razorpay.xcframework; sourceTree = "<group>"; };
+		0EE6CB9FD4CC35D7E97BF6089EBDC497 /* Pods-Flashmart */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-Flashmart"; path = Pods_Flashmart.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F7DC93F9465E4B126EC203F1A17D93D /* Pods-Flashmart-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Flashmart-acknowledgements.markdown"; sourceTree = "<group>"; };
+		21BEBA77726B8C519C762E580C97180F /* razorpay-pod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "razorpay-pod.release.xcconfig"; sourceTree = "<group>"; };
+		384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		385115C2EDA054000691568427D85C56 /* Pods-Flashmart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Flashmart.debug.xcconfig"; sourceTree = "<group>"; };
+		3C0CB0F0F43B4DD1F4B7ABF4B1A1FC9E /* Pods-Flashmart-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Flashmart-umbrella.h"; sourceTree = "<group>"; };
+		4A3FC34B17E7F7B95AFF1684F9990C64 /* Pods-Flashmart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Flashmart.release.xcconfig"; sourceTree = "<group>"; };
+		4E3A1E14A2C9B2B2E8A26F26E877C9DA /* razorpay-pod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "razorpay-pod.debug.xcconfig"; sourceTree = "<group>"; };
+		5570A5CD9640EE0CD8A953625DE30CD5 /* Pods-Flashmart-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Flashmart-dummy.m"; sourceTree = "<group>"; };
+		6952AB4E81B59B06A4B6355390006CFB /* Pods-Flashmart.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-Flashmart.modulemap"; sourceTree = "<group>"; };
+		6C53BC799C90FACA5D5805B8DFDA8C3F /* razorpay-pod-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "razorpay-pod-xcframeworks.sh"; sourceTree = "<group>"; };
+		98DB768C18A002267D0DF26058A792B8 /* Pods-Flashmart-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Flashmart-acknowledgements.plist"; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		AE86F66291811DA1B1723A07256C91AE /* Pods-Flashmart-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Flashmart-Info.plist"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BFE4D04802593B1D916267C46103A789 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C64DE55B1604B8AEB613123B26618546 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1152387DB52F96FF4B1C12CDB3C42AEC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				080C11D2D8319FE180F262BF3D38FA4C /* Razorpay.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4BD2AE21C8E5E6AD25904BFEF16D0076 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6888521189BB2945905871A01CC3E319 /* razorpay-pod */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		6888521189BB2945905871A01CC3E319 /* razorpay-pod */ = {
+			isa = PBXGroup;
+			children = (
+				1152387DB52F96FF4B1C12CDB3C42AEC /* Frameworks */,
+				7FB872A77071E361EFA3BD1BA8D875BE /* Support Files */,
+			);
+			name = "razorpay-pod";
+			path = "razorpay-pod";
+			sourceTree = "<group>";
+		};
+		69CFA9D31F3B6C39F399EA34CC684730 /* Pods-Flashmart */ = {
+			isa = PBXGroup;
+			children = (
+				6952AB4E81B59B06A4B6355390006CFB /* Pods-Flashmart.modulemap */,
+				1F7DC93F9465E4B126EC203F1A17D93D /* Pods-Flashmart-acknowledgements.markdown */,
+				98DB768C18A002267D0DF26058A792B8 /* Pods-Flashmart-acknowledgements.plist */,
+				5570A5CD9640EE0CD8A953625DE30CD5 /* Pods-Flashmart-dummy.m */,
+				067BA70468F53A76F9D5E3546D5B95E2 /* Pods-Flashmart-frameworks.sh */,
+				AE86F66291811DA1B1723A07256C91AE /* Pods-Flashmart-Info.plist */,
+				3C0CB0F0F43B4DD1F4B7ABF4B1A1FC9E /* Pods-Flashmart-umbrella.h */,
+				385115C2EDA054000691568427D85C56 /* Pods-Flashmart.debug.xcconfig */,
+				4A3FC34B17E7F7B95AFF1684F9990C64 /* Pods-Flashmart.release.xcconfig */,
+			);
+			name = "Pods-Flashmart";
+			path = "Target Support Files/Pods-Flashmart";
+			sourceTree = "<group>";
+		};
+		7FB872A77071E361EFA3BD1BA8D875BE /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				6C53BC799C90FACA5D5805B8DFDA8C3F /* razorpay-pod-xcframeworks.sh */,
+				4E3A1E14A2C9B2B2E8A26F26E877C9DA /* razorpay-pod.debug.xcconfig */,
+				21BEBA77726B8C519C762E580C97180F /* razorpay-pod.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/razorpay-pod";
+			sourceTree = "<group>";
+		};
+		833F6AE5D1C283540A1C49E9D5BB0702 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0EE6CB9FD4CC35D7E97BF6089EBDC497 /* Pods-Flashmart */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CF1408CF629C7361332E53B88F7BD30C = {
+			isa = PBXGroup;
+			children = (
+				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
+				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
+				4BD2AE21C8E5E6AD25904BFEF16D0076 /* Pods */,
+				833F6AE5D1C283540A1C49E9D5BB0702 /* Products */,
+				E42DF6E93BA97F8F96E9A516332244D2 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E4801F62A6B08CD9B5410329F1A18FDE /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E42DF6E93BA97F8F96E9A516332244D2 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				69CFA9D31F3B6C39F399EA34CC684730 /* Pods-Flashmart */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		E4801F62A6B08CD9B5410329F1A18FDE /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		460FB44ABAC1AC8943A512E830455DFD /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8B8E502D66831268A1039A8CF9C38533 /* Pods-Flashmart-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		BB08DA8D42A3C65A738F39BCEA265BFF /* Pods-Flashmart */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A8574E9E56E0B87D8AAA40B9542EEF0E /* Build configuration list for PBXNativeTarget "Pods-Flashmart" */;
+			buildPhases = (
+				460FB44ABAC1AC8943A512E830455DFD /* Headers */,
+				0DAA5D2B7C1E3434345CC8D22F937CE5 /* Sources */,
+				BFE4D04802593B1D916267C46103A789 /* Frameworks */,
+				4EB22A45B209C40EEE9BCE5E9A501929 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4D2A3E87F2CA019047D10E399DDBE41D /* PBXTargetDependency */,
+			);
+			name = "Pods-Flashmart";
+			productName = Pods_Flashmart;
+			productReference = 0EE6CB9FD4CC35D7E97BF6089EBDC497 /* Pods-Flashmart */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 833F6AE5D1C283540A1C49E9D5BB0702 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BB08DA8D42A3C65A738F39BCEA265BFF /* Pods-Flashmart */,
+				84CA3424E172CD651235AF0783D01D39 /* razorpay-pod */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4EB22A45B209C40EEE9BCE5E9A501929 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		635C94D36B1E5F7124C378459E5D3FEE /* [CP] Copy XCFrameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/razorpay-pod/razorpay-pod-xcframeworks-input-files.xcfilelist",
+			);
+			name = "[CP] Copy XCFrameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/razorpay-pod/razorpay-pod-xcframeworks-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/razorpay-pod/razorpay-pod-xcframeworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0DAA5D2B7C1E3434345CC8D22F937CE5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6DB54FFE6618717ABC28D1DF7FA0601 /* Pods-Flashmart-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4D2A3E87F2CA019047D10E399DDBE41D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "razorpay-pod";
+			target = 84CA3424E172CD651235AF0783D01D39 /* razorpay-pod */;
+			targetProxy = A6CD04907375B727120FC0B5884B8BBC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		22404EA4C39CA0915141B0949B2F6CF8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4E3A1E14A2C9B2B2E8A26F26E877C9DA /* razorpay-pod.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		255D79C1E46DF5D4CA6B4F45F44E0E89 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 385115C2EDA054000691568427D85C56 /* Pods-Flashmart.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-Flashmart/Pods-Flashmart-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-Flashmart/Pods-Flashmart.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		6A5C026ED62BBFE3380CD257EEFAEB20 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		755DDF78CE4ABBC1A7ADEF2458D04607 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4A3FC34B17E7F7B95AFF1684F9990C64 /* Pods-Flashmart.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-Flashmart/Pods-Flashmart-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-Flashmart/Pods-Flashmart.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		CE44AB14E7C83F8B540816206942AC1A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 21BEBA77726B8C519C762E580C97180F /* razorpay-pod.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E873CA97BD124B21839AF13C9BE1CD18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A5C026ED62BBFE3380CD257EEFAEB20 /* Debug */,
+				E873CA97BD124B21839AF13C9BE1CD18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A8574E9E56E0B87D8AAA40B9542EEF0E /* Build configuration list for PBXNativeTarget "Pods-Flashmart" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				255D79C1E46DF5D4CA6B4F45F44E0E89 /* Debug */,
+				755DDF78CE4ABBC1A7ADEF2458D04607 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EDB64A7BD8BC53C38270DF30BDFA7B79 /* Build configuration list for PBXAggregateTarget "razorpay-pod" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22404EA4C39CA0915141B0949B2F6CF8 /* Debug */,
+				CE44AB14E7C83F8B540816206942AC1A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+}

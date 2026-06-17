@@ -1,0 +1,30 @@
+# Matches DATABASE_URL in .env.example (postgres / postgres, db name mart).
+#
+# If Docker fails with: commit failed ... overlayfs/metadata.db ... input/output error
+# → Docker Desktop disk/storage issue. See: Mart/docs/database-troubleshooting.md
+#
+# If host port 5432 is already in use: use docker-compose.port5435.yml (see package.json db:up:5435).
+services:
+  db:
+    image: postgres:16-alpine
+    # linux/amd64 runs natively on Intel Mac / Linux CI; on Apple Silicon Docker emulates (Rosetta).
+    # If you still see "exec format error", enable Docker Desktop → Settings → General →
+    # "Use Rosetta for x86/amd64 emulation on Apple Silicon" (or use db:up:arm64 for native ARM).
+    platform: linux/amd64
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mart
+    ports:
+      - "5432:5432"
+    volumes:
+      - mart_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mart"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mart_pg_data:

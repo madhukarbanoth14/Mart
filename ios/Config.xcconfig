@@ -1,0 +1,9 @@
+// Debug — local Nest API on Mac, production auth (no offline demo)
+#include? "Pods/Target Support Files/Pods-Flashmart/Pods-Flashmart.debug.xcconfig"
+#include "Config.base.xcconfig"
+
+MART_API_BASE_URL = http:/$()/127.0.0.1:3005
+MART_USE_LOCAL_DEMO_AUTH = NO
+MART_DEMO_MODE = NO
+MART_REQUIRE_ONBOARDING_DOCUMENTS = NO
+INFOPLIST_KEY_MART_API_BASE_URL = $(MART_API_BASE_URL)

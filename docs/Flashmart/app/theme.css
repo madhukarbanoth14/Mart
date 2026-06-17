@@ -1,0 +1,104 @@
+/* ============================================================
+   Flashmart — Premium fintech design system
+   Type: Schibsted Grotesk (UI/display) + JetBrains Mono (figures)
+   ============================================================ */
+
+:root {
+  /* Surfaces — cool, restrained off-whites */
+  --bg:        #eef0f4;          /* stage / page behind cards */
+  --surface:   #ffffff;
+  --surface-2: #f6f7f9;          /* subtle raised / inset */
+  --surface-3: #eceef2;
+
+  /* Ink */
+  --ink:       #131722;          /* near-black, cool */
+  --ink-2:     #3d4452;          /* secondary text */
+  --ink-3:     #6b7280;          /* tertiary / captions */
+  --ink-4:     #9aa1ad;          /* faint */
+  --line:      #e4e7ec;          /* hairline border */
+  --line-2:    #d4d8e0;
+
+  /* Brand — confident royal indigo */
+  --brand:      #2f48d4;
+  --brand-600:  #2839b8;
+  --brand-700:  #1f2c93;
+  --brand-tint: #eef0fd;
+  --brand-ink:  #1a2470;         /* text on tint */
+
+  /* Semantic — refined, not neon */
+  --pos:       #0e9e6e;          /* money / success / delivered */
+  --pos-tint:  #e4f6ef;
+  --warn:      #c97a16;          /* pending */
+  --warn-tint: #fbf0df;
+  --neg:       #d6453f;          /* danger */
+  --neg-tint:  #fbe9e8;
+  --info:      #2f48d4;
+
+  /* Dark surface (admin charts / hero) */
+  --ink-surface:   #11152a;
+  --ink-surface-2: #1b2140;
+
+  /* Radii */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+
+  /* Shadows — soft, layered */
+  --sh-sm: 0 1px 2px rgba(19,23,34,.05), 0 1px 1px rgba(19,23,34,.04);
+  --sh-md: 0 2px 4px rgba(19,23,34,.05), 0 6px 16px rgba(19,23,34,.06);
+  --sh-lg: 0 12px 30px rgba(19,23,34,.10), 0 4px 8px rgba(19,23,34,.05);
+  --sh-xl: 0 30px 60px rgba(19,23,34,.16), 0 8px 20px rgba(19,23,34,.08);
+
+  --font: "Schibsted Grotesk", -apple-system, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* numbers */
+.mono { font-family: var(--mono); font-feature-settings: "tnum" 1; letter-spacing: -.02em; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* scrollbars inside apps */
+.fm-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.fm-scroll::-webkit-scrollbar-thumb { background: rgba(19,23,34,.14); border-radius: 99px; }
+.fm-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* tap feedback */
+.tap { cursor: pointer; transition: transform .12s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease, opacity .15s; -webkit-tap-highlight-color: transparent; }
+.tap:active { transform: scale(.975); }
+
+/* generic enter animation — transform-only so content is NEVER hidden
+   even if the animation is paused (inactive tab / capture context). */
+@keyframes fmFade { from { transform: translateY(6px); } to { transform: none; } }
+@keyframes fmPop  { 0% { opacity: 0; transform: scale(.9); } 60% { transform: scale(1.04); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes fmRise { from { transform: translateY(10px); } to { transform: none; } }
+@keyframes fmCheck { 0% { stroke-dashoffset: 60; } 100% { stroke-dashoffset: 0; } }
+@keyframes fmBarGrow { from { transform: scaleY(.04); } to { transform: scaleY(1); } }
+@keyframes fmSpin { to { transform: rotate(360deg); } }
+
+.fm-fade { animation: fmFade .3s cubic-bezier(.2,.7,.2,1) both; }
+.fm-rise { animation: fmRise .45s cubic-bezier(.2,.7,.2,1) both; }
+
+/* keyframe-staggered children */
+.stagger > * { animation: fmRise .5s cubic-bezier(.2,.7,.2,1) both; }
+.stagger > *:nth-child(1){ animation-delay:.03s }
+.stagger > *:nth-child(2){ animation-delay:.07s }
+.stagger > *:nth-child(3){ animation-delay:.11s }
+.stagger > *:nth-child(4){ animation-delay:.15s }
+.stagger > *:nth-child(5){ animation-delay:.19s }
+.stagger > *:nth-child(6){ animation-delay:.23s }
+.stagger > *:nth-child(7){ animation-delay:.27s }
+.stagger > *:nth-child(8){ animation-delay:.31s }
+
+button { font-family: inherit; }
