@@ -12,18 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.Payments
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,68 +27,93 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mart.distribution.demo.data.api.dto.cartMath
 import com.mart.distribution.demo.data.cart.CartLine
+import com.mart.distribution.demo.data.payment.RazorpayCheckoutOptions
 import com.mart.distribution.demo.data.profile.ShopkeeperProfileStore
 import com.mart.distribution.demo.ui.flashmart.FmAppHeader
 import com.mart.distribution.demo.ui.flashmart.FmButton
 import com.mart.distribution.demo.ui.flashmart.FmButtonVariant
 import com.mart.distribution.demo.ui.flashmart.FmCard
+import com.mart.distribution.demo.ui.flashmart.FmDialog
+import com.mart.distribution.demo.ui.flashmart.FmErrorBanner
+import com.mart.distribution.demo.ui.flashmart.FmInfoBanner
 import com.mart.distribution.demo.ui.flashmart.FmSectionLabel
-import com.mart.distribution.demo.ui.theme.MartFieldDefaults
+import com.mart.distribution.demo.ui.flashmart.FmTextField
+import com.mart.distribution.demo.ui.theme.FmSpacing
 import com.mart.distribution.demo.ui.theme.WholesaleBg
 import com.mart.distribution.demo.ui.theme.WholesaleBlue
-import com.mart.distribution.demo.ui.theme.WholesaleBlueTint
-import com.mart.distribution.demo.ui.theme.WholesaleBorder
 import com.mart.distribution.demo.ui.theme.WholesaleBorder2
 import com.mart.distribution.demo.ui.theme.WholesaleMuted
+import com.mart.distribution.demo.ui.theme.WholesaleRed
 import com.mart.distribution.demo.ui.theme.WholesaleSurface2
 import com.mart.distribution.demo.ui.theme.WholesaleText
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.KeyboardType
+import com.mart.distribution.demo.ui.util.formatDecimal
 import com.mart.distribution.demo.util.FieldFilters
 import com.mart.distribution.demo.util.FieldValidators
-import com.mart.distribution.demo.ui.util.formatDecimal
 
 @Composable
 fun ShopkeeperPaymentScreen(
     lines: List<CartLine>,
+    buyerRole: String = "SHOPKEEPER",
+    useRazorpayCheckout: Boolean = false,
     onBack: () -> Unit,
     onPayOnline: (paymentMethod: String) -> Unit,
     onPayLater: () -> Unit,
     paying: Boolean,
     placeError: String?,
+    paymentMessage: String? = null,
 ) {
+    val methods = remember(useRazorpayCheckout) { paymentMethodOptions(useRazorpayCheckout) }
     var method by remember { mutableStateOf("card") }
     var showCardDialog by remember { mutableStateOf(false) }
     var showUpiDialog by remember { mutableStateOf(false) }
-    val total =
-        remember(lines) {
-            lines.sumOf { (it.referenceUnitPrice ?: 0.0) * it.quantity }
-        }
-    val totalLabel = if (lines.isEmpty()) "—" else formatDecimal(total)
+    var methodError by remember { mutableStateOf<String?>(null) }
+    val math = remember(lines, buyerRole) { lines.cartMath(buyerRole) }
+    val totalLabel = if (lines.isEmpty()) "—" else formatDecimal(math.total)
+    val selected = methods.firstOrNull { it.id == method }
 
     fun startPay() {
-        when (method) {
-            "wallet" -> onPayLater()
-            "card" -> showCardDialog = true
-            "upi" -> showUpiDialog = true
+        methodError = null
+        val option = methods.firstOrNull { it.id == method } ?: return
+        if (!option.isEnabled(useRazorpayCheckout)) {
+            methodError = "This method requires Razorpay (production / live API build)."
+            return
+        }
+        when {
+            method == "cod" -> onPayLater()
+            useRazorpayCheckout && RazorpayCheckoutOptions.isRazorpayOnlineMethod(method) ->
+                onPayOnline(method)
+            method == "card" -> showCardDialog = true
+            method == "upi" -> showUpiDialog = true
             else -> onPayOnline(method)
         }
     }
 
     Box(modifier = Modifier.fillMaxSize().background(WholesaleBg)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            FmAppHeader(title = "Payment", subtitle = "Secure checkout", onBack = if (paying) null else onBack)
+            FmAppHeader(
+                title = "Payment",
+                subtitle = if (lines.isEmpty()) "No items" else "${lines.size} items · secure checkout",
+                onBack = if (paying) null else onBack,
+            )
             Column(
-                modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = FmSpacing.listH),
+                verticalArrangement = Arrangement.spacedBy(FmSpacing.itemGap),
             ) {
                 FmCard(
                     padding = androidx.compose.foundation.layout.PaddingValues(22.dp),
@@ -105,42 +126,32 @@ fun ShopkeeperPaymentScreen(
                     }
                 }
 
-                FmSectionLabel(title = "Payment method")
-                PaymentMethodCard(
-                    id = "card",
-                    selected = method,
-                    label = "Card",
-                    sub = "Demo credit / debit card",
-                    icon = Icons.Outlined.CreditCard,
-                    onSelect = { method = it },
-                )
-                PaymentMethodCard(
-                    id = "upi",
-                    selected = method,
-                    label = "UPI",
-                    sub = "GPay · PhonePe · Paytm",
-                    icon = Icons.Outlined.Payments,
-                    onSelect = { method = it },
-                )
-                PaymentMethodCard(
-                    id = "wallet",
-                    selected = method,
-                    label = "Pay on delivery",
-                    sub = "Cash / UPI to dealer",
-                    icon = Icons.Outlined.AccountBalanceWallet,
-                    onSelect = { method = it },
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text("⚡", fontSize = 14.sp)
-                    Spacer(Modifier.size(8.dp))
-                    Text("Demo mode · no real charges", fontSize = 12.sp, color = WholesaleMuted)
+                com.mart.distribution.demo.ui.flashmart.FmSectionLabel(title = "Payment method")
+                methods.forEach { option ->
+                    PaymentMethodCard(
+                        option = option,
+                        selected = method == option.id,
+                        enabled = option.isEnabled(useRazorpayCheckout),
+                        onSelect = {
+                            method = option.id
+                            methodError = null
+                        },
+                    )
                 }
-                placeError?.let { Text(it, color = com.mart.distribution.demo.ui.theme.WholesaleRed, fontSize = 13.sp) }
+
+                FmInfoBanner(
+                    message =
+                        if (useRazorpayCheckout) {
+                            "Secured by Razorpay · enter payment details in the gateway"
+                        } else {
+                            "Demo mode · card & UPI only · no real charges"
+                        },
+                )
+                methodError?.let { FmErrorBanner(message = it) }
+                placeError?.let { FmErrorBanner(message = it) }
+                paymentMessage?.let {
+                    FmInfoBanner(message = it, tint = com.mart.distribution.demo.ui.theme.WholesaleBlueTint)
+                }
                 Spacer(Modifier.height(100.dp))
             }
         }
@@ -151,34 +162,31 @@ fun ShopkeeperPaymentScreen(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .background(Brush.verticalGradient(listOf(Color.Transparent, WholesaleBg, WholesaleBg)))
-                    .padding(horizontal = 16.dp, vertical = 24.dp),
+                    .padding(horizontal = FmSpacing.listH, vertical = 24.dp),
         ) {
             if (paying) {
-                FmButton(
-                    text = "Processing…",
-                    onClick = {},
-                    enabled = false,
-                    variant = FmButtonVariant.Dark,
-                )
+                FmButton(text = "Processing…", onClick = {}, enabled = false, variant = FmButtonVariant.Dark)
                 Box(Modifier.fillMaxWidth().padding(top = 8.dp), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = WholesaleBlue)
                 }
             } else {
                 FmButton(
                     text =
-                        when (method) {
-                            "wallet" -> "Place order · pay later"
+                        when {
+                            method == "cod" -> "Place order · pay later"
+                            useRazorpayCheckout && selected?.razorpayGateway == true ->
+                                "Continue to Razorpay · $totalLabel"
                             else -> "Pay $totalLabel"
                         },
                     onClick = { startPay() },
                     variant = FmButtonVariant.Dark,
-                    enabled = lines.isNotEmpty(),
+                    enabled = lines.isNotEmpty() && (selected?.isEnabled(useRazorpayCheckout) != false),
                 )
             }
         }
     }
 
-    if (showCardDialog) {
+    if (!useRazorpayCheckout && showCardDialog) {
         DemoCardPaymentDialog(
             totalLabel = totalLabel,
             onDismiss = { showCardDialog = false },
@@ -189,27 +197,22 @@ fun ShopkeeperPaymentScreen(
         )
     }
 
-    if (showUpiDialog) {
-        AlertDialog(
-            onDismissRequest = { showUpiDialog = false },
-            title = { Text("Pay with UPI") },
-            text = {
-                Text("Confirm demo payment from ${ShopkeeperProfileStore.DUMMY_UPI_ID} for $totalLabel?")
+    if (!useRazorpayCheckout && showUpiDialog) {
+        FmDialog(
+            title = "Pay with UPI",
+            onDismiss = { showUpiDialog = false },
+            confirmLabel = "Pay now",
+            onConfirm = {
+                showUpiDialog = false
+                onPayOnline("upi")
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showUpiDialog = false
-                        onPayOnline("upi")
-                    },
-                ) {
-                    Text("Pay now")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showUpiDialog = false }) { Text("Cancel") }
-            },
-        )
+        ) {
+            Text(
+                "Confirm demo payment from ${ShopkeeperProfileStore.DUMMY_UPI_ID} for $totalLabel?",
+                fontSize = 14.sp,
+                color = WholesaleText,
+            )
+        }
     }
 }
 
@@ -225,88 +228,70 @@ private fun DemoCardPaymentDialog(
     var name by remember { mutableStateOf(ShopkeeperProfileStore.DUMMY_CARD_NAME) }
     var cardError by remember { mutableStateOf<String?>(null) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Enter card details") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text("Demo card — no real payment is processed.", fontSize = 12.sp, color = WholesaleMuted)
-                OutlinedTextField(
-                    value = cardNumber,
-                    onValueChange = { cardNumber = FieldFilters.cardNumber(it); cardError = null },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Card number") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    colors = MartFieldDefaults.outlinedColors(),
-                )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = expiry,
-                        onValueChange = { expiry = FieldFilters.cardExpiry(it); cardError = null },
-                        modifier = Modifier.weight(1f),
-                        label = { Text("Expiry") },
-                        placeholder = { Text("MM/YY") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        colors = MartFieldDefaults.outlinedColors(),
-                    )
-                    OutlinedTextField(
-                        value = cvv,
-                        onValueChange = { cvv = FieldFilters.cvv(it); cardError = null },
-                        modifier = Modifier.weight(1f),
-                        label = { Text("CVV") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                        singleLine = true,
-                        colors = MartFieldDefaults.outlinedColors(),
-                    )
-                }
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = FieldFilters.personName(it); cardError = null },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Name on card") },
-                    singleLine = true,
-                    colors = MartFieldDefaults.outlinedColors(),
-                )
-                cardError?.let { Text(it, fontSize = 12.sp, color = com.mart.distribution.demo.ui.theme.WholesaleRed) }
-                Text("Pay $totalLabel", fontWeight = FontWeight.SemiBold, color = WholesaleText)
-            }
+    FmDialog(
+        title = "Enter card details",
+        onDismiss = onDismiss,
+        confirmLabel = "Pay $totalLabel",
+        onConfirm = {
+            FieldValidators.cardNumber(cardNumber)?.let { cardError = it; return@FmDialog }
+            FieldValidators.cardExpiry(expiry)?.let { cardError = it; return@FmDialog }
+            FieldValidators.cvv(cvv)?.let { cardError = it; return@FmDialog }
+            FieldValidators.cardName(name)?.let { cardError = it; return@FmDialog }
+            onConfirm()
         },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    FieldValidators.cardNumber(cardNumber)?.let { cardError = it; return@TextButton }
-                    FieldValidators.cardExpiry(expiry)?.let { cardError = it; return@TextButton }
-                    FieldValidators.cvv(cvv)?.let { cardError = it; return@TextButton }
-                    FieldValidators.cardName(name)?.let { cardError = it; return@TextButton }
-                    onConfirm()
-                },
-            ) { Text("Pay $totalLabel") }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
-        },
-    )
+    ) {
+        FmInfoBanner(message = "Demo card — no real payment is processed.")
+        FmTextField(
+            value = cardNumber,
+            onValueChange = { cardNumber = FieldFilters.cardNumber(it); cardError = null },
+            label = "Card number",
+            placeholder = "4111 1111 1111 1111",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FmTextField(
+                value = expiry,
+                onValueChange = { expiry = FieldFilters.cardExpiry(it); cardError = null },
+                label = "Expiry",
+                placeholder = "MM/YY",
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            )
+            FmTextField(
+                value = cvv,
+                onValueChange = { cvv = FieldFilters.cvv(it); cardError = null },
+                label = "CVV",
+                placeholder = "123",
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+            )
+        }
+        FmTextField(
+            value = name,
+            onValueChange = { name = FieldFilters.personName(it); cardError = null },
+            label = "Name on card",
+        )
+        cardError?.let { FmErrorBanner(message = it) }
+        Text("Pay $totalLabel", fontWeight = FontWeight.SemiBold, color = WholesaleText, fontSize = 15.sp)
+    }
 }
 
 @Composable
 private fun PaymentMethodCard(
-    id: String,
-    selected: String,
-    label: String,
-    sub: String,
-    icon: ImageVector,
-    onSelect: (String) -> Unit,
+    option: PaymentMethodOption,
+    selected: Boolean,
+    enabled: Boolean,
+    onSelect: () -> Unit,
 ) {
-    val on = selected == id
+    val alpha = if (enabled) 1f else 0.45f
     FmCard(
-        onClick = { onSelect(id) },
+        onClick = { if (enabled) onSelect() },
         modifier =
             Modifier
                 .fillMaxWidth()
+                .alpha(alpha)
                 .then(
-                    if (on) {
+                    if (selected && enabled) {
                         Modifier.border(1.dp, WholesaleBlue, RoundedCornerShape(16.dp))
                     } else {
                         Modifier
@@ -319,14 +304,19 @@ private fun PaymentMethodCard(
                     Modifier
                         .size(42.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(if (on) WholesaleBlue else WholesaleSurface2),
+                        .background(if (selected && enabled) WholesaleBlue else WholesaleSurface2),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(icon, null, tint = if (on) Color.White else WholesaleMuted, modifier = Modifier.size(20.dp))
+                Icon(
+                    option.icon,
+                    null,
+                    tint = if (selected && enabled) Color.White else WholesaleMuted,
+                    modifier = Modifier.size(20.dp),
+                )
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(label, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = WholesaleText)
-                Text(sub, fontSize = 12.sp, color = WholesaleMuted)
+                Text(option.label, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = WholesaleText)
+                Text(option.subtitle, fontSize = 12.sp, color = WholesaleMuted)
             }
             Box(
                 modifier =
@@ -334,7 +324,7 @@ private fun PaymentMethodCard(
                         .size(22.dp)
                         .clip(CircleShape)
                         .then(
-                            if (on) {
+                            if (selected && enabled) {
                                 Modifier.background(WholesaleBlue).border(7.dp, WholesaleBlue, CircleShape)
                             } else {
                                 Modifier.border(2.dp, WholesaleBorder2, CircleShape)

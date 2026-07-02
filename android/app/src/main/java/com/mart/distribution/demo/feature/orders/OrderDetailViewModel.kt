@@ -173,4 +173,92 @@ class OrderDetailViewModel(
         }
     }
 
+    fun requestReturn(reason: String) {
+        viewModelScope.launch {
+            _actionError.value = null
+            _actionMessage.value = null
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    localDemoMartStore.requestReturn(orderId, reason)
+                } else {
+                    martApi.requestOrderReturn(orderId, com.mart.distribution.demo.data.api.dto.OrderReturnRequest(reason))
+                }
+                _actionMessage.value = "Return request submitted"
+                load()
+            } catch (e: Exception) {
+                _actionError.value = actionErrorMessage(e)
+            }
+        }
+    }
+
+    fun requestReturnDetailed(
+        reason: String,
+        reasonText: String?,
+        comments: String?,
+        items: List<com.mart.distribution.demo.data.api.dto.CreateReturnItemRequest>,
+    ) {
+        viewModelScope.launch {
+            _actionError.value = null
+            _actionMessage.value = null
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    localDemoMartStore.requestReturn(orderId, reasonText ?: reason)
+                } else {
+                    martApi.createReturn(
+                        orderId,
+                        com.mart.distribution.demo.data.api.dto.CreateReturnRequest(
+                            reason = reason,
+                            reasonText = reasonText,
+                            comments = comments,
+                            items = items,
+                        ),
+                    )
+                }
+                _actionMessage.value = "Return request submitted"
+                load()
+            } catch (e: Exception) {
+                _actionError.value = actionErrorMessage(e)
+            }
+        }
+    }
+
+    fun approveReturn() {
+        viewModelScope.launch {
+            _actionError.value = null
+            _actionMessage.value = null
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    localDemoMartStore.approveReturn(orderId)
+                } else {
+                    martApi.approveOrderReturn(orderId)
+                }
+                _actionMessage.value = "Return approved — raise refund request when ready"
+                load()
+            } catch (e: Exception) {
+                _actionError.value = actionErrorMessage(e)
+            }
+        }
+    }
+
+    fun rejectReturn(note: String? = null) {
+        viewModelScope.launch {
+            _actionError.value = null
+            _actionMessage.value = null
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    localDemoMartStore.rejectReturn(orderId, note)
+                } else {
+                    martApi.rejectOrderReturn(
+                        orderId,
+                        com.mart.distribution.demo.data.api.dto.OrderReturnRejectRequest(note),
+                    )
+                }
+                _actionMessage.value = "Return request rejected"
+                load()
+            } catch (e: Exception) {
+                _actionError.value = actionErrorMessage(e)
+            }
+        }
+    }
+
 }

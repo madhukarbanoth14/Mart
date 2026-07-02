@@ -6,7 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import com.mart.distribution.demo.AppContainer
 import com.mart.distribution.demo.feature.auth.LoginViewModel
+import com.mart.distribution.demo.feature.auth.RegisterViewModel
 import com.mart.distribution.demo.feature.brands.BrandsViewModel
+import com.mart.distribution.demo.feature.finance.FinanceViewModel
+import com.mart.distribution.demo.feature.returns.ReturnsViewModel
 import com.mart.distribution.demo.feature.home.MainViewModel
 class AppViewModelFactory(
     owner: SavedStateRegistryOwner,
@@ -27,6 +30,8 @@ class AppViewModelFactory(
                     container.martApi,
                     container.localDemoMartStore,
                     container.networkConfigRepository,
+                    container.pushTokenRegistrar,
+                    container.cartRepository,
                 ) as T
             modelClass.isAssignableFrom(MainViewModel::class.java) ->
                 MainViewModel(
@@ -36,9 +41,16 @@ class AppViewModelFactory(
                     container.localDemoMartStore,
                     container.demoFlowRepository,
                     container.applicationContext,
+                    container.pushTokenRegistrar,
                 ) as T
             modelClass.isAssignableFrom(BrandsViewModel::class.java) ->
                 BrandsViewModel(container.brandsRepository) as T
+            modelClass.isAssignableFrom(RegisterViewModel::class.java) ->
+                RegisterViewModel(container.martApi, container.sessionManager) as T
+            modelClass.isAssignableFrom(FinanceViewModel::class.java) ->
+                FinanceViewModel(container.martApi) as T
+            modelClass.isAssignableFrom(ReturnsViewModel::class.java) ->
+                ReturnsViewModel(container.martApi) as T
             else -> throw IllegalArgumentException("Unknown VM: ${modelClass.name}")
         }
     }

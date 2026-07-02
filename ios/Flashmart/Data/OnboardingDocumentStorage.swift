@@ -118,6 +118,15 @@ enum OnboardingDocumentStorage {
         return base.appendingPathComponent("onboarding", isDirectory: true)
     }
 
+    static func localFile(userId: String, document: OnboardingDocument) -> URL? {
+        let userDir = onboardingRoot.appendingPathComponent(userId, isDirectory: true)
+        let candidate = userDir.appendingPathComponent(document.fileName)
+        if FileManager.default.fileExists(atPath: candidate.path) {
+            return candidate
+        }
+        return nil
+    }
+
     private static func mimeType(for ext: String) -> String {
         switch ext.lowercased() {
         case "pdf": return "application/pdf"
@@ -125,5 +134,24 @@ enum OnboardingDocumentStorage {
         case "png": return "image/png"
         default: return "application/octet-stream"
         }
+    }
+}
+
+enum BusinessDocumentTypes {
+    struct Slot: Identifiable, Equatable {
+        let type: String
+        let label: String
+        var id: String { type }
+    }
+
+    static let all: [Slot] = [
+        Slot(type: "AADHAAR", label: "Aadhaar Card"),
+        Slot(type: "PAN", label: "PAN Card"),
+        Slot(type: "GST", label: "GST Certificate"),
+        Slot(type: "TRADE_LICENSE", label: "Trade License"),
+    ]
+
+    static func label(for type: String) -> String {
+        all.first { $0.type == type }?.label ?? type
     }
 }

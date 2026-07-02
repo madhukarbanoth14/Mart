@@ -15,6 +15,8 @@ import com.mart.distribution.demo.data.onboarding.OnboardingDocumentStorage
 import com.mart.distribution.demo.data.onboarding.PendingOnboardingDocument
 import com.mart.distribution.demo.data.api.dto.CreateProductRequest
 import com.mart.distribution.demo.data.api.dto.CreateRazorpayOrderRequest
+import com.mart.distribution.demo.data.api.dto.CreateAreaRequest
+import com.mart.distribution.demo.data.api.dto.UpdateAreaRequest
 import com.mart.distribution.demo.data.api.dto.CreateShopkeeperRequest
 import com.mart.distribution.demo.data.api.dto.DealerSummaryDto
 import com.mart.distribution.demo.data.api.dto.OrderDto
@@ -22,15 +24,23 @@ import com.mart.distribution.demo.data.api.dto.ProductDto
 import com.mart.distribution.demo.data.api.dto.ProductsPagedResponse
 import com.mart.distribution.demo.data.api.dto.ShopkeeperSummaryDto
 import com.mart.distribution.demo.data.api.dto.StockRowDto
+import com.mart.distribution.demo.data.api.dto.UpdateStockRequest
+import com.mart.distribution.demo.data.api.dto.UpsertStockRequest
 import com.mart.distribution.demo.data.api.dto.UpdateProductRequest
 import com.mart.distribution.demo.data.api.dto.UpdateUserStatusRequest
+import com.mart.distribution.demo.data.api.dto.catalogUnitPrice
+import com.mart.distribution.demo.data.api.dto.discountPercentForRole
+import com.mart.distribution.demo.data.api.dto.toDoubleFromApiOrNull
 import com.mart.distribution.demo.data.api.dto.UserRowDto
 import com.mart.distribution.demo.data.api.dto.VerifyRazorpayPaymentRequest
 import com.mart.distribution.demo.data.demo.LocalDemoAuthConfig
+import com.mart.distribution.demo.data.cart.CartLine
 import com.mart.distribution.demo.data.cart.CartRepository
 import com.mart.distribution.demo.data.demo.DemoFlowRepository
 import com.mart.distribution.demo.data.demo.LocalDemoMartStore
+import com.mart.distribution.demo.data.push.PushTokenRegistrar
 import com.mart.distribution.demo.data.session.SessionRepository
+import com.mart.distribution.demo.util.normalizeAreaName
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,6 +57,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.HttpException
+import java.io.File
 
 sealed class LoadState<out T> {
     data object Idle : LoadState<Nothing>()
@@ -90,10 +101,19 @@ data class MainUiState(
     val pendingRazorpayKeyId: String? = null,
     val pendingRazorpayAmountPaise: Int? = null,
     val pendingRazorpayCurrency: String? = null,
+    val pendingRazorpayMethod: String? = null,
     val paymentMessage: String? = null,
     val shopkeeperSummary: ShopkeeperSummaryDto? = null,
     val dealerSummary: DealerSummaryDto? = null,
     val shopkeeperHomeFeed: ShopkeeperHomeFeedState = ShopkeeperHomeFeedState(),
+    /** productId -> available quantity from the shopkeeper's assigned dealer. */
+    val availability: Map<String, Int> = emptyMap(),
+    /** True only when availability was fetched successfully (gating is off otherwise). */
+    val availabilityLoaded: Boolean = false,
+    val myDocuments: LoadState<List<com.mart.distribution.demo.data.api.dto.OnboardingDocumentDto>> = LoadState.Idle,
+    val documentCheckoutBlocked: Boolean = false,
+    val maxOrderQuantity: Int = 10000,
+    val quickQuantityChips: List<Int> = listOf(10, 25, 50, 100, 250, 500, 1000),
 )
 
 private const val SHOPKEEPER_HOME_PAGE_SIZE = 24
@@ -108,6 +128,7 @@ class MainViewModel(
     private val localDemoMartStore: LocalDemoMartStore,
     private val demoFlowRepository: DemoFlowRepository,
     private val appContext: Context,
+    private val pushTokenRegistrar: PushTokenRegistrar,
 ) : ViewModel() {
     /** Client-side paging cache after loading full catalog from `GET /products`. */
     private var homeProductsCache: List<ProductDto>? = null
@@ -117,6 +138,12 @@ class MainViewModel(
     private var loadProductsJob: Job? = null
     private var catalogCache: List<ProductDto>? = null
     private var catalogCacheAtMs: Long = 0L
+    /** Cart snapshot taken before Razorpay checkout; restored if payment is cancelled. */
+    private var razorpayCartRestore: List<CartLine>? = null
+    /** Survives [clearPendingRazorpayLaunch] so callbacks can verify after the SDK closes. */
+    private var activeRazorpayAppOrderId: String? = null
+    private var activeRazorpayGatewayOrderId: String? = null
+    private var razorpayResultHandled: Boolean = false
 
     private fun shouldShowLoading(current: LoadState<*>): Boolean = current !is LoadState.Ok
 
@@ -160,6 +187,13 @@ class MainViewModel(
             return when (e.code()) {
                 400, 422 -> msg.ifBlank { "Please check input and try again." }
                 401 -> "Session expired. Please login again."
+                403 ->
+                    if (body.contains("DOCUMENT_REQUIRED") || msg.contains("upload at least one", true)) {
+                        "To place orders, please upload at least one valid business document for verification."
+                    } else {
+                        msg.ifBlank { "You do not have permission for this action." }
+                    }
+                409 -> msg.ifBlank { "A user with this email or phone already exists." }
                 500 ->
                     nested
                         ?: msg.takeIf { it.isNotBlank() && it.length < 500 }
@@ -214,9 +248,42 @@ class MainViewModel(
 
     val cartLines = cartRepository.lines
 
+    init {
+        viewModelScope.launch {
+            var previousUserId: String? = sessionRepository.getUserSnapshot()?.id
+            sessionRepository.sessionUserFlow.collect { user ->
+                val currentUserId = user?.id
+                if (previousUserId != null &&
+                    currentUserId != null &&
+                    previousUserId != currentUserId
+                ) {
+                    clearSessionScopedState()
+                }
+                previousUserId = currentUserId
+            }
+        }
+    }
+
+    /** Clears in-memory cart and role-specific UI when the signed-in user changes. */
+    private fun clearSessionScopedState() {
+        razorpayCartRestore = null
+        activeRazorpayAppOrderId = null
+        activeRazorpayGatewayOrderId = null
+        razorpayResultHandled = false
+        cartRepository.clear()
+        homeProductsCache = null
+        homeProductsCacheKey = null
+        catalogCache = null
+        catalogCacheAtMs = 0L
+        _ui.value = MainUiState()
+    }
+
     fun refreshForRole() {
         viewModelScope.launch {
-            val user = sessionRepository.sessionUserFlow.first() ?: return@launch
+            val user =
+                sessionRepository.getUserSnapshot()
+                    ?: sessionRepository.sessionUserFlow.first()
+                    ?: return@launch
             when (user.role.uppercase()) {
                 "EMPLOYEE" -> {
                     _ui.update {
@@ -229,7 +296,7 @@ class MainViewModel(
                     loadUsers()
                     loadAreas()
                 }
-                "ADMIN" -> {
+                "ADMIN", "SUPER_ADMIN" -> {
                     loadProducts()
                     loadShelves()
                     loadOrders()
@@ -250,6 +317,7 @@ class MainViewModel(
                         async { loadOrdersSuspend(showLoading = shouldShowLoading(_ui.value.orders)) }.await()
                         async { loadStockSuspend(showLoading = shouldShowLoading(_ui.value.stock)) }.await()
                         async { loadDealerSummarySuspend() }.await()
+                        async { loadOrderingConfigSuspend() }.await()
                     }
                 }
                 else -> {
@@ -265,9 +333,83 @@ class MainViewModel(
                     coroutineScope {
                         async { loadOrdersSuspend(showLoading = shouldShowLoading(_ui.value.orders)) }.await()
                         async { loadShopkeeperSummarySuspend() }.await()
+                        async { loadAvailabilitySuspend() }.await()
+                        async { loadOrderingConfigSuspend() }.await()
                     }
                 }
             }
+        }
+    }
+
+    fun loadAvailability() {
+        viewModelScope.launch { loadAvailabilitySuspend() }
+    }
+
+    fun loadOrderingConfig() {
+        viewModelScope.launch { loadOrderingConfigSuspend() }
+    }
+
+    private suspend fun loadOrderingConfigSuspend() {
+        if (sessionRepository.isLocalDemoMode()) return
+        try {
+            val cfg = martApi.orderingConfig()
+            _ui.update {
+                it.copy(
+                    maxOrderQuantity = cfg.maxOrderQuantity,
+                    quickQuantityChips = cfg.quickQuantityChips,
+                )
+            }
+        } catch (_: Exception) {
+            // Keep defaults from MainUiState.
+        }
+    }
+
+    fun reorderFromOrder(
+        orderId: String,
+        onComplete: (success: Boolean, message: String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            try {
+                val preview =
+                    if (sessionRepository.isLocalDemoMode()) {
+                        localDemoMartStore.previewReorder(orderId)
+                    } else {
+                        martApi.reorderPreview(orderId)
+                    }
+                cartRepository.clear()
+                val role = currentUserRoleOrDefault()
+                for (item in preview.items) {
+                    val product = item.product ?: continue
+                    cartRepository.setLineQuantity(product, item.quantity, role)
+                }
+                onComplete(preview.items.isNotEmpty(), preview.warnings.firstOrNull())
+            } catch (e: Exception) {
+                onComplete(false, e.message ?: "Could not reorder")
+            }
+        }
+    }
+
+    /**
+     * Loads the shopkeeper's assigned-dealer stock so the catalog can block
+     * out-of-stock items. Gating stays off (availabilityLoaded=false) if this
+     * fails or the backend doesn't support the endpoint, so ordering still works.
+     */
+    private suspend fun loadAvailabilitySuspend() {
+        if (sessionRepository.isLocalDemoMode()) {
+            _ui.update { it.copy(availabilityLoaded = false) }
+            return
+        }
+        val role = sessionRepository.sessionUserFlow.first()?.role?.uppercase()
+        if (role != "SHOPKEEPER") {
+            _ui.update { it.copy(availabilityLoaded = false) }
+            return
+        }
+        try {
+            val rows = martApi.availableStock()
+            val map = rows.associate { it.productId to it.quantity }
+            _ui.update { it.copy(availability = map, availabilityLoaded = true) }
+        } catch (_: Exception) {
+            _ui.update { it.copy(availabilityLoaded = false) }
         }
     }
 
@@ -302,6 +444,9 @@ class MainViewModel(
         }
         if (state.shelves is LoadState.Idle || state.shelves is LoadState.Err) {
             loadShelves()
+        }
+        if (!state.availabilityLoaded) {
+            loadAvailability()
         }
     }
 
@@ -403,7 +548,7 @@ class MainViewModel(
                 } catch (e: Exception) {
                     if (_ui.value.products !is LoadState.Ok) {
                         _ui.update {
-                            it.copy(products = LoadState.Err(e.message ?: "Failed to load products"))
+                            it.copy(products = LoadState.Err(httpReadableMessage(e)))
                         }
                     }
                 }
@@ -642,7 +787,11 @@ class MainViewModel(
     }
 
     fun loadOrders() {
-        viewModelScope.launch { loadOrdersSuspend(showLoading = shouldShowLoading(_ui.value.orders)) }
+        viewModelScope.launch {
+            loadOrdersSuspend(showLoading = shouldShowLoading(_ui.value.orders))
+            // Stock changes after orders; keep shopkeeper availability fresh (no-op otherwise).
+            loadAvailabilitySuspend()
+        }
     }
 
     private suspend fun loadOrdersSuspend(showLoading: Boolean = shouldShowLoading(_ui.value.orders)) {
@@ -679,6 +828,115 @@ class MainViewModel(
 
     fun loadStock(showLoading: Boolean = shouldShowLoading(_ui.value.stock)) {
         viewModelScope.launch { loadStockSuspend(showLoading) }
+    }
+
+    fun updateStockQuantity(
+        stockId: String,
+        quantity: Int,
+        onFinished: (String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    localDemoMartStore.updateStockQuantity(stockId, quantity)
+                } else {
+                    martApi.updateStock(stockId, UpdateStockRequest(quantity))
+                }
+                loadStockSuspend(showLoading = false)
+                onFinished(null)
+            } catch (e: Exception) {
+                onFinished(httpReadableMessage(e))
+            }
+        }
+    }
+
+    fun addStockSku(
+        productId: String,
+        quantity: Int,
+        onFinished: (String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    localDemoMartStore.upsertStock(productId, quantity)
+                } else {
+                    martApi.upsertStock(UpsertStockRequest(productId, quantity))
+                }
+                loadStockSuspend(showLoading = false)
+                onFinished(null)
+            } catch (e: Exception) {
+                onFinished(httpReadableMessage(e))
+            }
+        }
+    }
+
+    private fun rememberRazorpayCheckout(
+        appOrderId: String,
+        gatewayOrderId: String,
+        cartSnapshot: List<CartLine>?,
+    ) {
+        activeRazorpayAppOrderId = appOrderId
+        activeRazorpayGatewayOrderId = gatewayOrderId
+        razorpayCartRestore = cartSnapshot
+        razorpayResultHandled = false
+    }
+
+    private fun clearRazorpayCheckoutSession() {
+        activeRazorpayAppOrderId = null
+        activeRazorpayGatewayOrderId = null
+        razorpayCartRestore = null
+        razorpayResultHandled = false
+    }
+
+    fun prepareRestockCheckout(
+        items: List<Pair<ProductDto, Int>>,
+        onFinished: (String?) -> Unit,
+    ) {
+        if (items.isEmpty()) {
+            onFinished("Select at least one SKU")
+            return
+        }
+        if (items.any { it.second <= 0 }) {
+            onFinished("Enter a valid quantity for each SKU")
+            return
+        }
+        viewModelScope.launch {
+            try {
+                val role = "DEALER"
+                val cartLines =
+                    items.map { (product, qty) ->
+                        CartLine(
+                            productId = product.id,
+                            productName = product.name,
+                            quantity = qty,
+                            referenceUnitPrice = product.catalogUnitPrice(role),
+                            gstPercentage = product.gstPercentage.toDoubleFromApiOrNull(),
+                            discountPercent = product.discountPercentForRole(role),
+                            imageUrl = product.imageUrl,
+                            brandLogoUrl = product.brand?.logoUrl,
+                        )
+                    }
+                razorpayCartRestore = null
+                cartRepository.restoreLines(cartLines)
+                _ui.update {
+                    it.copy(
+                        placeOrderError = null,
+                        placeOrderResult = null,
+                        paymentMessage = null,
+                        placedOrder = null,
+                        pendingRazorpayOrderId = null,
+                        pendingRazorpayGatewayOrderId = null,
+                        pendingRazorpayKeyId = null,
+                        pendingRazorpayAmountPaise = null,
+                        pendingRazorpayCurrency = null,
+                        pendingRazorpayMethod = null,
+                    )
+                }
+                onFinished(null)
+            } catch (e: Exception) {
+                onFinished(httpReadableMessage(e))
+            }
+        }
     }
 
     private suspend fun loadStockSuspend(showLoading: Boolean = shouldShowLoading(_ui.value.stock)) {
@@ -750,6 +1008,55 @@ class MainViewModel(
         }
     }
 
+    fun createArea(
+        name: String,
+        onFinished: (String?) -> Unit,
+    ) {
+        val trimmed = normalizeAreaName(name)
+        if (trimmed.length < 2) {
+            onFinished("Enter an area name (min 2 characters)")
+            return
+        }
+        viewModelScope.launch {
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    onFinished("Area management is not available in demo mode")
+                    return@launch
+                }
+                martApi.createArea(CreateAreaRequest(name = trimmed))
+                loadAreas()
+                onFinished(null)
+            } catch (e: Exception) {
+                onFinished(httpReadableMessage(e))
+            }
+        }
+    }
+
+    fun updateArea(
+        areaId: String,
+        name: String,
+        onFinished: (String?) -> Unit,
+    ) {
+        val trimmed = normalizeAreaName(name)
+        if (trimmed.length < 2) {
+            onFinished("Enter an area name (min 2 characters)")
+            return
+        }
+        viewModelScope.launch {
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    onFinished("Area management is not available in demo mode")
+                    return@launch
+                }
+                martApi.updateArea(areaId, UpdateAreaRequest(name = trimmed))
+                loadAreas()
+                onFinished(null)
+            } catch (e: Exception) {
+                onFinished(httpReadableMessage(e))
+            }
+        }
+    }
+
     fun createEmployee(
         name: String,
         email: String,
@@ -802,7 +1109,7 @@ class MainViewModel(
                     onFinished(null, info)
                 }
             } catch (e: Exception) {
-                onFinished(e.message ?: "Could not create employee", null)
+                onFinished(httpReadableMessage(e), null)
             }
         }
     }
@@ -815,6 +1122,10 @@ class MainViewModel(
         areaId: String,
         onboardingNotes: String?,
         documents: List<PendingOnboardingDocument> = emptyList(),
+        shopName: String? = null,
+        address: String? = null,
+        latitude: Double? = null,
+        longitude: Double? = null,
         onFinished: (String?, String?) -> Unit,
     ) {
         viewModelScope.launch {
@@ -853,6 +1164,10 @@ class MainViewModel(
                                 password = pwd,
                                 areaId = areaId,
                                 onboardingNotes = onboardingNotes?.trim()?.takeIf { it.isNotEmpty() },
+                                shopName = shopName?.trim()?.takeIf { it.isNotEmpty() },
+                                address = address?.trim()?.takeIf { it.isNotEmpty() },
+                                latitude = latitude,
+                                longitude = longitude,
                             ),
                         )
                     uploadOnboardingDocuments(created.id, documents)
@@ -867,7 +1182,7 @@ class MainViewModel(
                     },
                 )
             } catch (e: Exception) {
-                onFinished(e.message ?: "Could not add shopkeeper", null)
+                onFinished(httpReadableMessage(e), null)
             }
         }
     }
@@ -883,6 +1198,10 @@ class MainViewModel(
         areaId: String,
         onboardingNotes: String?,
         documents: List<PendingOnboardingDocument> = emptyList(),
+        shopName: String? = null,
+        address: String? = null,
+        latitude: Double? = null,
+        longitude: Double? = null,
         onFinished: (String?, CreateDealerResponse?, String?) -> Unit,
     ) {
         viewModelScope.launch {
@@ -950,6 +1269,10 @@ class MainViewModel(
                                 password = password?.trim()?.takeIf { it.length >= 8 },
                                 areaId = areaId,
                                 onboardingNotes = onboardingNotes?.trim()?.takeIf { it.isNotEmpty() },
+                                shopName = shopName?.trim()?.takeIf { it.isNotEmpty() },
+                                address = address?.trim()?.takeIf { it.isNotEmpty() },
+                                latitude = latitude,
+                                longitude = longitude,
                             ),
                         )
                     uploadOnboardingDocuments(resp.id, documents)
@@ -966,7 +1289,7 @@ class MainViewModel(
                     )
                 }
             } catch (e: Exception) {
-                onFinished(e.message ?: "Could not add dealer", null, null)
+                onFinished(httpReadableMessage(e), null, null)
             }
         }
     }
@@ -1107,6 +1430,12 @@ class MainViewModel(
         }
     }
 
+    fun clearPlaceOrderError() {
+        if (_ui.value.placeOrderError != null) {
+            _ui.update { it.copy(placeOrderError = null) }
+        }
+    }
+
     fun clearOrderFeedback() {
         _ui.update {
             it.copy(
@@ -1230,6 +1559,7 @@ class MainViewModel(
     }
 
     fun placeOrderFromCart() {
+        if (!ensureCanCheckout()) return
         val lines = cartRepository.lines.value
         if (lines.isEmpty()) {
             _ui.update { it.copy(placeOrderError = "Cart is empty") }
@@ -1247,6 +1577,7 @@ class MainViewModel(
                     pendingRazorpayKeyId = null,
                     pendingRazorpayAmountPaise = null,
                     pendingRazorpayCurrency = null,
+                    pendingRazorpayMethod = null,
                 )
             }
             try {
@@ -1279,7 +1610,7 @@ class MainViewModel(
                         }
                     } else {
                         when (role) {
-                            "DEALER" -> createDealerRestockWithLegacyFallback(bodyLegacy, bodyCreate)
+                            "DEALER" -> martApi.createDealerRestockOrder(bodyLegacy)
                             "SHOPKEEPER" -> createShopkeeperOrderWithLegacyFallback(bodyLegacy, bodyCreate)
                             else -> {
                                 _ui.update {
@@ -1297,6 +1628,9 @@ class MainViewModel(
                     )
                 }
                 loadOrders()
+                if (role == "DEALER") {
+                    loadStock()
+                }
             } catch (e: Exception) {
                 _ui.update {
                     it.copy(placeOrderError = httpReadableMessage(e))
@@ -1306,6 +1640,7 @@ class MainViewModel(
     }
 
     fun placeOrderFromCartWithDemoPayment(paymentMethod: String) {
+        if (!ensureCanCheckout()) return
         val lines = cartRepository.lines.value
         if (lines.isEmpty()) {
             _ui.update { it.copy(placeOrderError = "Cart is empty") }
@@ -1323,6 +1658,7 @@ class MainViewModel(
                     pendingRazorpayKeyId = null,
                     pendingRazorpayAmountPaise = null,
                     pendingRazorpayCurrency = null,
+                    pendingRazorpayMethod = null,
                 )
             }
             try {
@@ -1336,12 +1672,20 @@ class MainViewModel(
                                 )
                             },
                     )
+                val role = currentUserRole()
                 val created =
                     if (sessionRepository.isLocalDemoMode()) {
                         val u = sessionRepository.sessionUserFlow.first() ?: return@launch
-                        localDemoMartStore.createOrder(u.id, bodyLegacy)
+                        when {
+                            u.role.equals("DEALER", ignoreCase = true) ->
+                                localDemoMartStore.createDealerRestockOrder(u.id, bodyLegacy)
+                            else -> localDemoMartStore.createOrder(u.id, bodyLegacy)
+                        }
                     } else {
-                        martApi.createOrder(bodyLegacy)
+                        when (role) {
+                            "DEALER" -> martApi.createDealerRestockOrder(bodyLegacy)
+                            else -> martApi.createOrder(bodyLegacy)
+                        }
                     }
                 if (sessionRepository.isLocalDemoMode()) {
                     localDemoMartStore.mockPayment(created.id)
@@ -1366,13 +1710,17 @@ class MainViewModel(
                     )
                 }
                 loadOrders()
+                if (role == "DEALER") {
+                    loadStock()
+                }
             } catch (e: Exception) {
                 _ui.update { it.copy(placeOrderError = httpReadableMessage(e)) }
             }
         }
     }
 
-    fun placeOrderFromCartRazorpay() {
+    fun placeOrderFromCartRazorpay(paymentMethod: String = "card") {
+        if (!ensureCanCheckout()) return
         val lines = cartRepository.lines.value
         if (lines.isEmpty()) {
             _ui.update { it.copy(placeOrderError = "Cart is empty") }
@@ -1389,7 +1737,7 @@ class MainViewModel(
                         )
                     }
                 if (sessionRepository.isLocalDemoMode()) {
-                    placeOrderFromCartWithDemoPayment("card")
+                    placeOrderFromCartWithDemoPayment(paymentMethod)
                     return@launch
                 }
                 val role = currentUserRole()
@@ -1425,20 +1773,18 @@ class MainViewModel(
                         amountPaise = rz.amountPaise
                         currencyOut = rz.currency
                     }
-                    val created = martApi.orderById(orderId)
-                    cartRepository.clear()
+                    rememberRazorpayCheckout(appOrderId = orderId, gatewayOrderId = gatewayId, cartSnapshot = lines)
                     _ui.update {
                         it.copy(
-                            placedOrder = created,
-                            placeOrderResult = "Order created. Complete Razorpay payment.",
+                            placeOrderResult = "Complete payment in Razorpay",
                             pendingRazorpayOrderId = orderId,
                             pendingRazorpayGatewayOrderId = gatewayId,
                             pendingRazorpayKeyId = keyId,
                             pendingRazorpayAmountPaise = amountPaise,
                             pendingRazorpayCurrency = currencyOut,
+                            pendingRazorpayMethod = paymentMethod,
                         )
                     }
-                    loadOrders()
                 } catch (e: HttpException) {
                     if (e.code() != 404) throw e
                     val bodyLegacy = CreateOrderRequest(items = items)
@@ -1452,19 +1798,22 @@ class MainViewModel(
                         martApi.createRazorpayOrder(
                             CreateRazorpayOrderRequest(orderId = created.id, currency = "INR"),
                         )
-                    cartRepository.clear()
+                    rememberRazorpayCheckout(
+                        appOrderId = rz.orderId,
+                        gatewayOrderId = rz.razorpayOrderId,
+                        cartSnapshot = lines,
+                    )
                     _ui.update {
                         it.copy(
-                            placedOrder = created,
-                            placeOrderResult = "Order created. Complete Razorpay payment.",
+                            placeOrderResult = "Complete payment in Razorpay",
                             pendingRazorpayOrderId = rz.orderId,
                             pendingRazorpayGatewayOrderId = rz.razorpayOrderId,
                             pendingRazorpayKeyId = rz.keyId,
                             pendingRazorpayAmountPaise = rz.amountPaise,
                             pendingRazorpayCurrency = rz.currency,
+                            pendingRazorpayMethod = paymentMethod,
                         )
                     }
-                    loadOrders()
                 }
             } catch (e: Exception) {
                 _ui.update { it.copy(placeOrderError = httpReadableMessage(e)) }
@@ -1507,6 +1856,11 @@ class MainViewModel(
                         paymentMessage = null,
                     )
                 }
+                rememberRazorpayCheckout(
+                    appOrderId = created.orderId,
+                    gatewayOrderId = created.razorpayOrderId,
+                    cartSnapshot = null,
+                )
             } catch (e: Exception) {
                 _ui.update { it.copy(paymentMessage = e.message ?: "Could not start payment") }
             }
@@ -1516,11 +1870,64 @@ class MainViewModel(
     fun clearPendingRazorpayLaunch() {
         _ui.update {
             it.copy(
+                pendingRazorpayGatewayOrderId = null,
+                pendingRazorpayKeyId = null,
+                pendingRazorpayAmountPaise = null,
+                pendingRazorpayCurrency = null,
+                pendingRazorpayMethod = null,
+            )
+        }
+    }
+
+    private suspend fun abandonPendingRazorpayCheckout(userMessage: String) {
+        val orderId = _ui.value.pendingRazorpayOrderId
+        val role = currentUserRole()
+        val isFreshCartCheckout = razorpayCartRestore != null
+        if (isFreshCartCheckout && !orderId.isNullOrBlank()) {
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    runCatching { localDemoMartStore.cancelOrder(orderId) }
+                } else {
+                    runCatching { martApi.cancelOrder(orderId) }
+                }
+            } catch (_: Exception) {
+                // Best-effort cleanup; still restore cart and clear pending checkout state.
+            }
+        }
+        if (isFreshCartCheckout) {
+            razorpayCartRestore?.let { cartRepository.restoreLines(it) }
+        }
+        clearRazorpayCheckoutSession()
+        _ui.update {
+            it.copy(
+                placeOrderResult = if (isFreshCartCheckout) null else it.placeOrderResult,
+                paymentMessage = userMessage,
                 pendingRazorpayOrderId = null,
                 pendingRazorpayGatewayOrderId = null,
                 pendingRazorpayKeyId = null,
                 pendingRazorpayAmountPaise = null,
                 pendingRazorpayCurrency = null,
+                pendingRazorpayMethod = null,
+            )
+        }
+        if (isFreshCartCheckout) {
+            loadOrders()
+            if (role == "DEALER") {
+                loadStock()
+            }
+        }
+    }
+
+    private fun clearPendingRazorpayOnly(userMessage: String) {
+        _ui.update {
+            it.copy(
+                paymentMessage = userMessage,
+                pendingRazorpayOrderId = null,
+                pendingRazorpayGatewayOrderId = null,
+                pendingRazorpayKeyId = null,
+                pendingRazorpayAmountPaise = null,
+                pendingRazorpayCurrency = null,
+                pendingRazorpayMethod = null,
             )
         }
     }
@@ -1532,16 +1939,41 @@ class MainViewModel(
         razorpaySignature: String?,
         error: String?,
     ) {
+        if (!success && razorpayResultHandled) {
+            return
+        }
         if (!success) {
-            _ui.update {
-                it.copy(paymentMessage = error ?: "Payment cancelled or failed")
+            viewModelScope.launch {
+                if (razorpayCartRestore != null) {
+                    abandonPendingRazorpayCheckout(
+                        error ?: "Payment cancelled — order removed. Your cart has been restored.",
+                    )
+                } else {
+                    clearPendingRazorpayOnly(error ?: "Payment cancelled or failed")
+                }
             }
             return
         }
-        val appOrderId = _ui.value.pendingRazorpayOrderId ?: _ui.value.placedOrder?.id
-        if (appOrderId.isNullOrBlank() || razorpayOrderId.isNullOrBlank() || razorpayPaymentId.isNullOrBlank() || razorpaySignature.isNullOrBlank()) {
-            _ui.update {
-                it.copy(paymentMessage = "Payment result incomplete, please retry.")
+        if (razorpayResultHandled) {
+            return
+        }
+        razorpayResultHandled = true
+        val appOrderId =
+            _ui.value.pendingRazorpayOrderId
+                ?: activeRazorpayAppOrderId
+                ?: _ui.value.placedOrder?.id
+        val gatewayOrderId =
+            razorpayOrderId?.trim()?.takeIf { it.isNotEmpty() }
+                ?: activeRazorpayGatewayOrderId
+        val paymentId = razorpayPaymentId?.trim()?.takeIf { it.isNotEmpty() }
+        if (appOrderId.isNullOrBlank() || gatewayOrderId.isNullOrBlank() || paymentId.isNullOrBlank()) {
+            razorpayResultHandled = false
+            viewModelScope.launch {
+                if (razorpayCartRestore != null) {
+                    abandonPendingRazorpayCheckout("Payment result incomplete — order removed. Your cart has been restored.")
+                } else {
+                    clearPendingRazorpayOnly("Payment result incomplete, please retry.")
+                }
             }
             return
         }
@@ -1551,19 +1983,46 @@ class MainViewModel(
                     martApi.verifyRazorpayPayment(
                         VerifyRazorpayPaymentRequest(
                             orderId = appOrderId,
-                            razorpayOrderId = razorpayOrderId,
-                            razorpayPaymentId = razorpayPaymentId,
-                            razorpaySignature = razorpaySignature,
+                            razorpayOrderId = gatewayOrderId,
+                            razorpayPaymentId = paymentId,
+                            razorpaySignature = razorpaySignature?.trim().orEmpty(),
                         ),
                     )
                 }
+                val order =
+                    if (sessionRepository.isLocalDemoMode()) {
+                        _ui.value.placedOrder?.copy(paymentStatus = "PAID")
+                    } else {
+                        martApi.orderById(appOrderId)
+                    }
+                cartRepository.clear()
+                clearRazorpayCheckoutSession()
+                val role = currentUserRole()
                 _ui.update {
-                    it.copy(paymentMessage = "Payment successful.")
+                    it.copy(
+                        placedOrder = order,
+                        placeOrderResult = "Order placed successfully",
+                        paymentMessage = "Payment successful.",
+                        pendingRazorpayOrderId = null,
+                        pendingRazorpayGatewayOrderId = null,
+                        pendingRazorpayKeyId = null,
+                        pendingRazorpayAmountPaise = null,
+                        pendingRazorpayCurrency = null,
+                        pendingRazorpayMethod = null,
+                    )
                 }
                 loadOrders()
+                if (role == "DEALER") {
+                    loadStock()
+                }
             } catch (e: Exception) {
-                _ui.update {
-                    it.copy(paymentMessage = e.message ?: "Payment verification failed")
+                razorpayResultHandled = false
+                if (razorpayCartRestore != null) {
+                    abandonPendingRazorpayCheckout(
+                        e.message ?: "Payment verification failed — order removed. Your cart has been restored.",
+                    )
+                } else {
+                    clearPendingRazorpayOnly(e.message ?: "Payment verification failed")
                 }
             }
         }
@@ -1571,6 +2030,9 @@ class MainViewModel(
 
     fun logout(onDone: () -> Unit) {
         viewModelScope.launch {
+            // Detach this device's push token while the auth token is still valid.
+            runCatching { pushTokenRegistrar.unregister() }
+            clearSessionScopedState()
             sessionRepository.clear()
             onDone()
         }
@@ -1606,5 +2068,151 @@ class MainViewModel(
 
     fun removeCartLine(productId: String) {
         cartRepository.remove(productId)
+    }
+
+    fun dismissDocumentCheckoutBlock() {
+        _ui.update { it.copy(documentCheckoutBlocked = false) }
+    }
+
+    fun showDocumentCheckoutBlock() {
+        _ui.update { it.copy(documentCheckoutBlocked = true) }
+    }
+
+    private fun ensureCanCheckout(): Boolean {
+        val user = sessionRepository.getUserSnapshot()
+        if (user != null && !user.canPlaceOrders) {
+            _ui.update {
+                it.copy(
+                    documentCheckoutBlocked = true,
+                    placeOrderError = null,
+                )
+            }
+            return false
+        }
+        return true
+    }
+
+    fun refreshAuthProfile() {
+        viewModelScope.launch {
+            if (sessionRepository.isLocalDemoMode()) return@launch
+            try {
+                val me = martApi.me()
+                val prev = sessionRepository.getUserSnapshot() ?: return@launch
+                sessionRepository.patchSessionUser(
+                    prev.copy(
+                        name = me.name ?: prev.name,
+                        phone = me.phone,
+                        areaName = me.area?.name,
+                        assignedDealer = me.assignedDealer,
+                        documentUploaded = me.documentUploaded,
+                        canPlaceOrders = me.canPlaceOrders,
+                        documentStatus = me.documentStatus,
+                    ),
+                )
+            } catch (_: Exception) {
+            }
+        }
+    }
+
+    fun loadMyDocuments() {
+        viewModelScope.launch {
+            _ui.update { it.copy(myDocuments = LoadState.Loading) }
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    val u = sessionRepository.getUserSnapshot() ?: return@launch
+                    val docs = localDemoMartStore.listDocuments(u.id)
+                    _ui.update { it.copy(myDocuments = LoadState.Ok(docs)) }
+                    return@launch
+                }
+                val docs = martApi.myDocuments()
+                _ui.update { it.copy(myDocuments = LoadState.Ok(docs)) }
+            } catch (e: Exception) {
+                _ui.update { it.copy(myDocuments = LoadState.Err(httpReadableMessage(e))) }
+            }
+        }
+    }
+
+    fun uploadMyDocument(
+        documentType: String,
+        file: File,
+        mimeType: String?,
+        displayName: String,
+        onFinished: (String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            try {
+                if (sessionRepository.isLocalDemoMode()) {
+                    val u = sessionRepository.getUserSnapshot() ?: return@launch
+                    localDemoMartStore.uploadDocument(u.id, documentType, file, displayName, mimeType)
+                    refreshAuthProfile()
+                    loadMyDocuments()
+                    onFinished(null)
+                    return@launch
+                }
+                val part =
+                    MultipartBody.Part.createFormData(
+                        "file",
+                        displayName,
+                        file.asRequestBody((mimeType ?: "application/octet-stream").toMediaTypeOrNull()),
+                    )
+                martApi.uploadMyDocument(
+                    documentType.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    part,
+                )
+                refreshAuthProfile()
+                loadMyDocuments()
+                onFinished(null)
+            } catch (e: Exception) {
+                onFinished(httpReadableMessage(e))
+            }
+        }
+    }
+
+    fun verifyUserDocument(
+        userId: String,
+        documentId: String,
+        onFinished: (String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            try {
+                martApi.verifyDocument(userId, documentId)
+                loadUsers()
+                onFinished(null)
+            } catch (e: Exception) {
+                onFinished(httpReadableMessage(e))
+            }
+        }
+    }
+
+    fun rejectUserDocument(
+        userId: String,
+        documentId: String,
+        reason: String,
+        onFinished: (String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            try {
+                martApi.rejectDocument(userId, documentId, UpdateUserStatusRequest(reason))
+                loadUsers()
+                onFinished(null)
+            } catch (e: Exception) {
+                onFinished(httpReadableMessage(e))
+            }
+        }
+    }
+
+    fun recordPartnerFollowUp(
+        userId: String,
+        onFinished: (String?) -> Unit,
+    ) {
+        viewModelScope.launch {
+            try {
+                martApi.recordFollowUp(userId)
+                loadUsers()
+                onFinished(null)
+            } catch (e: Exception) {
+                onFinished(httpReadableMessage(e))
+            }
+        }
     }
 }

@@ -22,6 +22,9 @@ class NetworkConfigRepository(
     private val overrideCache = AtomicReference<String?>(null)
 
     fun effectiveBaseUrl(): String {
+        if (!BuildConfig.SHOW_BACKEND_URL) {
+            return BuildConfig.API_BASE_URL.trimEnd('/')
+        }
         val o = overrideCache.get()?.trim().orEmpty()
         if (o.isNotEmpty()) return o.trimEnd('/')
         return BuildConfig.API_BASE_URL.trimEnd('/')
@@ -29,6 +32,7 @@ class NetworkConfigRepository(
 
     /** Value to show in the login field after [hydrate]. */
     fun displayUrlForLoginField(): String {
+        if (!BuildConfig.SHOW_BACKEND_URL) return ""
         val saved = overrideCache.get()?.trim().orEmpty()
         if (saved.isNotEmpty()) return saved
         val def = BuildConfig.API_BASE_URL.trimEnd('/')

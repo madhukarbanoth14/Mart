@@ -6,6 +6,7 @@ import android.content.Context
 import com.mart.distribution.demo.data.onboarding.OnboardingDocumentStorage
 import com.mart.distribution.demo.data.onboarding.PendingOnboardingDocument
 import com.mart.distribution.demo.ui.onboarding.OnboardingDocumentsSection
+import com.mart.distribution.demo.ui.onboarding.OnboardingShopLocationSection
 import com.mart.distribution.demo.util.FieldFilters
 import com.mart.distribution.demo.util.FieldValidators
 import com.mart.distribution.demo.ui.onboarding.OnboardingDocumentsSection
@@ -70,7 +71,14 @@ fun DealerOnboardScreen(
     val ui by mainViewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
         mainViewModel.loadAreas()
+        mainViewModel.ensureCatalogLoaded()
     }
+    val catalogProducts =
+        when (val p = ui.products) {
+            is LoadState.Ok -> p.data
+            else -> emptyList()
+        }
+    val dealerDiscountText = remember(catalogProducts) { roleDiscountText(catalogProducts, dealer = true) }
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -80,6 +88,10 @@ fun DealerOnboardScreen(
     var onboardSuccess by remember { mutableStateOf<CreateDealerResponse?>(null) }
     var pendingInfo by remember { mutableStateOf<String?>(null) }
     var onboardingNotesText by remember { mutableStateOf("") }
+    var shopName by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+    var latitude by remember { mutableStateOf<Double?>(null) }
+    var longitude by remember { mutableStateOf<Double?>(null) }
     var pendingDocuments by remember { mutableStateOf<List<PendingOnboardingDocument>>(emptyList()) }
     val documentSlots = remember { OnboardingDocumentStorage.dealerDocumentSlots() }
     val areas =
@@ -137,6 +149,25 @@ fun DealerOnboardScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            MartElevatedCard(modifier = Modifier.fillMaxWidth()) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        "Dealer discount",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Text(
+                        "$dealerDiscountText on own-brand SKUs",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    Text(
+                        "Applied automatically on dealer restock pricing per SKU.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = FieldFilters.personName(it); error = null },
@@ -177,6 +208,17 @@ fun DealerOnboardScreen(
                     colors = MartFieldDefaults.outlinedColors(),
                 )
             }
+            OnboardingShopLocationSection(
+                shopName = shopName,
+                onShopNameChange = { shopName = it; error = null },
+                address = address,
+                onAddressChange = { address = it; error = null },
+                latitude = latitude,
+                longitude = longitude,
+                onLocationCaptured = { lat, lng -> latitude = lat; longitude = lng },
+                modifier = Modifier.fillMaxWidth(),
+                shopNameLabel = "Business / firm name (optional)",
+            )
             OutlinedTextField(
                 value = onboardingNotesText,
                 onValueChange = { onboardingNotesText = it; error = null },
@@ -264,6 +306,10 @@ fun DealerOnboardScreen(
                         areaId = selectedAreaId,
                         onboardingNotes = combinedOnboardingNotes(),
                         documents = pendingDocuments,
+                        shopName = shopName.takeIf { it.isNotBlank() },
+                        address = address.takeIf { it.isNotBlank() },
+                        latitude = latitude,
+                        longitude = longitude,
                     ) { err, success, info ->
                         busy = false
                         if (err != null) {

@@ -1,0 +1,160 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Auth/OnboardingView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Skip",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 45
+        }
+      },
+      {
+        "comment": "",
+        "key": "Atta",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 133
+        }
+      },
+      {
+        "comment": "",
+        "key": "Oil",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 133
+        }
+      },
+      {
+        "comment": "",
+        "key": "Salt",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 133
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tea",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 133
+        }
+      },
+      {
+        "comment": "",
+        "key": "₹420",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 135
+        }
+      },
+      {
+        "comment": "",
+        "key": "₹180",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 135
+        }
+      },
+      {
+        "comment": "",
+        "key": "₹28",
+        "location": {
+          "startingColumn": 51,
+          "startingLine": 135
+        }
+      },
+      {
+        "comment": "",
+        "key": "₹95",
+        "location": {
+          "startingColumn": 60,
+          "startingLine": 135
+        }
+      },
+      {
+        "comment": "",
+        "key": "Today, by 6 PM",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 162
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sharma Distributors",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 163
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax Invoice",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "INV-1245",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 197
+        }
+      },
+      {
+        "comment": "",
+        "key": "Subtotal",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 202
+        }
+      },
+      {
+        "comment": "",
+        "key": "₹4,180",
+        "location": {
+          "startingColumn": 63,
+          "startingLine": 202
+        }
+      },
+      {
+        "comment": "",
+        "key": "GST",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 203
+        }
+      },
+      {
+        "comment": "",
+        "key": "₹512",
+        "location": {
+          "startingColumn": 58,
+          "startingLine": 203
+        }
+      },
+      {
+        "comment": "",
+        "key": "Total",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 206
+        }
+      },
+      {
+        "comment": "",
+        "key": "₹4,692",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 208
+        }
+      }
+    ]
+  },
+  "version": 1
+}

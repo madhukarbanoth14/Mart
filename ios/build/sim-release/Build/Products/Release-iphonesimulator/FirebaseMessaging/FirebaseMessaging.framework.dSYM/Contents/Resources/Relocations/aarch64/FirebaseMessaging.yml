@@ -1,0 +1,849 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Products/Release-iphonesimulator/FirebaseMessaging/FirebaseMessaging.framework/FirebaseMessaging'
+relocations:
+  - { offset: 0x7A95D, size: 0x8, addend: 0x0, symName: _FirebaseMessagingVersionString, symObjAddr: 0x0, symBinAddr: 0x1FC68, symSize: 0x0 }
+  - { offset: 0x7A992, size: 0x8, addend: 0x0, symName: _FirebaseMessagingVersionNumber, symObjAddr: 0x30, symBinAddr: 0x1FC98, symSize: 0x0 }
+  - { offset: 0x7A9CF, size: 0x8, addend: 0x0, symName: _FIRMessagingIsAPNSSyncMessage, symObjAddr: 0x0, symBinAddr: 0x11E0, symSize: 0xD8 }
+  - { offset: 0x7A9F3, size: 0x8, addend: 0x0, symName: _FIRMessagingRegistrationTokenRefreshedNotification, symObjAddr: 0x5DA8, symBinAddr: 0x30480, symSize: 0x0 }
+  - { offset: 0x7AA0E, size: 0x8, addend: 0x0, symName: _kFIRMessagingUserDefaultsKeyAutoInitEnabled, symObjAddr: 0x5DB0, symBinAddr: 0x30488, symSize: 0x0 }
+  - { offset: 0x7AA24, size: 0x8, addend: 0x0, symName: _kFIRMessagingPlistAutoInitEnabled, symObjAddr: 0x5DB8, symBinAddr: 0x30490, symSize: 0x0 }
+  - { offset: 0x7AA3A, size: 0x8, addend: 0x0, symName: _FIRMessagingErrorDomain, symObjAddr: 0x5DC0, symBinAddr: 0x30498, symSize: 0x0 }
+  - { offset: 0x7ADCD, size: 0x8, addend: 0x0, symName: _FIRMessagingIsAPNSSyncMessage, symObjAddr: 0x0, symBinAddr: 0x11E0, symSize: 0xD8 }
+  - { offset: 0x7AE17, size: 0x8, addend: 0x0, symName: _FIRMessagingIsContextManagerMessage, symObjAddr: 0xD8, symBinAddr: 0x12B8, symSize: 0x10 }
+  - { offset: 0x7AE36, size: 0x8, addend: 0x0, symName: '-[FIRMessagingMessageInfo init]', symObjAddr: 0xE8, symBinAddr: 0x12C8, symSize: 0x28 }
+  - { offset: 0x7AE6D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingMessageInfo initWithStatus:]', symObjAddr: 0x110, symBinAddr: 0x12F0, symSize: 0x48 }
+  - { offset: 0x7AEB4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingMessageInfo status]', symObjAddr: 0x158, symBinAddr: 0x1338, symSize: 0x8 }
+  - { offset: 0x7AEEB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingMessageInfo setStatus:]', symObjAddr: 0x160, symBinAddr: 0x1340, symSize: 0x8 }
+  - { offset: 0x7AF28, size: 0x8, addend: 0x0, symName: '+[FIRMessaging messaging]', symObjAddr: 0x168, symBinAddr: 0x1348, symSize: 0x74 }
+  - { offset: 0x7AF7B, size: 0x8, addend: 0x0, symName: '-[FIRMessaging initWithAnalytics:userDefaults:heartbeatLogger:]', symObjAddr: 0x1DC, symBinAddr: 0x13BC, symSize: 0xD4 }
+  - { offset: 0x7AFE2, size: 0x8, addend: 0x0, symName: '-[FIRMessaging dealloc]', symObjAddr: 0x2B0, symBinAddr: 0x1490, symSize: 0x7C }
+  - { offset: 0x7B015, size: 0x8, addend: 0x0, symName: '+[FIRMessaging load]', symObjAddr: 0x32C, symBinAddr: 0x150C, symSize: 0x18 }
+  - { offset: 0x7B048, size: 0x8, addend: 0x0, symName: '+[FIRMessaging componentsToRegister]', symObjAddr: 0x344, symBinAddr: 0x1524, symSize: 0x9C }
+  - { offset: 0x7B09B, size: 0x8, addend: 0x0, symName: '___36+[FIRMessaging componentsToRegister]_block_invoke', symObjAddr: 0x3E0, symBinAddr: 0x15C0, symSize: 0x154 }
+  - { offset: 0x7B144, size: 0x8, addend: 0x0, symName: '-[FIRMessaging configureMessagingWithOptions:]', symObjAddr: 0x534, symBinAddr: 0x1714, symSize: 0xF8 }
+  - { offset: 0x7B1A5, size: 0x8, addend: 0x0, symName: '-[FIRMessaging didCompleteConfigure]', symObjAddr: 0x62C, symBinAddr: 0x180C, symSize: 0x148 }
+  - { offset: 0x7B1E8, size: 0x8, addend: 0x0, symName: '___36-[FIRMessaging didCompleteConfigure]_block_invoke', symObjAddr: 0x774, symBinAddr: 0x1954, symSize: 0xD8 }
+  - { offset: 0x7B243, size: 0x8, addend: 0x0, symName: '___36-[FIRMessaging didCompleteConfigure]_block_invoke_2', symObjAddr: 0x84C, symBinAddr: 0x1A2C, symSize: 0x4 }
+  - { offset: 0x7B282, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s, symObjAddr: 0x850, symBinAddr: 0x1A30, symSize: 0x8 }
+  - { offset: 0x7B2A9, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s, symObjAddr: 0x858, symBinAddr: 0x1A38, symSize: 0x8 }
+  - { offset: 0x7B2C8, size: 0x8, addend: 0x0, symName: '___36-[FIRMessaging didCompleteConfigure]_block_invoke.78', symObjAddr: 0x860, symBinAddr: 0x1A40, symSize: 0x4 }
+  - { offset: 0x7B307, size: 0x8, addend: 0x0, symName: '-[FIRMessaging configureNotificationSwizzlingIfEnabled]', symObjAddr: 0x864, symBinAddr: 0x1A44, symSize: 0x98 }
+  - { offset: 0x7B363, size: 0x8, addend: 0x0, symName: '-[FIRMessaging start]', symObjAddr: 0x8FC, symBinAddr: 0x1ADC, symSize: 0x144 }
+  - { offset: 0x7B3E1, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setupFileManagerSubDirectory]', symObjAddr: 0xA40, symBinAddr: 0x1C20, symSize: 0x80 }
+  - { offset: 0x7B415, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setupNotificationListeners]', symObjAddr: 0xAC0, symBinAddr: 0x1CA0, symSize: 0x68 }
+  - { offset: 0x7B45A, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setupRmqManager]', symObjAddr: 0xB28, symBinAddr: 0x1D08, symSize: 0x68 }
+  - { offset: 0x7B48E, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setupTopics]', symObjAddr: 0xB90, symBinAddr: 0x1D70, symSize: 0x68 }
+  - { offset: 0x7B4C2, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setupSyncMessageManager]', symObjAddr: 0xBF8, symBinAddr: 0x1DD8, symSize: 0x88 }
+  - { offset: 0x7B4F6, size: 0x8, addend: 0x0, symName: '-[FIRMessaging teardown]', symObjAddr: 0xC80, symBinAddr: 0x1E60, symSize: 0x6C }
+  - { offset: 0x7B557, size: 0x8, addend: 0x0, symName: '-[FIRMessaging appDidReceiveMessage:]', symObjAddr: 0xCEC, symBinAddr: 0x1ECC, symSize: 0x16C }
+  - { offset: 0x7B60A, size: 0x8, addend: 0x0, symName: '-[FIRMessaging handleContextManagerMessage:]', symObjAddr: 0xE58, symBinAddr: 0x2038, symSize: 0x54 }
+  - { offset: 0x7B665, size: 0x8, addend: 0x0, symName: '-[FIRMessaging handleIncomingLinkIfNeededFromMessage:]', symObjAddr: 0xEAC, symBinAddr: 0x208C, symSize: 0x154 }
+  - { offset: 0x7B744, size: 0x8, addend: 0x0, symName: '___54-[FIRMessaging handleIncomingLinkIfNeededFromMessage:]_block_invoke', symObjAddr: 0x1000, symBinAddr: 0x21E0, symSize: 0xC }
+  - { offset: 0x7B797, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s, symObjAddr: 0x100C, symBinAddr: 0x21EC, symSize: 0x28 }
+  - { offset: 0x7B7C0, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s, symObjAddr: 0x1034, symBinAddr: 0x2214, symSize: 0x28 }
+  - { offset: 0x7B7DF, size: 0x8, addend: 0x0, symName: '___54-[FIRMessaging handleIncomingLinkIfNeededFromMessage:]_block_invoke.107', symObjAddr: 0x105C, symBinAddr: 0x223C, symSize: 0x4 }
+  - { offset: 0x7B815, size: 0x8, addend: 0x0, symName: '-[FIRMessaging linkURLFromMessage:]', symObjAddr: 0x1060, symBinAddr: 0x2240, symSize: 0x88 }
+  - { offset: 0x7B87C, size: 0x8, addend: 0x0, symName: '-[FIRMessaging APNSToken]', symObjAddr: 0x10E8, symBinAddr: 0x22C8, symSize: 0x4 }
+  - { offset: 0x7B8B2, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setAPNSToken:]', symObjAddr: 0x10EC, symBinAddr: 0x22CC, symSize: 0x8 }
+  - { offset: 0x7B8F3, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setAPNSToken:type:]', symObjAddr: 0x10F4, symBinAddr: 0x22D4, symSize: 0x194 }
+  - { offset: 0x7B96B, size: 0x8, addend: 0x0, symName: '-[FIRMessaging isAutoInitEnabled]', symObjAddr: 0x1288, symBinAddr: 0x2468, symSize: 0x24 }
+  - { offset: 0x7B9A3, size: 0x8, addend: 0x0, symName: '+[FIRMessaging isAutoInitEnabledWithUserDefaults:]', symObjAddr: 0x12AC, symBinAddr: 0x248C, symSize: 0x98 }
+  - { offset: 0x7B9F9, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setAutoInitEnabled:]', symObjAddr: 0x1344, symBinAddr: 0x2524, symSize: 0x88 }
+  - { offset: 0x7BA4F, size: 0x8, addend: 0x0, symName: '-[FIRMessaging FCMToken]', symObjAddr: 0x13CC, symBinAddr: 0x25AC, symSize: 0x38 }
+  - { offset: 0x7BA98, size: 0x8, addend: 0x0, symName: '-[FIRMessaging tokenWithCompletion:]', symObjAddr: 0x1404, symBinAddr: 0x25E4, symSize: 0x88 }
+  - { offset: 0x7BAEE, size: 0x8, addend: 0x0, symName: '-[FIRMessaging deleteTokenWithCompletion:]', symObjAddr: 0x148C, symBinAddr: 0x266C, symSize: 0x88 }
+  - { offset: 0x7BB44, size: 0x8, addend: 0x0, symName: '-[FIRMessaging retrieveFCMTokenForSenderID:completion:]', symObjAddr: 0x1514, symBinAddr: 0x26F4, symSize: 0x208 }
+  - { offset: 0x7BC20, size: 0x8, addend: 0x0, symName: '___55-[FIRMessaging retrieveFCMTokenForSenderID:completion:]_block_invoke', symObjAddr: 0x171C, symBinAddr: 0x28FC, symSize: 0x14 }
+  - { offset: 0x7BC88, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32b, symObjAddr: 0x1730, symBinAddr: 0x2910, symSize: 0x10 }
+  - { offset: 0x7BCB1, size: 0x8, addend: 0x0, symName: '-[FIRMessaging deleteFCMTokenForSenderID:completion:]', symObjAddr: 0x1740, symBinAddr: 0x2920, symSize: 0x180 }
+  - { offset: 0x7BD81, size: 0x8, addend: 0x0, symName: '___53-[FIRMessaging deleteFCMTokenForSenderID:completion:]_block_invoke', symObjAddr: 0x18C0, symBinAddr: 0x2AA0, symSize: 0x108 }
+  - { offset: 0x7BE4F, size: 0x8, addend: 0x0, symName: '___53-[FIRMessaging deleteFCMTokenForSenderID:completion:]_block_invoke_2', symObjAddr: 0x19C8, symBinAddr: 0x2BA8, symSize: 0x14 }
+  - { offset: 0x7BEA8, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40b48w, symObjAddr: 0x19DC, symBinAddr: 0x2BBC, symSize: 0x40 }
+  - { offset: 0x7BED1, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48w, symObjAddr: 0x1A1C, symBinAddr: 0x2BFC, symSize: 0x30 }
+  - { offset: 0x7BEF0, size: 0x8, addend: 0x0, symName: '-[FIRMessaging deleteDataWithCompletion:]', symObjAddr: 0x1A4C, symBinAddr: 0x2C2C, symSize: 0xE8 }
+  - { offset: 0x7BF45, size: 0x8, addend: 0x0, symName: '___41-[FIRMessaging deleteDataWithCompletion:]_block_invoke', symObjAddr: 0x1B34, symBinAddr: 0x2D14, symSize: 0xD0 }
+  - { offset: 0x7BFD1, size: 0x8, addend: 0x0, symName: '___41-[FIRMessaging deleteDataWithCompletion:]_block_invoke_2', symObjAddr: 0x1C04, symBinAddr: 0x2DE4, symSize: 0x18 }
+  - { offset: 0x7C037, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32b40w, symObjAddr: 0x1C1C, symBinAddr: 0x2DFC, symSize: 0x38 }
+  - { offset: 0x7C060, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40w, symObjAddr: 0x1C54, symBinAddr: 0x2E34, symSize: 0x28 }
+  - { offset: 0x7C07F, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setDelegate:]', symObjAddr: 0x1C7C, symBinAddr: 0x2E5C, symSize: 0x2C }
+  - { offset: 0x7C0C4, size: 0x8, addend: 0x0, symName: '-[FIRMessaging validateDelegateConformsToTokenAvailabilityMethods]', symObjAddr: 0x1CA8, symBinAddr: 0x2E88, symSize: 0xD0 }
+  - { offset: 0x7C106, size: 0x8, addend: 0x0, symName: '-[FIRMessaging notifyRefreshedFCMToken]', symObjAddr: 0x1D78, symBinAddr: 0x2F58, symSize: 0x180 }
+  - { offset: 0x7C172, size: 0x8, addend: 0x0, symName: '___39-[FIRMessaging notifyRefreshedFCMToken]_block_invoke', symObjAddr: 0x1EF8, symBinAddr: 0x30D8, symSize: 0x2C }
+  - { offset: 0x7C1B0, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32w, symObjAddr: 0x1F24, symBinAddr: 0x3104, symSize: 0xC }
+  - { offset: 0x7C1D9, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32w, symObjAddr: 0x1F30, symBinAddr: 0x3110, symSize: 0x8 }
+  - { offset: 0x7C1F8, size: 0x8, addend: 0x0, symName: '+[FIRMessaging normalizeTopic:]', symObjAddr: 0x1F38, symBinAddr: 0x3118, symSize: 0x8C }
+  - { offset: 0x7C23D, size: 0x8, addend: 0x0, symName: '-[FIRMessaging subscribeToTopic:]', symObjAddr: 0x1FC4, symBinAddr: 0x31A4, symSize: 0x8 }
+  - { offset: 0x7C27E, size: 0x8, addend: 0x0, symName: '-[FIRMessaging subscribeToTopic:completion:]', symObjAddr: 0x1FCC, symBinAddr: 0x31AC, symSize: 0x184 }
+  - { offset: 0x7C2F3, size: 0x8, addend: 0x0, symName: '___44-[FIRMessaging subscribeToTopic:completion:]_block_invoke', symObjAddr: 0x2150, symBinAddr: 0x3330, symSize: 0x174 }
+  - { offset: 0x7C402, size: 0x8, addend: 0x0, symName: '-[FIRMessaging unsubscribeFromTopic:]', symObjAddr: 0x22C4, symBinAddr: 0x34A4, symSize: 0x8 }
+  - { offset: 0x7C443, size: 0x8, addend: 0x0, symName: '-[FIRMessaging unsubscribeFromTopic:completion:]', symObjAddr: 0x22CC, symBinAddr: 0x34AC, symSize: 0x184 }
+  - { offset: 0x7C4B8, size: 0x8, addend: 0x0, symName: '___48-[FIRMessaging unsubscribeFromTopic:completion:]_block_invoke', symObjAddr: 0x2450, symBinAddr: 0x3630, symSize: 0x174 }
+  - { offset: 0x7C5C7, size: 0x8, addend: 0x0, symName: '-[FIRMessaging reachability:statusChanged:]', symObjAddr: 0x25C4, symBinAddr: 0x37A4, symSize: 0x4 }
+  - { offset: 0x7C613, size: 0x8, addend: 0x0, symName: '-[FIRMessaging onNetworkStatusChanged]', symObjAddr: 0x25C8, symBinAddr: 0x37A8, symSize: 0x58 }
+  - { offset: 0x7C647, size: 0x8, addend: 0x0, symName: '-[FIRMessaging isNetworkAvailable]', symObjAddr: 0x2620, symBinAddr: 0x3800, symSize: 0x3C }
+  - { offset: 0x7C690, size: 0x8, addend: 0x0, symName: '-[FIRMessaging networkType]', symObjAddr: 0x265C, symBinAddr: 0x383C, symSize: 0x58 }
+  - { offset: 0x7C6D9, size: 0x8, addend: 0x0, symName: '-[FIRMessaging defaultFCMTokenWasRefreshed:]', symObjAddr: 0x26B4, symBinAddr: 0x3894, symSize: 0x104 }
+  - { offset: 0x7C767, size: 0x8, addend: 0x0, symName: '-[FIRMessaging updateDefaultFCMToken:]', symObjAddr: 0x27B8, symBinAddr: 0x3998, symSize: 0xD4 }
+  - { offset: 0x7C7CA, size: 0x8, addend: 0x0, symName: '-[FIRMessaging notifyDelegateOfFCMTokenAvailability]', symObjAddr: 0x288C, symBinAddr: 0x3A6C, symSize: 0x180 }
+  - { offset: 0x7C836, size: 0x8, addend: 0x0, symName: '___52-[FIRMessaging notifyDelegateOfFCMTokenAvailability]_block_invoke', symObjAddr: 0x2A0C, symBinAddr: 0x3BEC, symSize: 0x2C }
+  - { offset: 0x7C874, size: 0x8, addend: 0x0, symName: '+[FIRMessaging hasSubDirectory:]', symObjAddr: 0x2A38, symBinAddr: 0x3C18, symSize: 0x68 }
+  - { offset: 0x7C8DF, size: 0x8, addend: 0x0, symName: '+[FIRMessaging pathForSubDirectory:]', symObjAddr: 0x2AA0, symBinAddr: 0x3C80, symSize: 0xD4 }
+  - { offset: 0x7C9AD, size: 0x8, addend: 0x0, symName: '+[FIRMessaging createSubDirectory:]', symObjAddr: 0x2B74, symBinAddr: 0x3D54, symSize: 0x118 }
+  - { offset: 0x7CA54, size: 0x8, addend: 0x0, symName: '+[FIRMessaging currentLocale]', symObjAddr: 0x2C8C, symBinAddr: 0x3E6C, symSize: 0x9C }
+  - { offset: 0x7CABF, size: 0x8, addend: 0x0, symName: '+[FIRMessaging firebaseLocales]', symObjAddr: 0x2D28, symBinAddr: 0x3F08, symSize: 0x12C }
+  - { offset: 0x7CB39, size: 0x8, addend: 0x0, symName: '+[FIRMessaging firebaselocalesMap]', symObjAddr: 0x2E54, symBinAddr: 0x4034, symSize: 0xC }
+  - { offset: 0x7CB6D, size: 0x8, addend: 0x0, symName: '+[FIRMessaging FIRMessagingSDKVersion]', symObjAddr: 0x2E60, symBinAddr: 0x4040, symSize: 0x4 }
+  - { offset: 0x7CBA4, size: 0x8, addend: 0x0, symName: '+[FIRMessaging FIRMessagingSDKVersion]', symObjAddr: 0x2E60, symBinAddr: 0x4040, symSize: 0x4 }
+  - { offset: 0x7CBAF, size: 0x8, addend: 0x0, symName: '+[FIRMessaging FIRMessagingSDKCurrentLocale]', symObjAddr: 0x2E64, symBinAddr: 0x4044, symSize: 0x4 }
+  - { offset: 0x7CBE5, size: 0x8, addend: 0x0, symName: '+[FIRMessaging noop]', symObjAddr: 0x2E68, symBinAddr: 0x4048, symSize: 0x18 }
+  - { offset: 0x7CC5A, size: 0x8, addend: 0x0, symName: '-[FIRMessaging delegate]', symObjAddr: 0x2E80, symBinAddr: 0x4060, symSize: 0x18 }
+  - { offset: 0x7CC91, size: 0x8, addend: 0x0, symName: '-[FIRMessaging apnsTokenData]', symObjAddr: 0x2E98, symBinAddr: 0x4078, symSize: 0x8 }
+  - { offset: 0x7CCC8, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setApnsTokenData:]', symObjAddr: 0x2EA0, symBinAddr: 0x4080, symSize: 0xC }
+  - { offset: 0x7CD09, size: 0x8, addend: 0x0, symName: '-[FIRMessaging client]', symObjAddr: 0x2EAC, symBinAddr: 0x408C, symSize: 0x8 }
+  - { offset: 0x7CD40, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setClient:]', symObjAddr: 0x2EB4, symBinAddr: 0x4094, symSize: 0xC }
+  - { offset: 0x7CD81, size: 0x8, addend: 0x0, symName: '-[FIRMessaging reachability]', symObjAddr: 0x2EC0, symBinAddr: 0x40A0, symSize: 0x8 }
+  - { offset: 0x7CDB8, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setReachability:]', symObjAddr: 0x2EC8, symBinAddr: 0x40A8, symSize: 0xC }
+  - { offset: 0x7CDF9, size: 0x8, addend: 0x0, symName: '-[FIRMessaging pubsub]', symObjAddr: 0x2ED4, symBinAddr: 0x40B4, symSize: 0x8 }
+  - { offset: 0x7CE30, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setPubsub:]', symObjAddr: 0x2EDC, symBinAddr: 0x40BC, symSize: 0xC }
+  - { offset: 0x7CE71, size: 0x8, addend: 0x0, symName: '-[FIRMessaging rmq2Manager]', symObjAddr: 0x2EE8, symBinAddr: 0x40C8, symSize: 0x8 }
+  - { offset: 0x7CEA8, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setRmq2Manager:]', symObjAddr: 0x2EF0, symBinAddr: 0x40D0, symSize: 0xC }
+  - { offset: 0x7CEE9, size: 0x8, addend: 0x0, symName: '-[FIRMessaging syncMessageManager]', symObjAddr: 0x2EFC, symBinAddr: 0x40DC, symSize: 0x8 }
+  - { offset: 0x7CF20, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setSyncMessageManager:]', symObjAddr: 0x2F04, symBinAddr: 0x40E4, symSize: 0xC }
+  - { offset: 0x7CF61, size: 0x8, addend: 0x0, symName: '-[FIRMessaging messagingUserDefaults]', symObjAddr: 0x2F10, symBinAddr: 0x40F0, symSize: 0x8 }
+  - { offset: 0x7CF98, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setMessagingUserDefaults:]', symObjAddr: 0x2F18, symBinAddr: 0x40F8, symSize: 0xC }
+  - { offset: 0x7CFD9, size: 0x8, addend: 0x0, symName: '-[FIRMessaging installations]', symObjAddr: 0x2F24, symBinAddr: 0x4104, symSize: 0x8 }
+  - { offset: 0x7D010, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setInstallations:]', symObjAddr: 0x2F2C, symBinAddr: 0x410C, symSize: 0xC }
+  - { offset: 0x7D051, size: 0x8, addend: 0x0, symName: '-[FIRMessaging tokenManager]', symObjAddr: 0x2F38, symBinAddr: 0x4118, symSize: 0x8 }
+  - { offset: 0x7D088, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setTokenManager:]', symObjAddr: 0x2F40, symBinAddr: 0x4120, symSize: 0xC }
+  - { offset: 0x7D0C9, size: 0x8, addend: 0x0, symName: '-[FIRMessaging heartbeatLogger]', symObjAddr: 0x2F4C, symBinAddr: 0x412C, symSize: 0x8 }
+  - { offset: 0x7D100, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setHeartbeatLogger:]', symObjAddr: 0x2F54, symBinAddr: 0x4134, symSize: 0xC }
+  - { offset: 0x7D141, size: 0x8, addend: 0x0, symName: '-[FIRMessaging loggedMessageIDs]', symObjAddr: 0x2F60, symBinAddr: 0x4140, symSize: 0x8 }
+  - { offset: 0x7D178, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setLoggedMessageIDs:]', symObjAddr: 0x2F68, symBinAddr: 0x4148, symSize: 0xC }
+  - { offset: 0x7D1B9, size: 0x8, addend: 0x0, symName: '-[FIRMessaging analytics]', symObjAddr: 0x2F74, symBinAddr: 0x4154, symSize: 0x8 }
+  - { offset: 0x7D1F0, size: 0x8, addend: 0x0, symName: '-[FIRMessaging setAnalytics:]', symObjAddr: 0x2F7C, symBinAddr: 0x415C, symSize: 0xC }
+  - { offset: 0x7D231, size: 0x8, addend: 0x0, symName: '-[FIRMessaging .cxx_destruct]', symObjAddr: 0x2F88, symBinAddr: 0x4168, symSize: 0xB0 }
+  - { offset: 0x7DB3A, size: 0x8, addend: 0x0, symName: '+[FIRMessaging(ExtensionHelper) extensionHelper]', symObjAddr: 0x0, symBinAddr: 0x4218, symSize: 0x30 }
+  - { offset: 0x7DB48, size: 0x8, addend: 0x0, symName: '+[FIRMessaging(ExtensionHelper) extensionHelper]', symObjAddr: 0x0, symBinAddr: 0x4218, symSize: 0x30 }
+  - { offset: 0x7DB72, size: 0x8, addend: 0x0, symName: _extensionHelper.once, symObjAddr: 0x1888, symBinAddr: 0x3D940, symSize: 0x0 }
+  - { offset: 0x7DB88, size: 0x8, addend: 0x0, symName: _extensionHelper.extensionHelper, symObjAddr: 0x1890, symBinAddr: 0x3D948, symSize: 0x0 }
+  - { offset: 0x7DC1A, size: 0x8, addend: 0x0, symName: '+[FIRMessaging(ExtensionHelper) extensionHelper].cold.1', symObjAddr: 0x5C, symBinAddr: 0x189B0, symSize: 0x14 }
+  - { offset: 0x7DC36, size: 0x8, addend: 0x0, symName: '+[FIRMessaging(ExtensionHelper) extensionHelper].cold.1', symObjAddr: 0x5C, symBinAddr: 0x189B0, symSize: 0x14 }
+  - { offset: 0x7DC48, size: 0x8, addend: 0x0, symName: '___48+[FIRMessaging(ExtensionHelper) extensionHelper]_block_invoke', symObjAddr: 0x30, symBinAddr: 0x4248, symSize: 0x28 }
+  - { offset: 0x7DC6F, size: 0x8, addend: 0x0, symName: _FIRInclude_FIRMessaging_ExtensionHelper_Category, symObjAddr: 0x58, symBinAddr: 0x4270, symSize: 0x4 }
+  - { offset: 0x7DD58, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAnalytics canLogNotification:]', symObjAddr: 0x0, symBinAddr: 0x4274, symSize: 0xC0 }
+  - { offset: 0x7DD80, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAnalytics canLogNotification:]', symObjAddr: 0x0, symBinAddr: 0x4274, symSize: 0xC0 }
+  - { offset: 0x7DE02, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAnalytics logOpenNotification:toAnalytics:]', symObjAddr: 0xC0, symBinAddr: 0x4334, symSize: 0x70 }
+  - { offset: 0x7DE55, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAnalytics logForegroundNotification:toAnalytics:]', symObjAddr: 0x130, symBinAddr: 0x43A4, symSize: 0x14 }
+  - { offset: 0x7DEA6, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAnalytics logEvent:withNotification:toAnalytics:]', symObjAddr: 0x144, symBinAddr: 0x43B8, symSize: 0x100 }
+  - { offset: 0x7DF35, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAnalytics paramsForEvent:withNotification:]', symObjAddr: 0x244, symBinAddr: 0x44B8, symSize: 0x310 }
+  - { offset: 0x7E021, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAnalytics logUserPropertyForConversionTracking:toAnalytics:]', symObjAddr: 0x554, symBinAddr: 0x47C8, symSize: 0x1D0 }
+  - { offset: 0x7E0CB, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAnalytics logMessage:toAnalytics:]', symObjAddr: 0x724, symBinAddr: 0x4998, symSize: 0xBC }
+  - { offset: 0x7E13E, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAnalytics isDisplayNotification:]', symObjAddr: 0x7E0, symBinAddr: 0x4A54, symSize: 0xE8 }
+  - { offset: 0x7E244, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo initWithDeviceToken:isSandbox:]', symObjAddr: 0x0, symBinAddr: 0x4B3C, symSize: 0x7C }
+  - { offset: 0x7E2A6, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo initWithDeviceToken:isSandbox:]', symObjAddr: 0x0, symBinAddr: 0x4B3C, symSize: 0x7C }
+  - { offset: 0x7E2FD, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo initWithTokenOptionsDictionary:]', symObjAddr: 0x7C, symBinAddr: 0x4BB8, symSize: 0x114 }
+  - { offset: 0x7E364, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo copyWithZone:]', symObjAddr: 0x190, symBinAddr: 0x4CCC, symSize: 0x60 }
+  - { offset: 0x7E3B7, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAPNSInfo supportsSecureCoding]', symObjAddr: 0x1F0, symBinAddr: 0x4D2C, symSize: 0x8 }
+  - { offset: 0x7E3EA, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo initWithCoder:]', symObjAddr: 0x1F8, symBinAddr: 0x4D34, symSize: 0xA0 }
+  - { offset: 0x7E451, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo encodeWithCoder:]', symObjAddr: 0x298, symBinAddr: 0x4DD4, symSize: 0x74 }
+  - { offset: 0x7E494, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo isEqualToAPNSInfo:]', symObjAddr: 0x30C, symBinAddr: 0x4E48, symSize: 0x90 }
+  - { offset: 0x7E4DB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo deviceToken]', symObjAddr: 0x39C, symBinAddr: 0x4ED8, symSize: 0x8 }
+  - { offset: 0x7E512, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo setDeviceToken:]', symObjAddr: 0x3A4, symBinAddr: 0x4EE0, symSize: 0x8 }
+  - { offset: 0x7E551, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo isSandbox]', symObjAddr: 0x3AC, symBinAddr: 0x4EE8, symSize: 0x8 }
+  - { offset: 0x7E588, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo setSandbox:]', symObjAddr: 0x3B4, symBinAddr: 0x4EF0, symSize: 0x8 }
+  - { offset: 0x7E5C3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAPNSInfo .cxx_destruct]', symObjAddr: 0x3BC, symBinAddr: 0x4EF8, symSize: 0xC }
+  - { offset: 0x7E690, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain initWithIdentifier:]', symObjAddr: 0x0, symBinAddr: 0x4F04, symSize: 0x84 }
+  - { offset: 0x7E6AA, size: 0x8, addend: 0x0, symName: _kFIRMessagingKeychainWildcardIdentifier, symObjAddr: 0xF80, symBinAddr: 0x30710, symSize: 0x0 }
+  - { offset: 0x7E737, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain initWithIdentifier:]', symObjAddr: 0x0, symBinAddr: 0x4F04, symSize: 0x84 }
+  - { offset: 0x7E77E, size: 0x8, addend: 0x0, symName: '+[FIRMessagingAuthKeychain keychainQueryForService:account:generic:]', symObjAddr: 0x84, symBinAddr: 0x4F88, symSize: 0x1B0 }
+  - { offset: 0x7E801, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain keychainQueryForService:account:]', symObjAddr: 0x234, symBinAddr: 0x5138, symSize: 0x80 }
+  - { offset: 0x7E858, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain itemsMatchingService:account:]', symObjAddr: 0x2B4, symBinAddr: 0x51B8, symSize: 0x3F8 }
+  - { offset: 0x7E94C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain dataForService:account:]', symObjAddr: 0x6AC, symBinAddr: 0x55B0, symSize: 0x38 }
+  - { offset: 0x7E9B3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain removeItemsMatchingService:account:handler:]', symObjAddr: 0x6E4, symBinAddr: 0x55E8, symSize: 0x1E0 }
+  - { offset: 0x7EA26, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain setData:forService:account:handler:]', symObjAddr: 0x8C4, symBinAddr: 0x57C8, symSize: 0x2E8 }
+  - { offset: 0x7EAB4, size: 0x8, addend: 0x0, symName: '___63-[FIRMessagingAuthKeychain setData:forService:account:handler:]_block_invoke', symObjAddr: 0xBAC, symBinAddr: 0x5AB0, symSize: 0xD8 }
+  - { offset: 0x7EB6E, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56s64b, symObjAddr: 0xC84, symBinAddr: 0x5B88, symSize: 0x4C }
+  - { offset: 0x7EB97, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s64s, symObjAddr: 0xCD0, symBinAddr: 0x5BD4, symSize: 0x40 }
+  - { offset: 0x7EBB6, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain setCacheData:forService:account:]', symObjAddr: 0xD10, symBinAddr: 0x5C14, symSize: 0x1D8 }
+  - { offset: 0x7EC19, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain generic]', symObjAddr: 0xEE8, symBinAddr: 0x5DEC, symSize: 0x8 }
+  - { offset: 0x7EC50, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain setGeneric:]', symObjAddr: 0xEF0, symBinAddr: 0x5DF4, symSize: 0x8 }
+  - { offset: 0x7EC8F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain cachedKeychainData]', symObjAddr: 0xEF8, symBinAddr: 0x5DFC, symSize: 0x8 }
+  - { offset: 0x7ECC6, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain setCachedKeychainData:]', symObjAddr: 0xF00, symBinAddr: 0x5E04, symSize: 0xC }
+  - { offset: 0x7ED07, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthKeychain .cxx_destruct]', symObjAddr: 0xF0C, symBinAddr: 0x5E10, symSize: 0x30 }
+  - { offset: 0x7EF01, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService init]', symObjAddr: 0x0, symBinAddr: 0x5E40, symSize: 0xA8 }
+  - { offset: 0x7EF36, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService calculateNextCheckinRetryIntervalInSeconds]', symObjAddr: 0x484, symBinAddr: 0x62A0, symSize: 0x4C }
+  - { offset: 0x7F12A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService init]', symObjAddr: 0x0, symBinAddr: 0x5E40, symSize: 0xA8 }
+  - { offset: 0x7F161, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService dealloc]', symObjAddr: 0xA8, symBinAddr: 0x5EE8, symSize: 0x48 }
+  - { offset: 0x7F194, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService hasCheckinPlist]', symObjAddr: 0xF0, symBinAddr: 0x5F30, symSize: 0x8 }
+  - { offset: 0x7F1CB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService scheduleCheckin:]', symObjAddr: 0xF8, symBinAddr: 0x5F38, symSize: 0xE8 }
+  - { offset: 0x7F25C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService startCheckinTimerWithDuration:]', symObjAddr: 0x1E0, symBinAddr: 0x6020, symSize: 0x78 }
+  - { offset: 0x7F29F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService clearScheduledCheckinTimer]', symObjAddr: 0x258, symBinAddr: 0x6098, symSize: 0x38 }
+  - { offset: 0x7F2D2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService onScheduledCheckinTimerFired:]', symObjAddr: 0x290, symBinAddr: 0x60D0, symSize: 0x4 }
+  - { offset: 0x7F30F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService performScheduledCheckin]', symObjAddr: 0x294, symBinAddr: 0x60D4, symSize: 0xD0 }
+  - { offset: 0x7F352, size: 0x8, addend: 0x0, symName: '___50-[FIRMessagingAuthService performScheduledCheckin]_block_invoke', symObjAddr: 0x364, symBinAddr: 0x61A4, symSize: 0xF0 }
+  - { offset: 0x7F406, size: 0x8, addend: 0x0, symName: '___50-[FIRMessagingAuthService performScheduledCheckin]_block_invoke_2', symObjAddr: 0x454, symBinAddr: 0x6294, symSize: 0xC }
+  - { offset: 0x7F441, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService hasValidCheckinInfo]', symObjAddr: 0x4D0, symBinAddr: 0x62EC, symSize: 0x34 }
+  - { offset: 0x7F478, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService fetchCheckinInfoWithHandler:]', symObjAddr: 0x504, symBinAddr: 0x6320, symSize: 0x1B8 }
+  - { offset: 0x7F4C9, size: 0x8, addend: 0x0, symName: '___55-[FIRMessagingAuthService fetchCheckinInfoWithHandler:]_block_invoke', symObjAddr: 0x6BC, symBinAddr: 0x64D8, symSize: 0x160 }
+  - { offset: 0x7F551, size: 0x8, addend: 0x0, symName: '___55-[FIRMessagingAuthService fetchCheckinInfoWithHandler:]_block_invoke_2', symObjAddr: 0x81C, symBinAddr: 0x6638, symSize: 0xA8 }
+  - { offset: 0x7F5DC, size: 0x8, addend: 0x0, symName: '___55-[FIRMessagingAuthService fetchCheckinInfoWithHandler:]_block_invoke_3', symObjAddr: 0x8C4, symBinAddr: 0x66E0, symSize: 0x44 }
+  - { offset: 0x7F603, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService checkinPreferences]', symObjAddr: 0x958, symBinAddr: 0x6724, symSize: 0x8 }
+  - { offset: 0x7F63A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService stopCheckinRequest]', symObjAddr: 0x960, symBinAddr: 0x672C, symSize: 0x2C }
+  - { offset: 0x7F66D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService resetCheckinWithHandler:]', symObjAddr: 0x98C, symBinAddr: 0x6758, symSize: 0x7C }
+  - { offset: 0x7F6B2, size: 0x8, addend: 0x0, symName: '___51-[FIRMessagingAuthService resetCheckinWithHandler:]_block_invoke', symObjAddr: 0xA08, symBinAddr: 0x67D4, symSize: 0x5C }
+  - { offset: 0x7F72C, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40b, symObjAddr: 0xA64, symBinAddr: 0x6830, symSize: 0x34 }
+  - { offset: 0x7F755, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService notifyCheckinHandlersWithCheckin:error:]', symObjAddr: 0xA98, symBinAddr: 0x6864, symSize: 0x178 }
+  - { offset: 0x7F7DE, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService setCheckinHandlers:]', symObjAddr: 0xC10, symBinAddr: 0x69DC, symSize: 0x3C }
+  - { offset: 0x7F83E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService cachedCheckinMatchesCheckin:]', symObjAddr: 0xC4C, symBinAddr: 0x6A18, symSize: 0xFC }
+  - { offset: 0x7F887, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService checkinStore]', symObjAddr: 0xD48, symBinAddr: 0x6B14, symSize: 0x8 }
+  - { offset: 0x7F8BE, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService setCheckinStore:]', symObjAddr: 0xD50, symBinAddr: 0x6B1C, symSize: 0xC }
+  - { offset: 0x7F8FF, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService checkinService]', symObjAddr: 0xD5C, symBinAddr: 0x6B28, symSize: 0x8 }
+  - { offset: 0x7F936, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService setCheckinService:]', symObjAddr: 0xD64, symBinAddr: 0x6B30, symSize: 0xC }
+  - { offset: 0x7F977, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService setCheckinPreferences:]', symObjAddr: 0xD70, symBinAddr: 0x6B3C, symSize: 0xC }
+  - { offset: 0x7F9B8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService checkinHandlers]', symObjAddr: 0xD7C, symBinAddr: 0x6B48, symSize: 0x8 }
+  - { offset: 0x7F9EF, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService isCheckinInProgress]', symObjAddr: 0xD84, symBinAddr: 0x6B50, symSize: 0xC }
+  - { offset: 0x7FA26, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService setIsCheckinInProgress:]', symObjAddr: 0xD90, symBinAddr: 0x6B5C, symSize: 0x8 }
+  - { offset: 0x7FA63, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService scheduledCheckinTimer]', symObjAddr: 0xD98, symBinAddr: 0x6B64, symSize: 0xC }
+  - { offset: 0x7FA9A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService setScheduledCheckinTimer:]', symObjAddr: 0xDA4, symBinAddr: 0x6B70, symSize: 0x8 }
+  - { offset: 0x7FAD9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService checkinRetryCount]', symObjAddr: 0xDAC, symBinAddr: 0x6B78, symSize: 0x8 }
+  - { offset: 0x7FB10, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService setCheckinRetryCount:]', symObjAddr: 0xDB4, symBinAddr: 0x6B80, symSize: 0x8 }
+  - { offset: 0x7FB4D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingAuthService .cxx_destruct]', symObjAddr: 0xDBC, symBinAddr: 0x6B88, symSize: 0x54 }
+  - { offset: 0x7FF47, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist initWithPlistFile:subDirectory:]', symObjAddr: 0x0, symBinAddr: 0x6BDC, symSize: 0x98 }
+  - { offset: 0x7FFD1, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist initWithPlistFile:subDirectory:]', symObjAddr: 0x0, symBinAddr: 0x6BDC, symSize: 0x98 }
+  - { offset: 0x80028, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist writeDictionary:error:]', symObjAddr: 0x98, symBinAddr: 0x6C74, symSize: 0x22C }
+  - { offset: 0x800FC, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist deleteFile:]', symObjAddr: 0x2C4, symBinAddr: 0x6EA0, symSize: 0xA4 }
+  - { offset: 0x80163, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist contentAsDictionary]', symObjAddr: 0x368, symBinAddr: 0x6F44, symSize: 0xA0 }
+  - { offset: 0x801B9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist doesFileExist]', symObjAddr: 0x408, symBinAddr: 0x6FE4, symSize: 0x58 }
+  - { offset: 0x80200, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist plistPathInDirectory]', symObjAddr: 0x460, symBinAddr: 0x703C, symSize: 0x10C }
+  - { offset: 0x802AA, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist supportedDirectory]', symObjAddr: 0x56C, symBinAddr: 0x7148, symSize: 0x8 }
+  - { offset: 0x802DD, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist cachedPlistContents]', symObjAddr: 0x574, symBinAddr: 0x7150, symSize: 0x8 }
+  - { offset: 0x80314, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist setCachedPlistContents:]', symObjAddr: 0x57C, symBinAddr: 0x7158, symSize: 0xC }
+  - { offset: 0x80355, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist fileName]', symObjAddr: 0x588, symBinAddr: 0x7164, symSize: 0x8 }
+  - { offset: 0x8038C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist setFileName:]', symObjAddr: 0x590, symBinAddr: 0x716C, symSize: 0x8 }
+  - { offset: 0x803CB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist subDirectoryName]', symObjAddr: 0x598, symBinAddr: 0x7174, symSize: 0x8 }
+  - { offset: 0x80402, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist setSubDirectoryName:]', symObjAddr: 0x5A0, symBinAddr: 0x717C, symSize: 0x8 }
+  - { offset: 0x80441, size: 0x8, addend: 0x0, symName: '-[FIRMessagingBackupExcludedPlist .cxx_destruct]', symObjAddr: 0x5A8, symBinAddr: 0x7184, symSize: 0x3C }
+  - { offset: 0x804CE, size: 0x8, addend: 0x0, symName: '+[FIRMessagingCheckinPreferences preferencesFromKeychainContents:]', symObjAddr: 0x0, symBinAddr: 0x71C0, symSize: 0xA0 }
+  - { offset: 0x804E8, size: 0x8, addend: 0x0, symName: _kFIRMessagingDefaultCheckinInterval, symObjAddr: 0x980, symBinAddr: 0x1FCB8, symSize: 0x0 }
+  - { offset: 0x805F7, size: 0x8, addend: 0x0, symName: '+[FIRMessagingCheckinPreferences preferencesFromKeychainContents:]', symObjAddr: 0x0, symBinAddr: 0x71C0, symSize: 0xA0 }
+  - { offset: 0x8065E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences initWithDeviceID:secretToken:]', symObjAddr: 0xA0, symBinAddr: 0x7260, symSize: 0xA8 }
+  - { offset: 0x806B5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences reset]', symObjAddr: 0x148, symBinAddr: 0x7308, symSize: 0x68 }
+  - { offset: 0x806E8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences checkinPlistContents]', symObjAddr: 0x1B0, symBinAddr: 0x7370, symSize: 0x17C }
+  - { offset: 0x8072F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences hasCheckinInfo]', symObjAddr: 0x32C, symBinAddr: 0x74EC, symSize: 0x68 }
+  - { offset: 0x80766, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences hasValidCheckinInfo]', symObjAddr: 0x394, symBinAddr: 0x7554, symSize: 0x13C }
+  - { offset: 0x80873, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences setHasPreCachedAuthCredentials:]', symObjAddr: 0x4D0, symBinAddr: 0x7690, symSize: 0x8 }
+  - { offset: 0x808B0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences checkinKeychainContent]', symObjAddr: 0x4D8, symBinAddr: 0x7698, symSize: 0xD0 }
+  - { offset: 0x808E7, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences updateWithCheckinPlistContents:]', symObjAddr: 0x5A8, symBinAddr: 0x7768, symSize: 0x268 }
+  - { offset: 0x80949, size: 0x8, addend: 0x0, symName: '+[FIRMessagingCheckinPreferences checkinDeviceIDFromKeychainContent:]', symObjAddr: 0x810, symBinAddr: 0x79D0, symSize: 0x8 }
+  - { offset: 0x8098C, size: 0x8, addend: 0x0, symName: '+[FIRMessagingCheckinPreferences checkinSecretFromKeychainContent:]', symObjAddr: 0x818, symBinAddr: 0x79D8, symSize: 0x8 }
+  - { offset: 0x809CF, size: 0x8, addend: 0x0, symName: '+[FIRMessagingCheckinPreferences checkinKeychainContent:forIndex:]', symObjAddr: 0x820, symBinAddr: 0x79E0, symSize: 0x70 }
+  - { offset: 0x80A32, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences deviceID]', symObjAddr: 0x890, symBinAddr: 0x7A50, symSize: 0x8 }
+  - { offset: 0x80A69, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences setDeviceID:]', symObjAddr: 0x898, symBinAddr: 0x7A58, symSize: 0x8 }
+  - { offset: 0x80AA8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences secretToken]', symObjAddr: 0x8A0, symBinAddr: 0x7A60, symSize: 0x8 }
+  - { offset: 0x80ADF, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences setSecretToken:]', symObjAddr: 0x8A8, symBinAddr: 0x7A68, symSize: 0x8 }
+  - { offset: 0x80B1E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences deviceDataVersion]', symObjAddr: 0x8B0, symBinAddr: 0x7A70, symSize: 0x8 }
+  - { offset: 0x80B55, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences setDeviceDataVersion:]', symObjAddr: 0x8B8, symBinAddr: 0x7A78, symSize: 0x8 }
+  - { offset: 0x80B94, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences digest]', symObjAddr: 0x8C0, symBinAddr: 0x7A80, symSize: 0x8 }
+  - { offset: 0x80BCB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences setDigest:]', symObjAddr: 0x8C8, symBinAddr: 0x7A88, symSize: 0x8 }
+  - { offset: 0x80C0A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences versionInfo]', symObjAddr: 0x8D0, symBinAddr: 0x7A90, symSize: 0x8 }
+  - { offset: 0x80C41, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences setVersionInfo:]', symObjAddr: 0x8D8, symBinAddr: 0x7A98, symSize: 0x8 }
+  - { offset: 0x80C80, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences lastCheckinTimestampMillis]', symObjAddr: 0x8E0, symBinAddr: 0x7AA0, symSize: 0x8 }
+  - { offset: 0x80CB7, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences setLastCheckinTimestampMillis:]', symObjAddr: 0x8E8, symBinAddr: 0x7AA8, symSize: 0x8 }
+  - { offset: 0x80CF4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences gServicesData]', symObjAddr: 0x8F0, symBinAddr: 0x7AB0, symSize: 0x8 }
+  - { offset: 0x80D2B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences setGServicesData:]', symObjAddr: 0x8F8, symBinAddr: 0x7AB8, symSize: 0xC }
+  - { offset: 0x80D6C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences hasPreCachedAuthCredentials]', symObjAddr: 0x904, symBinAddr: 0x7AC4, symSize: 0x8 }
+  - { offset: 0x80DA3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinPreferences .cxx_destruct]', symObjAddr: 0x90C, symBinAddr: 0x7ACC, symSize: 0x60 }
+  - { offset: 0x80E51, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinService init]', symObjAddr: 0x0, symBinAddr: 0x7B2C, symSize: 0xC8 }
+  - { offset: 0x80E75, size: 0x8, addend: 0x0, symName: _kFIRMessagingDeviceAuthIdKey, symObjAddr: 0x17A8, symBinAddr: 0x30858, symSize: 0x0 }
+  - { offset: 0x80E8B, size: 0x8, addend: 0x0, symName: _kFIRMessagingSecretTokenKey, symObjAddr: 0x17B0, symBinAddr: 0x30860, symSize: 0x0 }
+  - { offset: 0x80EA1, size: 0x8, addend: 0x0, symName: _kFIRMessagingDigestStringKey, symObjAddr: 0x17B8, symBinAddr: 0x30868, symSize: 0x0 }
+  - { offset: 0x80EB7, size: 0x8, addend: 0x0, symName: _kFIRMessagingLastCheckinTimeKey, symObjAddr: 0x17C0, symBinAddr: 0x30870, symSize: 0x0 }
+  - { offset: 0x80ECD, size: 0x8, addend: 0x0, symName: _kFIRMessagingVersionInfoStringKey, symObjAddr: 0x17C8, symBinAddr: 0x30878, symSize: 0x0 }
+  - { offset: 0x80EE3, size: 0x8, addend: 0x0, symName: _kFIRMessagingGServicesDictionaryKey, symObjAddr: 0x17D0, symBinAddr: 0x30880, symSize: 0x0 }
+  - { offset: 0x80EF9, size: 0x8, addend: 0x0, symName: _kFIRMessagingDeviceDataVersionKey, symObjAddr: 0x17D8, symBinAddr: 0x30888, symSize: 0x0 }
+  - { offset: 0x80F50, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinService init]', symObjAddr: 0x0, symBinAddr: 0x7B2C, symSize: 0xC8 }
+  - { offset: 0x80FA6, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinService dealloc]', symObjAddr: 0xC8, symBinAddr: 0x7BF4, symSize: 0x54 }
+  - { offset: 0x80FD9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinService checkinWithExistingCheckin:completion:]', symObjAddr: 0x11C, symBinAddr: 0x7C48, symSize: 0x204 }
+  - { offset: 0x810FB, size: 0x8, addend: 0x0, symName: '___68-[FIRMessagingCheckinService checkinWithExistingCheckin:completion:]_block_invoke', symObjAddr: 0x320, symBinAddr: 0x7E4C, symSize: 0x618 }
+  - { offset: 0x8134A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinService stopFetching]', symObjAddr: 0x950, symBinAddr: 0x8464, symSize: 0x38 }
+  - { offset: 0x8137D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinService checkinParametersWithExistingCheckin:]', symObjAddr: 0x988, symBinAddr: 0x849C, symSize: 0x388 }
+  - { offset: 0x81478, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinService session]', symObjAddr: 0xD10, symBinAddr: 0x8824, symSize: 0x8 }
+  - { offset: 0x814AF, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinService setSession:]', symObjAddr: 0xD18, symBinAddr: 0x882C, symSize: 0xC }
+  - { offset: 0x814F0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinService .cxx_destruct]', symObjAddr: 0xD24, symBinAddr: 0x8838, symSize: 0xC }
+  - { offset: 0x81776, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore init]', symObjAddr: 0x0, symBinAddr: 0x8844, symSize: 0x9C }
+  - { offset: 0x8179A, size: 0x8, addend: 0x0, symName: _kFIRMessagingCheckinKeychainService, symObjAddr: 0xAB8, symBinAddr: 0x308C0, symSize: 0x0 }
+  - { offset: 0x817A4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore bundleIdentifierForKeychainAccount]', symObjAddr: 0xD0, symBinAddr: 0x8914, symSize: 0x30 }
+  - { offset: 0x817CE, size: 0x8, addend: 0x0, symName: _bundleIdentifierForKeychainAccount.bundleIdentifier, symObjAddr: 0x6F98, symBinAddr: 0x3D950, symSize: 0x0 }
+  - { offset: 0x817E4, size: 0x8, addend: 0x0, symName: _bundleIdentifierForKeychainAccount.onceToken, symObjAddr: 0x6FA0, symBinAddr: 0x3D958, symSize: 0x0 }
+  - { offset: 0x818C7, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore init]', symObjAddr: 0x0, symBinAddr: 0x8844, symSize: 0x9C }
+  - { offset: 0x818FE, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore hasCheckinPlist]', symObjAddr: 0x9C, symBinAddr: 0x88E0, symSize: 0x34 }
+  - { offset: 0x8196A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore bundleIdentifierForKeychainAccount].cold.1', symObjAddr: 0x7C4, symBinAddr: 0x189C4, symSize: 0x14 }
+  - { offset: 0x81986, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore bundleIdentifierForKeychainAccount].cold.1', symObjAddr: 0x7C4, symBinAddr: 0x189C4, symSize: 0x14 }
+  - { offset: 0x81998, size: 0x8, addend: 0x0, symName: '___62-[FIRMessagingCheckinStore bundleIdentifierForKeychainAccount]_block_invoke', symObjAddr: 0x100, symBinAddr: 0x8944, symSize: 0x24 }
+  - { offset: 0x819D9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore saveCheckinPreferences:handler:]', symObjAddr: 0x124, symBinAddr: 0x8968, symSize: 0x2C8 }
+  - { offset: 0x81B08, size: 0x8, addend: 0x0, symName: '___59-[FIRMessagingCheckinStore saveCheckinPreferences:handler:]_block_invoke', symObjAddr: 0x3EC, symBinAddr: 0x8C30, symSize: 0x5C }
+  - { offset: 0x81B5F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore removeCheckinPreferencesWithHandler:]', symObjAddr: 0x460, symBinAddr: 0x8C8C, symSize: 0x130 }
+  - { offset: 0x81BDB, size: 0x8, addend: 0x0, symName: '___64-[FIRMessagingCheckinStore removeCheckinPreferencesWithHandler:]_block_invoke', symObjAddr: 0x590, symBinAddr: 0x8DBC, symSize: 0xC }
+  - { offset: 0x81C39, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore cachedCheckinPreferences]', symObjAddr: 0x59C, symBinAddr: 0x8DC8, symSize: 0x1D0 }
+  - { offset: 0x81CD0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore plist]', symObjAddr: 0x76C, symBinAddr: 0x8F98, symSize: 0x8 }
+  - { offset: 0x81D07, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore setPlist:]', symObjAddr: 0x774, symBinAddr: 0x8FA0, symSize: 0xC }
+  - { offset: 0x81D48, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore keychain]', symObjAddr: 0x780, symBinAddr: 0x8FAC, symSize: 0x8 }
+  - { offset: 0x81D7F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore setKeychain:]', symObjAddr: 0x788, symBinAddr: 0x8FB4, symSize: 0xC }
+  - { offset: 0x81DC0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingCheckinStore .cxx_destruct]', symObjAddr: 0x794, symBinAddr: 0x8FC0, symSize: 0x30 }
+  - { offset: 0x82095, size: 0x8, addend: 0x0, symName: _kFIRMessagingFromKey, symObjAddr: 0x660, symBinAddr: 0x308E8, symSize: 0x0 }
+  - { offset: 0x820B5, size: 0x8, addend: 0x0, symName: _kFIRMessagingSendTo, symObjAddr: 0x668, symBinAddr: 0x308F0, symSize: 0x0 }
+  - { offset: 0x820CB, size: 0x8, addend: 0x0, symName: _kFIRMessagingSendTTL, symObjAddr: 0x670, symBinAddr: 0x308F8, symSize: 0x0 }
+  - { offset: 0x820E1, size: 0x8, addend: 0x0, symName: _kFIRMessagingSendDelay, symObjAddr: 0x678, symBinAddr: 0x30900, symSize: 0x0 }
+  - { offset: 0x820F7, size: 0x8, addend: 0x0, symName: _kFIRMessagingSendMessageID, symObjAddr: 0x680, symBinAddr: 0x30908, symSize: 0x0 }
+  - { offset: 0x8210D, size: 0x8, addend: 0x0, symName: _KFIRMessagingSendMessageAppData, symObjAddr: 0x688, symBinAddr: 0x30910, symSize: 0x0 }
+  - { offset: 0x82123, size: 0x8, addend: 0x0, symName: _kFIRMessagingMessageInternalReservedKeyword, symObjAddr: 0x690, symBinAddr: 0x30918, symSize: 0x0 }
+  - { offset: 0x82139, size: 0x8, addend: 0x0, symName: _kFIRMessagingMessagePersistentIDKey, symObjAddr: 0x698, symBinAddr: 0x30920, symSize: 0x0 }
+  - { offset: 0x8214F, size: 0x8, addend: 0x0, symName: _kFIRMessagingMessageIDKey, symObjAddr: 0x6A0, symBinAddr: 0x30928, symSize: 0x0 }
+  - { offset: 0x82165, size: 0x8, addend: 0x0, symName: _kFIRMessagingMessageAPNSContentAvailableKey, symObjAddr: 0x6A8, symBinAddr: 0x30930, symSize: 0x0 }
+  - { offset: 0x8217B, size: 0x8, addend: 0x0, symName: _kFIRMessagingMessageSyncMessageTTLKey, symObjAddr: 0x6B0, symBinAddr: 0x30938, symSize: 0x0 }
+  - { offset: 0x82191, size: 0x8, addend: 0x0, symName: _kFIRMessagingMessageLinkKey, symObjAddr: 0x6B8, symBinAddr: 0x30940, symSize: 0x0 }
+  - { offset: 0x821A7, size: 0x8, addend: 0x0, symName: _kFIRMessagingSenderID, symObjAddr: 0x6C0, symBinAddr: 0x30948, symSize: 0x0 }
+  - { offset: 0x821BD, size: 0x8, addend: 0x0, symName: _kFIRMessagingFID, symObjAddr: 0x6C8, symBinAddr: 0x30950, symSize: 0x0 }
+  - { offset: 0x821D3, size: 0x8, addend: 0x0, symName: _kFIRMessagingAnalyticsComposerIdentifier, symObjAddr: 0x6D0, symBinAddr: 0x30958, symSize: 0x0 }
+  - { offset: 0x821E9, size: 0x8, addend: 0x0, symName: _kFIRMessagingAnalyticsMessageLabel, symObjAddr: 0x6D8, symBinAddr: 0x30960, symSize: 0x0 }
+  - { offset: 0x821FF, size: 0x8, addend: 0x0, symName: _kFIRMessagingAnalyticsComposerLabel, symObjAddr: 0x6E0, symBinAddr: 0x30968, symSize: 0x0 }
+  - { offset: 0x82215, size: 0x8, addend: 0x0, symName: _kFIRMessagingProductID, symObjAddr: 0x6E8, symBinAddr: 0x30970, symSize: 0x0 }
+  - { offset: 0x8222B, size: 0x8, addend: 0x0, symName: _kFIRMessagingRemoteNotificationsProxyEnabledInfoPlistKey, symObjAddr: 0x6F0, symBinAddr: 0x30978, symSize: 0x0 }
+  - { offset: 0x82241, size: 0x8, addend: 0x0, symName: _kFIRMessagingSubDirectoryName, symObjAddr: 0x6F8, symBinAddr: 0x30980, symSize: 0x0 }
+  - { offset: 0x82257, size: 0x8, addend: 0x0, symName: _kFIRMessagingCheckinFetchedNotification, symObjAddr: 0x700, symBinAddr: 0x30988, symSize: 0x0 }
+  - { offset: 0x8226D, size: 0x8, addend: 0x0, symName: _kFIRMessagingAPNSTokenNotification, symObjAddr: 0x708, symBinAddr: 0x30990, symSize: 0x0 }
+  - { offset: 0x82283, size: 0x8, addend: 0x0, symName: _kFIRMessagingRegistrationTokenRefreshNotification, symObjAddr: 0x710, symBinAddr: 0x30998, symSize: 0x0 }
+  - { offset: 0x82299, size: 0x8, addend: 0x0, symName: _kFIRMessagingSendTtlDefault, symObjAddr: 0x778, symBinAddr: 0x1FCC0, symSize: 0x0 }
+  - { offset: 0x822BB, size: 0x8, addend: 0x0, symName: _kFIRMessaging_CMD_RST, symObjAddr: 0x718, symBinAddr: 0x309A0, symSize: 0x0 }
+  - { offset: 0x822D1, size: 0x8, addend: 0x0, symName: _kFIRMessagingDefaultGCMTokenFailNotification, symObjAddr: 0x720, symBinAddr: 0x309A8, symSize: 0x0 }
+  - { offset: 0x822E7, size: 0x8, addend: 0x0, symName: _kFIRMessagingAllScopeIdentifier, symObjAddr: 0x728, symBinAddr: 0x309B0, symSize: 0x0 }
+  - { offset: 0x822FD, size: 0x8, addend: 0x0, symName: _kFIRMessagingDefaultTokenScope, symObjAddr: 0x730, symBinAddr: 0x309B8, symSize: 0x0 }
+  - { offset: 0x82313, size: 0x8, addend: 0x0, symName: _kFIRMessagingFIAMTokenScope, symObjAddr: 0x738, symBinAddr: 0x309C0, symSize: 0x0 }
+  - { offset: 0x82329, size: 0x8, addend: 0x0, symName: _kFIRMessagingInstanceIDSubDirectoryName, symObjAddr: 0x740, symBinAddr: 0x309C8, symSize: 0x0 }
+  - { offset: 0x8233F, size: 0x8, addend: 0x0, symName: _kFIRMessagingTokenOptionsAPNSKey, symObjAddr: 0x748, symBinAddr: 0x309D0, symSize: 0x0 }
+  - { offset: 0x82355, size: 0x8, addend: 0x0, symName: _kFIRMessagingTokenOptionsAPNSIsSandboxKey, symObjAddr: 0x750, symBinAddr: 0x309D8, symSize: 0x0 }
+  - { offset: 0x8236B, size: 0x8, addend: 0x0, symName: _kFIRMessagingTokenOptionsFirebaseAppIDKey, symObjAddr: 0x758, symBinAddr: 0x309E0, symSize: 0x0 }
+  - { offset: 0x82381, size: 0x8, addend: 0x0, symName: _kFIRMessagingParamInstanceID, symObjAddr: 0x760, symBinAddr: 0x309E8, symSize: 0x0 }
+  - { offset: 0x82397, size: 0x8, addend: 0x0, symName: _kFIRMessagingAPNSTokenType, symObjAddr: 0x768, symBinAddr: 0x309F0, symSize: 0x0 }
+  - { offset: 0x823AD, size: 0x8, addend: 0x0, symName: _kFIRMessagingAppDelegateProxyEnabledInfoPlistKey, symObjAddr: 0x770, symBinAddr: 0x309F8, symSize: 0x0 }
+  - { offset: 0x823C3, size: 0x8, addend: 0x0, symName: _kFIRMessagingSecMissingEntitlementErrorCode, symObjAddr: 0x77C, symBinAddr: 0x1FCC4, symSize: 0x0 }
+  - { offset: 0x823FB, size: 0x8, addend: 0x0, symName: '+[FIRMessagingContextManagerService isContextManagerMessage:]', symObjAddr: 0x0, symBinAddr: 0x8FF0, symSize: 0x70 }
+  - { offset: 0x8241F, size: 0x8, addend: 0x0, symName: _kFIRMessagingContextManagerLocalTimeStart, symObjAddr: 0xEE8, symBinAddr: 0x30A00, symSize: 0x0 }
+  - { offset: 0x82435, size: 0x8, addend: 0x0, symName: _kFIRMessagingContextManagerLocalTimeEnd, symObjAddr: 0xEF0, symBinAddr: 0x30A08, symSize: 0x0 }
+  - { offset: 0x8244B, size: 0x8, addend: 0x0, symName: _kFIRMessagingContextManagerBodyKey, symObjAddr: 0xEF8, symBinAddr: 0x30A10, symSize: 0x0 }
+  - { offset: 0x82461, size: 0x8, addend: 0x0, symName: _kFIRMessagingContextManagerTitleKey, symObjAddr: 0xF00, symBinAddr: 0x30A18, symSize: 0x0 }
+  - { offset: 0x82477, size: 0x8, addend: 0x0, symName: _kFIRMessagingContextManagerBadgeKey, symObjAddr: 0xF08, symBinAddr: 0x30A20, symSize: 0x0 }
+  - { offset: 0x8248D, size: 0x8, addend: 0x0, symName: _kFIRMessagingContextManagerCategoryKey, symObjAddr: 0xF10, symBinAddr: 0x30A28, symSize: 0x0 }
+  - { offset: 0x824A3, size: 0x8, addend: 0x0, symName: _kFIRMessagingContextManagerSoundKey, symObjAddr: 0xF18, symBinAddr: 0x30A30, symSize: 0x0 }
+  - { offset: 0x824B9, size: 0x8, addend: 0x0, symName: _kFIRMessagingContextManagerContentAvailableKey, symObjAddr: 0xF20, symBinAddr: 0x30A38, symSize: 0x0 }
+  - { offset: 0x824D8, size: 0x8, addend: 0x0, symName: '+[FIRMessagingContextManagerService isContextManagerMessage:]', symObjAddr: 0x0, symBinAddr: 0x8FF0, symSize: 0x70 }
+  - { offset: 0x8254A, size: 0x8, addend: 0x0, symName: '+[FIRMessagingContextManagerService handleContextManagerMessage:]', symObjAddr: 0x70, symBinAddr: 0x9060, symSize: 0xA8 }
+  - { offset: 0x825AF, size: 0x8, addend: 0x0, symName: '+[FIRMessagingContextManagerService handleContextManagerLocalTimeMessage:]', symObjAddr: 0x118, symBinAddr: 0x9108, symSize: 0x210 }
+  - { offset: 0x82687, size: 0x8, addend: 0x0, symName: '+[FIRMessagingContextManagerService scheduleiOS10LocalNotificationForMessage:atDate:]', symObjAddr: 0x328, symBinAddr: 0x9318, symSize: 0x14C }
+  - { offset: 0x8275A, size: 0x8, addend: 0x0, symName: '___85+[FIRMessagingContextManagerService scheduleiOS10LocalNotificationForMessage:atDate:]_block_invoke', symObjAddr: 0x474, symBinAddr: 0x9464, symSize: 0x5C }
+  - { offset: 0x8279F, size: 0x8, addend: 0x0, symName: '+[FIRMessagingContextManagerService contentFromContextualMessage:]', symObjAddr: 0x4D0, symBinAddr: 0x94C0, symSize: 0x218 }
+  - { offset: 0x82812, size: 0x8, addend: 0x0, symName: '+[FIRMessagingContextManagerService scheduleLocalNotificationForMessage:atDate:]', symObjAddr: 0x6E8, symBinAddr: 0x96D8, symSize: 0x4 }
+  - { offset: 0x8285F, size: 0x8, addend: 0x0, symName: '+[FIRMessagingContextManagerService parseDataFromMessage:]', symObjAddr: 0x6EC, symBinAddr: 0x96DC, symSize: 0x1C4 }
+  - { offset: 0x82A2D, size: 0x8, addend: 0x0, symName: _FIRMessagingEncodeData, symObjAddr: 0x0, symBinAddr: 0x98A0, symSize: 0x64 }
+  - { offset: 0x82C92, size: 0x8, addend: 0x0, symName: _FIRMessagingEncodeData, symObjAddr: 0x0, symBinAddr: 0x98A0, symSize: 0x64 }
+  - { offset: 0x82CF9, size: 0x8, addend: 0x0, symName: _FIRMessagingEncodeString, symObjAddr: 0x64, symBinAddr: 0x9904, symSize: 0x38 }
+  - { offset: 0x82D42, size: 0x8, addend: 0x0, symName: '-[FIRMessagingMetricsLog initWithEventExtension:]', symObjAddr: 0x9C, symBinAddr: 0x993C, symSize: 0x48 }
+  - { offset: 0x82D89, size: 0x8, addend: 0x0, symName: '-[FIRMessagingMetricsLog transportBytes]', symObjAddr: 0xE4, symBinAddr: 0x9984, symSize: 0x120 }
+  - { offset: 0x82FA6, size: 0x8, addend: 0x0, symName: '-[FIRMessagingMetricsLog eventExtension]', symObjAddr: 0x204, symBinAddr: 0x9AA4, symSize: 0x8 }
+  - { offset: 0x82FDD, size: 0x8, addend: 0x0, symName: '-[FIRMessagingMetricsLog setEventExtension:]', symObjAddr: 0x20C, symBinAddr: 0x9AAC, symSize: 0x8 }
+  - { offset: 0x8301A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper populateNotificationContent:withContentHandler:]', symObjAddr: 0x214, symBinAddr: 0x9AB4, symSize: 0x174 }
+  - { offset: 0x8309B, size: 0x8, addend: 0x0, symName: '___78-[FIRMessagingExtensionHelper populateNotificationContent:withContentHandler:]_block_invoke', symObjAddr: 0x388, symBinAddr: 0x9C28, symSize: 0xB0 }
+  - { offset: 0x830EA, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper fileExtensionForResponse:]', symObjAddr: 0x448, symBinAddr: 0x9CD8, symSize: 0xEC }
+  - { offset: 0x8313D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper loadAttachmentForURL:completionHandler:]', symObjAddr: 0x534, symBinAddr: 0x9DC4, symSize: 0x15C }
+  - { offset: 0x831B5, size: 0x8, addend: 0x0, symName: ___Block_byref_object_copy_, symObjAddr: 0x690, symBinAddr: 0x9F20, symSize: 0x10 }
+  - { offset: 0x831DA, size: 0x8, addend: 0x0, symName: ___Block_byref_object_dispose_, symObjAddr: 0x6A0, symBinAddr: 0x9F30, symSize: 0x8 }
+  - { offset: 0x831F9, size: 0x8, addend: 0x0, symName: '___70-[FIRMessagingExtensionHelper loadAttachmentForURL:completionHandler:]_block_invoke', symObjAddr: 0x6A8, symBinAddr: 0x9F38, symSize: 0x20C }
+  - { offset: 0x83319, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48b56r, symObjAddr: 0x8B4, symBinAddr: 0xA144, symSize: 0x4C }
+  - { offset: 0x83342, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56r, symObjAddr: 0x900, symBinAddr: 0xA190, symSize: 0x3C }
+  - { offset: 0x83361, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper deliverNotification]', symObjAddr: 0x93C, symBinAddr: 0xA1CC, symSize: 0x80 }
+  - { offset: 0x833B1, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper exportDeliveryMetricsToBigQueryWithMessageInfo:]', symObjAddr: 0x9BC, symBinAddr: 0xA24C, symSize: 0x4C8 }
+  - { offset: 0x834F6, size: 0x8, addend: 0x0, symName: '+[FIRMessagingExtensionHelper bundleIdentifierByRemovingLastPartFrom:]', symObjAddr: 0xE84, symBinAddr: 0xA714, symSize: 0x6C }
+  - { offset: 0x8355D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper contentHandler]', symObjAddr: 0xEF0, symBinAddr: 0xA780, symSize: 0x8 }
+  - { offset: 0x83594, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper setContentHandler:]', symObjAddr: 0xEF8, symBinAddr: 0xA788, symSize: 0x8 }
+  - { offset: 0x835D3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper bestAttemptContent]', symObjAddr: 0xF00, symBinAddr: 0xA790, symSize: 0x8 }
+  - { offset: 0x8360A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper setBestAttemptContent:]', symObjAddr: 0xF08, symBinAddr: 0xA798, symSize: 0xC }
+  - { offset: 0x8364B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingExtensionHelper .cxx_destruct]', symObjAddr: 0xF14, symBinAddr: 0xA7A4, symSize: 0x30 }
+  - { offset: 0x83928, size: 0x8, addend: 0x0, symName: '+[FIRMessagingKeychain sharedInstance]', symObjAddr: 0x0, symBinAddr: 0xA7D4, symSize: 0x30 }
+  - { offset: 0x83942, size: 0x8, addend: 0x0, symName: _kFIRMessagingKeychainErrorDomain, symObjAddr: 0x8B0, symBinAddr: 0x30AE0, symSize: 0x0 }
+  - { offset: 0x83956, size: 0x8, addend: 0x0, symName: '+[FIRMessagingKeychain sharedInstance]', symObjAddr: 0x0, symBinAddr: 0xA7D4, symSize: 0x30 }
+  - { offset: 0x83980, size: 0x8, addend: 0x0, symName: _sharedInstance.sharedInstance, symObjAddr: 0x6D00, symBinAddr: 0x3D960, symSize: 0x0 }
+  - { offset: 0x83996, size: 0x8, addend: 0x0, symName: _sharedInstance.onceToken, symObjAddr: 0x6D08, symBinAddr: 0x3D968, symSize: 0x0 }
+  - { offset: 0x83A49, size: 0x8, addend: 0x0, symName: '+[FIRMessagingKeychain sharedInstance].cold.1', symObjAddr: 0x644, symBinAddr: 0x189D8, symSize: 0x14 }
+  - { offset: 0x83A65, size: 0x8, addend: 0x0, symName: '+[FIRMessagingKeychain sharedInstance].cold.1', symObjAddr: 0x644, symBinAddr: 0x189D8, symSize: 0x14 }
+  - { offset: 0x83A77, size: 0x8, addend: 0x0, symName: '___38+[FIRMessagingKeychain sharedInstance]_block_invoke', symObjAddr: 0x30, symBinAddr: 0xA804, symSize: 0x28 }
+  - { offset: 0x83A9E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingKeychain init]', symObjAddr: 0x58, symBinAddr: 0xA82C, symSize: 0x64 }
+  - { offset: 0x83B0C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingKeychain itemWithQuery:]', symObjAddr: 0xBC, symBinAddr: 0xA890, symSize: 0xAC }
+  - { offset: 0x83B98, size: 0x8, addend: 0x0, symName: '___38-[FIRMessagingKeychain itemWithQuery:]_block_invoke', symObjAddr: 0x168, symBinAddr: 0xA93C, symSize: 0x94 }
+  - { offset: 0x83C74, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40r, symObjAddr: 0x1FC, symBinAddr: 0xA9D0, symSize: 0x34 }
+  - { offset: 0x83C9D, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40r, symObjAddr: 0x230, symBinAddr: 0xAA04, symSize: 0x2C }
+  - { offset: 0x83CBC, size: 0x8, addend: 0x0, symName: '-[FIRMessagingKeychain removeItemWithQuery:handler:]', symObjAddr: 0x25C, symBinAddr: 0xAA30, symSize: 0xA4 }
+  - { offset: 0x83D3F, size: 0x8, addend: 0x0, symName: '___52-[FIRMessagingKeychain removeItemWithQuery:handler:]_block_invoke', symObjAddr: 0x300, symBinAddr: 0xAAD4, symSize: 0x114 }
+  - { offset: 0x83E0D, size: 0x8, addend: 0x0, symName: '___52-[FIRMessagingKeychain removeItemWithQuery:handler:]_block_invoke_2', symObjAddr: 0x414, symBinAddr: 0xABE8, symSize: 0x10 }
+  - { offset: 0x83E64, size: 0x8, addend: 0x0, symName: '-[FIRMessagingKeychain addItemWithQuery:handler:]', symObjAddr: 0x480, symBinAddr: 0xABF8, symSize: 0xA4 }
+  - { offset: 0x83ED4, size: 0x8, addend: 0x0, symName: '___49-[FIRMessagingKeychain addItemWithQuery:handler:]_block_invoke', symObjAddr: 0x524, symBinAddr: 0xAC9C, symSize: 0x104 }
+  - { offset: 0x83FAE, size: 0x8, addend: 0x0, symName: '___49-[FIRMessagingKeychain addItemWithQuery:handler:]_block_invoke_2', symObjAddr: 0x628, symBinAddr: 0xADA0, symSize: 0x10 }
+  - { offset: 0x84005, size: 0x8, addend: 0x0, symName: '-[FIRMessagingKeychain .cxx_destruct]', symObjAddr: 0x638, symBinAddr: 0xADB0, symSize: 0xC }
+  - { offset: 0x84404, size: 0x8, addend: 0x0, symName: '+[FIRMessagingLogger standardLogger]', symObjAddr: 0x0, symBinAddr: 0xADBC, symSize: 0x1C }
+  - { offset: 0x8441E, size: 0x8, addend: 0x0, symName: _kFIRLoggerMessaging, symObjAddr: 0x390, symBinAddr: 0x30B68, symSize: 0x0 }
+  - { offset: 0x8443D, size: 0x8, addend: 0x0, symName: _FIRMessagingSharedLogger, symObjAddr: 0x2B8, symBinAddr: 0xB074, symSize: 0x30 }
+  - { offset: 0x84463, size: 0x8, addend: 0x0, symName: _FIRMessagingSharedLogger.onceToken, symObjAddr: 0x5298, symBinAddr: 0x3D970, symSize: 0x0 }
+  - { offset: 0x84479, size: 0x8, addend: 0x0, symName: _FIRMessagingSharedLogger.logger, symObjAddr: 0x52A0, symBinAddr: 0x3D978, symSize: 0x0 }
+  - { offset: 0x84A4F, size: 0x8, addend: 0x0, symName: '+[FIRMessagingLogger standardLogger]', symObjAddr: 0x0, symBinAddr: 0xADBC, symSize: 0x1C }
+  - { offset: 0x84A82, size: 0x8, addend: 0x0, symName: '+[FIRMessagingLogger formatMessageCode:]', symObjAddr: 0x1C, symBinAddr: 0xADD8, symSize: 0x30 }
+  - { offset: 0x84AC5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingLogger logFuncDebug:messageCode:msg:]', symObjAddr: 0x4C, symBinAddr: 0xAE08, symSize: 0x7C }
+  - { offset: 0x84B89, size: 0x8, addend: 0x0, symName: '-[FIRMessagingLogger logFuncInfo:messageCode:msg:]', symObjAddr: 0xC8, symBinAddr: 0xAE84, symSize: 0x7C }
+  - { offset: 0x84C19, size: 0x8, addend: 0x0, symName: '-[FIRMessagingLogger logFuncNotice:messageCode:msg:]', symObjAddr: 0x144, symBinAddr: 0xAF00, symSize: 0x7C }
+  - { offset: 0x84CA9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingLogger logFuncWarning:messageCode:msg:]', symObjAddr: 0x1C0, symBinAddr: 0xAF7C, symSize: 0x7C }
+  - { offset: 0x84D39, size: 0x8, addend: 0x0, symName: '-[FIRMessagingLogger logFuncError:messageCode:msg:]', symObjAddr: 0x23C, symBinAddr: 0xAFF8, symSize: 0x7C }
+  - { offset: 0x84E05, size: 0x8, addend: 0x0, symName: _FIRMessagingSharedLogger.cold.1, symObjAddr: 0x314, symBinAddr: 0x189EC, symSize: 0x14 }
+  - { offset: 0x84E21, size: 0x8, addend: 0x0, symName: _FIRMessagingSharedLogger.cold.1, symObjAddr: 0x314, symBinAddr: 0x189EC, symSize: 0x14 }
+  - { offset: 0x84E33, size: 0x8, addend: 0x0, symName: ___FIRMessagingSharedLogger_block_invoke, symObjAddr: 0x2E8, symBinAddr: 0xB0A4, symSize: 0x2C }
+  - { offset: 0x84F4E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicBatch initWithAction:]', symObjAddr: 0x0, symBinAddr: 0xB0D0, symSize: 0x88 }
+  - { offset: 0x84F68, size: 0x8, addend: 0x0, symName: _kPendingTopicBatchActionKey, symObjAddr: 0x1590, symBinAddr: 0x30B90, symSize: 0x0 }
+  - { offset: 0x84F88, size: 0x8, addend: 0x0, symName: _kPendingTopicBatchTopicsKey, symObjAddr: 0x1598, symBinAddr: 0x30B98, symSize: 0x0 }
+  - { offset: 0x84F9E, size: 0x8, addend: 0x0, symName: _kPendingBatchesEncodingKey, symObjAddr: 0x15A0, symBinAddr: 0x30BA0, symSize: 0x0 }
+  - { offset: 0x84FB4, size: 0x8, addend: 0x0, symName: _kPendingTopicsTimestampEncodingKey, symObjAddr: 0x15A8, symBinAddr: 0x30BA8, symSize: 0x0 }
+  - { offset: 0x8511B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicBatch initWithAction:]', symObjAddr: 0x0, symBinAddr: 0xB0D0, symSize: 0x88 }
+  - { offset: 0x85162, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTopicBatch supportsSecureCoding]', symObjAddr: 0x88, symBinAddr: 0xB158, symSize: 0x8 }
+  - { offset: 0x85195, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicBatch encodeWithCoder:]', symObjAddr: 0x90, symBinAddr: 0xB160, symSize: 0x74 }
+  - { offset: 0x851D8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicBatch initWithCoder:]', symObjAddr: 0x104, symBinAddr: 0xB1D4, symSize: 0xE0 }
+  - { offset: 0x8523F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicBatch action]', symObjAddr: 0x1E4, symBinAddr: 0xB2B4, symSize: 0x8 }
+  - { offset: 0x85276, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicBatch topics]', symObjAddr: 0x1EC, symBinAddr: 0xB2BC, symSize: 0x8 }
+  - { offset: 0x852AD, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicBatch topicHandlers]', symObjAddr: 0x1F4, symBinAddr: 0xB2C4, symSize: 0x8 }
+  - { offset: 0x852E4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicBatch setTopicHandlers:]', symObjAddr: 0x1FC, symBinAddr: 0xB2CC, symSize: 0xC }
+  - { offset: 0x85325, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicBatch .cxx_destruct]', symObjAddr: 0x208, symBinAddr: 0xB2D8, symSize: 0x30 }
+  - { offset: 0x85358, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList init]', symObjAddr: 0x238, symBinAddr: 0xB308, symSize: 0x80 }
+  - { offset: 0x8538F, size: 0x8, addend: 0x0, symName: '+[FIRMessagingPendingTopicsList pruneTopicBatches:]', symObjAddr: 0x2B8, symBinAddr: 0xB388, symSize: 0x90 }
+  - { offset: 0x8540C, size: 0x8, addend: 0x0, symName: '+[FIRMessagingPendingTopicsList supportsSecureCoding]', symObjAddr: 0x348, symBinAddr: 0xB418, symSize: 0x8 }
+  - { offset: 0x8543F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList encodeWithCoder:]', symObjAddr: 0x350, symBinAddr: 0xB420, symSize: 0x90 }
+  - { offset: 0x85482, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList initWithCoder:]', symObjAddr: 0x3E0, symBinAddr: 0xB4B0, symSize: 0x110 }
+  - { offset: 0x854C9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList numberOfBatches]', symObjAddr: 0x4F0, symBinAddr: 0xB5C0, symSize: 0x34 }
+  - { offset: 0x85500, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList addOperationForTopic:withAction:completion:]', symObjAddr: 0x524, symBinAddr: 0xB5F4, symSize: 0x2B0 }
+  - { offset: 0x8562D, size: 0x8, addend: 0x0, symName: '___76-[FIRMessagingPendingTopicsList addOperationForTopic:withAction:completion:]_block_invoke', symObjAddr: 0x7D4, symBinAddr: 0xB8A4, symSize: 0x2C }
+  - { offset: 0x85687, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList resumeOperationsIfNeeded]', symObjAddr: 0x814, symBinAddr: 0xB8D0, symSize: 0x264 }
+  - { offset: 0x85700, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList subscriptionErrorIsRecoverable:]', symObjAddr: 0xA78, symBinAddr: 0xBB34, symSize: 0x44 }
+  - { offset: 0x85743, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList beginUpdateForCurrentBatchTopic:]', symObjAddr: 0xABC, symBinAddr: 0xBB78, symSize: 0x15C }
+  - { offset: 0x85796, size: 0x8, addend: 0x0, symName: '___65-[FIRMessagingPendingTopicsList beginUpdateForCurrentBatchTopic:]_block_invoke', symObjAddr: 0xC18, symBinAddr: 0xBCD4, symSize: 0xC4 }
+  - { offset: 0x85823, size: 0x8, addend: 0x0, symName: '___65-[FIRMessagingPendingTopicsList beginUpdateForCurrentBatchTopic:]_block_invoke_2', symObjAddr: 0xCDC, symBinAddr: 0xBD98, symSize: 0x2B4 }
+  - { offset: 0x85924, size: 0x8, addend: 0x0, symName: '___65-[FIRMessagingPendingTopicsList beginUpdateForCurrentBatchTopic:]_block_invoke_3', symObjAddr: 0xF90, symBinAddr: 0xC04C, symSize: 0xFC }
+  - { offset: 0x8599A, size: 0x8, addend: 0x0, symName: '___65-[FIRMessagingPendingTopicsList beginUpdateForCurrentBatchTopic:]_block_invoke.51', symObjAddr: 0x10DC, symBinAddr: 0xC148, symSize: 0x2C }
+  - { offset: 0x859F8, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48w, symObjAddr: 0x1108, symBinAddr: 0xC174, symSize: 0x38 }
+  - { offset: 0x85A21, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40w, symObjAddr: 0x1170, symBinAddr: 0xC1AC, symSize: 0x30 }
+  - { offset: 0x85A4A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList delegate]', symObjAddr: 0x11C8, symBinAddr: 0xC1DC, symSize: 0x18 }
+  - { offset: 0x85A81, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList setDelegate:]', symObjAddr: 0x11E0, symBinAddr: 0xC1F4, symSize: 0xC }
+  - { offset: 0x85AC2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList archiveDate]', symObjAddr: 0x11EC, symBinAddr: 0xC200, symSize: 0x8 }
+  - { offset: 0x85AF9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList setArchiveDate:]', symObjAddr: 0x11F4, symBinAddr: 0xC208, symSize: 0xC }
+  - { offset: 0x85B3A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList topicBatches]', symObjAddr: 0x1200, symBinAddr: 0xC214, symSize: 0x8 }
+  - { offset: 0x85B71, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList setTopicBatches:]', symObjAddr: 0x1208, symBinAddr: 0xC21C, symSize: 0xC }
+  - { offset: 0x85BB2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList currentBatch]', symObjAddr: 0x1214, symBinAddr: 0xC228, symSize: 0x8 }
+  - { offset: 0x85BE9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList setCurrentBatch:]', symObjAddr: 0x121C, symBinAddr: 0xC230, symSize: 0xC }
+  - { offset: 0x85C2A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList topicsInFlight]', symObjAddr: 0x1228, symBinAddr: 0xC23C, symSize: 0x8 }
+  - { offset: 0x85C61, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList setTopicsInFlight:]', symObjAddr: 0x1230, symBinAddr: 0xC244, symSize: 0xC }
+  - { offset: 0x85CA2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPendingTopicsList .cxx_destruct]', symObjAddr: 0x123C, symBinAddr: 0xC250, symSize: 0x50 }
+  - { offset: 0x86035, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage init]', symObjAddr: 0x0, symBinAddr: 0xC2A0, symSize: 0x28 }
+  - { offset: 0x860CF, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage init]', symObjAddr: 0x0, symBinAddr: 0xC2A0, symSize: 0x28 }
+  - { offset: 0x86106, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage initWithRMQID:expirationTime:]', symObjAddr: 0x28, symBinAddr: 0xC2C8, symSize: 0x7C }
+  - { offset: 0x8615D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage description]', symObjAddr: 0xA4, symBinAddr: 0xC344, symSize: 0xC8 }
+  - { offset: 0x861E8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage debugDescription]', symObjAddr: 0x16C, symBinAddr: 0xC40C, symSize: 0x4 }
+  - { offset: 0x8621D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage rmqID]', symObjAddr: 0x170, symBinAddr: 0xC410, symSize: 0x8 }
+  - { offset: 0x86254, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage setRmqID:]', symObjAddr: 0x178, symBinAddr: 0xC418, symSize: 0xC }
+  - { offset: 0x86295, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage apnsReceived]', symObjAddr: 0x184, symBinAddr: 0xC424, symSize: 0x8 }
+  - { offset: 0x862CC, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage setApnsReceived:]', symObjAddr: 0x18C, symBinAddr: 0xC42C, symSize: 0x8 }
+  - { offset: 0x86307, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage mcsReceived]', symObjAddr: 0x194, symBinAddr: 0xC434, symSize: 0x8 }
+  - { offset: 0x8633E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage setMcsReceived:]', symObjAddr: 0x19C, symBinAddr: 0xC43C, symSize: 0x8 }
+  - { offset: 0x86379, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage expirationTime]', symObjAddr: 0x1A4, symBinAddr: 0xC444, symSize: 0x8 }
+  - { offset: 0x863B0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage setExpirationTime:]', symObjAddr: 0x1AC, symBinAddr: 0xC44C, symSize: 0x8 }
+  - { offset: 0x863ED, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPersistentSyncMessage .cxx_destruct]', symObjAddr: 0x1B4, symBinAddr: 0xC454, symSize: 0xC }
+  - { offset: 0x86470, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub initWithTokenManager:]', symObjAddr: 0x0, symBinAddr: 0xC460, symSize: 0x9C }
+  - { offset: 0x86491, size: 0x8, addend: 0x0, symName: '+[FIRMessagingPubSub topicRegex]', symObjAddr: 0xC8C, symBinAddr: 0xD078, symSize: 0x30 }
+  - { offset: 0x864BD, size: 0x8, addend: 0x0, symName: _topicRegex.topicRegex, symObjAddr: 0xABC8, symBinAddr: 0x3D980, symSize: 0x0 }
+  - { offset: 0x864D4, size: 0x8, addend: 0x0, symName: _topicRegex.onceToken, symObjAddr: 0xABD0, symBinAddr: 0x3D988, symSize: 0x0 }
+  - { offset: 0x8667A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub initWithTokenManager:]', symObjAddr: 0x0, symBinAddr: 0xC460, symSize: 0x9C }
+  - { offset: 0x866C1, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub subscribeWithToken:topic:options:handler:]', symObjAddr: 0x9C, symBinAddr: 0xC4FC, symSize: 0x1A0 }
+  - { offset: 0x867AB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub dealloc]', symObjAddr: 0x23C, symBinAddr: 0xC69C, symSize: 0x54 }
+  - { offset: 0x867DE, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub updateSubscriptionWithToken:topic:options:shouldDelete:handler:]', symObjAddr: 0x290, symBinAddr: 0xC6F0, symSize: 0x18C }
+  - { offset: 0x868DC, size: 0x8, addend: 0x0, symName: '___85-[FIRMessagingPubSub updateSubscriptionWithToken:topic:options:shouldDelete:handler:]_block_invoke', symObjAddr: 0x41C, symBinAddr: 0xC87C, symSize: 0xE8 }
+  - { offset: 0x86979, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub unsubscribeWithToken:topic:options:handler:]', symObjAddr: 0x560, symBinAddr: 0xC964, symSize: 0x1E4 }
+  - { offset: 0x86A42, size: 0x8, addend: 0x0, symName: '___65-[FIRMessagingPubSub unsubscribeWithToken:topic:options:handler:]_block_invoke', symObjAddr: 0x744, symBinAddr: 0xCB48, symSize: 0xC }
+  - { offset: 0x86AA0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub subscribeToTopic:handler:]', symObjAddr: 0x768, symBinAddr: 0xCB54, symSize: 0x6C }
+  - { offset: 0x86AF3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub unsubscribeFromTopic:handler:]', symObjAddr: 0x7D4, symBinAddr: 0xCBC0, symSize: 0x6C }
+  - { offset: 0x86B46, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub scheduleSync:]', symObjAddr: 0x840, symBinAddr: 0xCC2C, symSize: 0x58 }
+  - { offset: 0x86B95, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub pendingTopicsList:requestedUpdateForTopic:action:completion:]', symObjAddr: 0x898, symBinAddr: 0xCC84, symSize: 0x94 }
+  - { offset: 0x86C14, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub pendingTopicsListDidUpdate:]', symObjAddr: 0x92C, symBinAddr: 0xCD18, symSize: 0x4 }
+  - { offset: 0x86C53, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub pendingTopicsListCanRequestTopicUpdates:]', symObjAddr: 0x930, symBinAddr: 0xCD1C, symSize: 0x3C }
+  - { offset: 0x86CA6, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub archivePendingTopicsList:]', symObjAddr: 0x96C, symBinAddr: 0xCD58, symSize: 0xD0 }
+  - { offset: 0x86D23, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub restorePendingTopicsList]', symObjAddr: 0xA3C, symBinAddr: 0xCE28, symSize: 0x144 }
+  - { offset: 0x86DB3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub verifyPubSubOptions:]', symObjAddr: 0xB80, symBinAddr: 0xCF6C, symSize: 0x1C }
+  - { offset: 0x86DF8, size: 0x8, addend: 0x0, symName: '+[FIRMessagingPubSub addPrefixToTopic:]', symObjAddr: 0xB9C, symBinAddr: 0xCF88, symSize: 0x78 }
+  - { offset: 0x86E41, size: 0x8, addend: 0x0, symName: '+[FIRMessagingPubSub removePrefixFromTopic:]', symObjAddr: 0xC14, symBinAddr: 0xD000, symSize: 0x68 }
+  - { offset: 0x86E8A, size: 0x8, addend: 0x0, symName: '+[FIRMessagingPubSub hasTopicsPrefix:]', symObjAddr: 0xC7C, symBinAddr: 0xD068, symSize: 0x10 }
+  - { offset: 0x86F03, size: 0x8, addend: 0x0, symName: '+[FIRMessagingPubSub topicRegex].cold.1', symObjAddr: 0xE2C, symBinAddr: 0x18A00, symSize: 0x14 }
+  - { offset: 0x86F1F, size: 0x8, addend: 0x0, symName: '+[FIRMessagingPubSub topicRegex].cold.1', symObjAddr: 0xE2C, symBinAddr: 0x18A00, symSize: 0x14 }
+  - { offset: 0x86F32, size: 0x8, addend: 0x0, symName: '___32+[FIRMessagingPubSub topicRegex]_block_invoke', symObjAddr: 0xCBC, symBinAddr: 0xD0A8, symSize: 0x68 }
+  - { offset: 0x86FA8, size: 0x8, addend: 0x0, symName: '+[FIRMessagingPubSub isValidTopicWithPrefix:]', symObjAddr: 0xD24, symBinAddr: 0xD110, symSize: 0x7C }
+  - { offset: 0x87036, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub pendingTopicUpdates]', symObjAddr: 0xDA0, symBinAddr: 0xD18C, symSize: 0x8 }
+  - { offset: 0x8706D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub setPendingTopicUpdates:]', symObjAddr: 0xDA8, symBinAddr: 0xD194, symSize: 0xC }
+  - { offset: 0x870AE, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub topicOperations]', symObjAddr: 0xDB4, symBinAddr: 0xD1A0, symSize: 0x8 }
+  - { offset: 0x870E5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub operationInProgressError]', symObjAddr: 0xDBC, symBinAddr: 0xD1A8, symSize: 0x8 }
+  - { offset: 0x8711C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub setOperationInProgressError:]', symObjAddr: 0xDC4, symBinAddr: 0xD1B0, symSize: 0xC }
+  - { offset: 0x8715D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub tokenManager]', symObjAddr: 0xDD0, symBinAddr: 0xD1BC, symSize: 0x8 }
+  - { offset: 0x87194, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub setTokenManager:]', symObjAddr: 0xDD8, symBinAddr: 0xD1C4, symSize: 0xC }
+  - { offset: 0x871D5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingPubSub .cxx_destruct]', symObjAddr: 0xDE4, symBinAddr: 0xD1D0, symSize: 0x48 }
+  - { offset: 0x874FB, size: 0x8, addend: 0x0, symName: '+[FIRMessagingRemoteNotificationsProxy canSwizzleMethods]', symObjAddr: 0x0, symBinAddr: 0xD218, symSize: 0xC }
+  - { offset: 0x87513, size: 0x8, addend: 0x0, symName: '+[FIRMessagingRemoteNotificationsProxy sharedProxy]', symObjAddr: 0xC, symBinAddr: 0xD224, symSize: 0x30 }
+  - { offset: 0x8753D, size: 0x8, addend: 0x0, symName: _sharedProxy.proxy, symObjAddr: 0x102F8, symBinAddr: 0x3D990, symSize: 0x0 }
+  - { offset: 0x87553, size: 0x8, addend: 0x0, symName: _sharedProxy.onceToken, symObjAddr: 0x10300, symBinAddr: 0x3D998, symSize: 0x0 }
+  - { offset: 0x8770B, size: 0x8, addend: 0x0, symName: _UserNotificationObserverContext, symObjAddr: 0x3388, symBinAddr: 0x3D8D0, symSize: 0x0 }
+  - { offset: 0x877FF, size: 0x8, addend: 0x0, symName: '+[FIRMessagingRemoteNotificationsProxy canSwizzleMethods]', symObjAddr: 0x0, symBinAddr: 0xD218, symSize: 0xC }
+  - { offset: 0x87859, size: 0x8, addend: 0x0, symName: '+[FIRMessagingRemoteNotificationsProxy sharedProxy].cold.1', symObjAddr: 0x17D0, symBinAddr: 0x18A14, symSize: 0x14 }
+  - { offset: 0x87875, size: 0x8, addend: 0x0, symName: '+[FIRMessagingRemoteNotificationsProxy sharedProxy].cold.1', symObjAddr: 0x17D0, symBinAddr: 0x18A14, symSize: 0x14 }
+  - { offset: 0x87887, size: 0x8, addend: 0x0, symName: '___51+[FIRMessagingRemoteNotificationsProxy sharedProxy]_block_invoke', symObjAddr: 0x3C, symBinAddr: 0xD254, symSize: 0x28 }
+  - { offset: 0x878AE, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy init]', symObjAddr: 0x64, symBinAddr: 0xD27C, symSize: 0x74 }
+  - { offset: 0x878E5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy dealloc]', symObjAddr: 0xD8, symBinAddr: 0xD2F0, symSize: 0x7C }
+  - { offset: 0x87918, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy swizzleMethodsIfPossible]', symObjAddr: 0x154, symBinAddr: 0xD36C, symSize: 0xA4 }
+  - { offset: 0x879B2, size: 0x8, addend: 0x0, symName: _FIRMessagingPropertyNameFromObject, symObjAddr: 0x1F8, symBinAddr: 0xD410, symSize: 0xA4 }
+  - { offset: 0x87A4C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy unswizzleAllMethods]', symObjAddr: 0x29C, symBinAddr: 0xD4B4, symSize: 0x21C }
+  - { offset: 0x87B1F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy listenForDelegateChangesInUserNotificationCenter:]', symObjAddr: 0x4B8, symBinAddr: 0xD6D0, symSize: 0xB4 }
+  - { offset: 0x87BEA, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy swizzleUserNotificationCenterDelegate:]', symObjAddr: 0x56C, symBinAddr: 0xD784, symSize: 0x120 }
+  - { offset: 0x87C96, size: 0x8, addend: 0x0, symName: _FCMSwizzleWillPresentNotificationWithHandler, symObjAddr: 0x68C, symBinAddr: 0xD8A4, symSize: 0x200 }
+  - { offset: 0x87DD7, size: 0x8, addend: 0x0, symName: _FIRMessagingUserInfoFromNotification, symObjAddr: 0x1680, symBinAddr: 0xE898, symSize: 0x130 }
+  - { offset: 0x87F14, size: 0x8, addend: 0x0, symName: _FCMSwizzleDidReceiveNotificationResponseWithHandler, symObjAddr: 0x88C, symBinAddr: 0xDAA4, symSize: 0x23C }
+  - { offset: 0x880A5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy unswizzleUserNotificationCenterDelegate:]', symObjAddr: 0xAC8, symBinAddr: 0xDCE0, symSize: 0xE0 }
+  - { offset: 0x88124, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy addDelegateObserverToUserNotificationCenter:]', symObjAddr: 0xBA8, symBinAddr: 0xDDC0, symSize: 0x108 }
+  - { offset: 0x881D2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy removeUserNotificationCenterDelegateObserver]', symObjAddr: 0xCB0, symBinAddr: 0xDEC8, symSize: 0x12C }
+  - { offset: 0x8823C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy observeValueForKeyPath:ofObject:change:context:]', symObjAddr: 0xDDC, symBinAddr: 0xDFF4, symSize: 0x174 }
+  - { offset: 0x882F4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy saveOriginalImplementation:forSelector:]', symObjAddr: 0xF50, symBinAddr: 0xE168, symSize: 0x8C }
+  - { offset: 0x8838D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy originalImplementationForSelector:]', symObjAddr: 0xFDC, symBinAddr: 0xE1F4, symSize: 0x88 }
+  - { offset: 0x88420, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy trackSwizzledSelector:ofClass:]', symObjAddr: 0x1064, symBinAddr: 0xE27C, symSize: 0x114 }
+  - { offset: 0x884E9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy removeImplementationForSelector:]', symObjAddr: 0x1178, symBinAddr: 0xE390, symSize: 0x54 }
+  - { offset: 0x88556, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy swizzleSelector:inClass:withImplementation:inProtocol:]', symObjAddr: 0x11CC, symBinAddr: 0xE3E4, symSize: 0x130 }
+  - { offset: 0x88780, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy unswizzleSelector:inClass:]', symObjAddr: 0x12FC, symBinAddr: 0xE514, symSize: 0x98 }
+  - { offset: 0x8885B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy nonExistentMethodImplementationForClass:]', symObjAddr: 0x1394, symBinAddr: 0xE5AC, symSize: 0x30 }
+  - { offset: 0x888F2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy application:didReceiveRemoteNotification:fetchCompletionHandler:]', symObjAddr: 0x13C4, symBinAddr: 0xE5DC, symSize: 0x78 }
+  - { offset: 0x8896B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy application:didFailToRegisterForRemoteNotificationsWithError:]', symObjAddr: 0x143C, symBinAddr: 0xE654, symSize: 0x70 }
+  - { offset: 0x889C7, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy application:didRegisterForRemoteNotificationsWithDeviceToken:]', symObjAddr: 0x14AC, symBinAddr: 0xE6C4, symSize: 0x50 }
+  - { offset: 0x88A15, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy originalAppDelegateImps]', symObjAddr: 0x14FC, symBinAddr: 0xE714, symSize: 0x8 }
+  - { offset: 0x88A4C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy setOriginalAppDelegateImps:]', symObjAddr: 0x1504, symBinAddr: 0xE71C, symSize: 0xC }
+  - { offset: 0x88A8D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy swizzledSelectorsByClass]', symObjAddr: 0x1510, symBinAddr: 0xE728, symSize: 0x8 }
+  - { offset: 0x88AC4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy setSwizzledSelectorsByClass:]', symObjAddr: 0x1518, symBinAddr: 0xE730, symSize: 0xC }
+  - { offset: 0x88B05, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy didSwizzleMethods]', symObjAddr: 0x1524, symBinAddr: 0xE73C, symSize: 0x8 }
+  - { offset: 0x88B3C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy setDidSwizzleMethods:]', symObjAddr: 0x152C, symBinAddr: 0xE744, symSize: 0x8 }
+  - { offset: 0x88B77, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy hasSwizzledUserNotificationDelegate]', symObjAddr: 0x1534, symBinAddr: 0xE74C, symSize: 0x8 }
+  - { offset: 0x88BAE, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy setHasSwizzledUserNotificationDelegate:]', symObjAddr: 0x153C, symBinAddr: 0xE754, symSize: 0x8 }
+  - { offset: 0x88BE9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy isObservingUserNotificationDelegateChanges]', symObjAddr: 0x1544, symBinAddr: 0xE75C, symSize: 0x8 }
+  - { offset: 0x88C20, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy setIsObservingUserNotificationDelegateChanges:]', symObjAddr: 0x154C, symBinAddr: 0xE764, symSize: 0x8 }
+  - { offset: 0x88C5B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy userNotificationCenter]', symObjAddr: 0x1554, symBinAddr: 0xE76C, symSize: 0x8 }
+  - { offset: 0x88C92, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy setUserNotificationCenter:]', symObjAddr: 0x155C, symBinAddr: 0xE774, symSize: 0xC }
+  - { offset: 0x88CD3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy currentUserNotificationCenterDelegate]', symObjAddr: 0x1568, symBinAddr: 0xE780, symSize: 0x8 }
+  - { offset: 0x88D0A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy setCurrentUserNotificationCenterDelegate:]', symObjAddr: 0x1570, symBinAddr: 0xE788, symSize: 0xC }
+  - { offset: 0x88D4B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy appDelegateInterceptorID]', symObjAddr: 0x157C, symBinAddr: 0xE794, symSize: 0x8 }
+  - { offset: 0x88D82, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy setAppDelegateInterceptorID:]', symObjAddr: 0x1584, symBinAddr: 0xE79C, symSize: 0xC }
+  - { offset: 0x88DC3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRemoteNotificationsProxy .cxx_destruct]', symObjAddr: 0x1590, symBinAddr: 0xE7A8, symSize: 0x54 }
+  - { offset: 0x88DF6, size: 0x8, addend: 0x0, symName: ___FCMSwizzleWillPresentNotificationWithHandler_block_invoke, symObjAddr: 0x15E4, symBinAddr: 0xE7FC, symSize: 0x20 }
+  - { offset: 0x88E95, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56b, symObjAddr: 0x1604, symBinAddr: 0xE81C, symSize: 0x44 }
+  - { offset: 0x88EBE, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s, symObjAddr: 0x1648, symBinAddr: 0xE860, symSize: 0x38 }
+  - { offset: 0x88EDD, size: 0x8, addend: 0x0, symName: ___FCMSwizzleDidReceiveNotificationResponseWithHandler_block_invoke, symObjAddr: 0x17B0, symBinAddr: 0xE9C8, symSize: 0x20 }
+  - { offset: 0x89236, size: 0x8, addend: 0x0, symName: _FIRMessagingStringFromSQLiteResult, symObjAddr: 0x0, symBinAddr: 0xE9E8, symSize: 0x44 }
+  - { offset: 0x89250, size: 0x8, addend: 0x0, symName: _kTableOutgoingRmqMessages, symObjAddr: 0x2E90, symBinAddr: 0x30CB0, symSize: 0x0 }
+  - { offset: 0x89270, size: 0x8, addend: 0x0, symName: _kTableLastRmqId, symObjAddr: 0x2E98, symBinAddr: 0x30CB8, symSize: 0x0 }
+  - { offset: 0x89286, size: 0x8, addend: 0x0, symName: _kOldTableS2DRmqIds, symObjAddr: 0x2EA0, symBinAddr: 0x30CC0, symSize: 0x0 }
+  - { offset: 0x8929C, size: 0x8, addend: 0x0, symName: _kTableS2DRmqIds, symObjAddr: 0x2EA8, symBinAddr: 0x30CC8, symSize: 0x0 }
+  - { offset: 0x892B2, size: 0x8, addend: 0x0, symName: _kTableSyncMessages, symObjAddr: 0x2EB0, symBinAddr: 0x30CD0, symSize: 0x0 }
+  - { offset: 0x892CF, size: 0x8, addend: 0x0, symName: '___52-[FIRMessagingRmqManager querySyncMessageWithRmqID:]_block_invoke', symObjAddr: 0x94C, symBinAddr: 0xF274, symSize: 0x1C8 }
+  - { offset: 0x895B9, size: 0x8, addend: 0x0, symName: _FIRMessagingStringFromSQLiteResult, symObjAddr: 0x0, symBinAddr: 0xE9E8, symSize: 0x44 }
+  - { offset: 0x8961B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager initWithDatabaseName:]', symObjAddr: 0x44, symBinAddr: 0xEA2C, symSize: 0xB8 }
+  - { offset: 0x8968F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager dealloc]', symObjAddr: 0xFC, symBinAddr: 0xEAE4, symSize: 0x48 }
+  - { offset: 0x896E3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager loadRmqId]', symObjAddr: 0x144, symBinAddr: 0xEB2C, symSize: 0xB8 }
+  - { offset: 0x89745, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager loadInitialOutgoingPersistentId]', symObjAddr: 0x1FC, symBinAddr: 0xEBE4, symSize: 0xEC }
+  - { offset: 0x897D3, size: 0x8, addend: 0x0, symName: '___57-[FIRMessagingRmqManager loadInitialOutgoingPersistentId]_block_invoke', symObjAddr: 0x2E8, symBinAddr: 0xECD0, symSize: 0x30 }
+  - { offset: 0x89822, size: 0x8, addend: 0x0, symName: '___57-[FIRMessagingRmqManager loadInitialOutgoingPersistentId]_block_invoke.48', symObjAddr: 0x378, symBinAddr: 0xED00, symSize: 0x30 }
+  - { offset: 0x89871, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager saveLastOutgoingRmqId:]', symObjAddr: 0x3A8, symBinAddr: 0xED30, symSize: 0x58 }
+  - { offset: 0x898DD, size: 0x8, addend: 0x0, symName: '___48-[FIRMessagingRmqManager saveLastOutgoingRmqId:]_block_invoke', symObjAddr: 0x400, symBinAddr: 0xED88, symSize: 0xE8 }
+  - { offset: 0x89A70, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager saveS2dMessageWithRmqId:]', symObjAddr: 0x4F8, symBinAddr: 0xEE70, symSize: 0x7C }
+  - { offset: 0x89AD0, size: 0x8, addend: 0x0, symName: '___50-[FIRMessagingRmqManager saveS2dMessageWithRmqId:]_block_invoke', symObjAddr: 0x574, symBinAddr: 0xEEEC, symSize: 0xEC }
+  - { offset: 0x89BED, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager queryHighestRmqId]', symObjAddr: 0x6B0, symBinAddr: 0xEFD8, symSize: 0xD8 }
+  - { offset: 0x89CD0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager queryLastRmqId]', symObjAddr: 0x788, symBinAddr: 0xF0B0, symSize: 0xD8 }
+  - { offset: 0x89D9F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager querySyncMessageWithRmqID:]', symObjAddr: 0x860, symBinAddr: 0xF188, symSize: 0xD4 }
+  - { offset: 0x89E1B, size: 0x8, addend: 0x0, symName: ___Block_byref_object_copy_, symObjAddr: 0x934, symBinAddr: 0xF25C, symSize: 0x10 }
+  - { offset: 0x89E40, size: 0x8, addend: 0x0, symName: ___Block_byref_object_dispose_, symObjAddr: 0x944, symBinAddr: 0xF26C, symSize: 0x8 }
+  - { offset: 0x89EA0, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48r, symObjAddr: 0xB14, symBinAddr: 0xF43C, symSize: 0x3C }
+  - { offset: 0x89EC9, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48r, symObjAddr: 0xB50, symBinAddr: 0xF478, symSize: 0x34 }
+  - { offset: 0x89EE8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager deleteExpiredOrFinishedSyncMessages]', symObjAddr: 0xB84, symBinAddr: 0xF4AC, symSize: 0x58 }
+  - { offset: 0x89F32, size: 0x8, addend: 0x0, symName: '___61-[FIRMessagingRmqManager deleteExpiredOrFinishedSyncMessages]_block_invoke', symObjAddr: 0xBDC, symBinAddr: 0xF504, symSize: 0x118 }
+  - { offset: 0x8A060, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager saveSyncMessageWithRmqID:expirationTime:]', symObjAddr: 0xCF4, symBinAddr: 0xF61C, symSize: 0x94 }
+  - { offset: 0x8A0EF, size: 0x8, addend: 0x0, symName: '___66-[FIRMessagingRmqManager saveSyncMessageWithRmqID:expirationTime:]_block_invoke', symObjAddr: 0xD88, symBinAddr: 0xF6B0, symSize: 0x178 }
+  - { offset: 0x8A26C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager updateSyncMessageViaAPNSWithRmqID:]', symObjAddr: 0xF00, symBinAddr: 0xF828, symSize: 0x7C }
+  - { offset: 0x8A2CE, size: 0x8, addend: 0x0, symName: '___60-[FIRMessagingRmqManager updateSyncMessageViaAPNSWithRmqID:]_block_invoke', symObjAddr: 0xF7C, symBinAddr: 0xF8A4, symSize: 0x7C }
+  - { offset: 0x8A32F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager updateSyncMessageWithRmqID:column:value:]', symObjAddr: 0xFF8, symBinAddr: 0xF920, symSize: 0x124 }
+  - { offset: 0x8A435, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager pathForDatabase]', symObjAddr: 0x111C, symBinAddr: 0xFA44, symSize: 0x24 }
+  - { offset: 0x8A46D, size: 0x8, addend: 0x0, symName: '+[FIRMessagingRmqManager pathForDatabaseWithName:]', symObjAddr: 0x1140, symBinAddr: 0xFA68, symSize: 0xF8 }
+  - { offset: 0x8A542, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager createTableWithName:command:]', symObjAddr: 0x1238, symBinAddr: 0xFB60, symSize: 0x114 }
+  - { offset: 0x8A68A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager dropTableWithName:]', symObjAddr: 0x134C, symBinAddr: 0xFC74, symSize: 0xB8 }
+  - { offset: 0x8A728, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager removeDatabase]', symObjAddr: 0x1404, symBinAddr: 0xFD2C, symSize: 0x58 }
+  - { offset: 0x8A772, size: 0x8, addend: 0x0, symName: '___40-[FIRMessagingRmqManager removeDatabase]_block_invoke', symObjAddr: 0x145C, symBinAddr: 0xFD84, symSize: 0x58 }
+  - { offset: 0x8A7D4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager openDatabase]', symObjAddr: 0x14B4, symBinAddr: 0xFDDC, symSize: 0x58 }
+  - { offset: 0x8A850, size: 0x8, addend: 0x0, symName: '___38-[FIRMessagingRmqManager openDatabase]_block_invoke', symObjAddr: 0x150C, symBinAddr: 0xFE34, symSize: 0x1F8 }
+  - { offset: 0x8AA5E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager updateDBWithStringRmqID]', symObjAddr: 0x1704, symBinAddr: 0x1002C, symSize: 0x58 }
+  - { offset: 0x8AAA8, size: 0x8, addend: 0x0, symName: '___49-[FIRMessagingRmqManager updateDBWithStringRmqID]_block_invoke', symObjAddr: 0x175C, symBinAddr: 0x10084, symSize: 0x40 }
+  - { offset: 0x8AAEA, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager saveMessageWithRmqId:tag:data:]', symObjAddr: 0x179C, symBinAddr: 0x100C4, symSize: 0x164 }
+  - { offset: 0x8AC55, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager deleteMessagesFromTable:withRmqIds:]', symObjAddr: 0x1900, symBinAddr: 0x10228, symSize: 0xA8 }
+  - { offset: 0x8ACC8, size: 0x8, addend: 0x0, symName: '___61-[FIRMessagingRmqManager deleteMessagesFromTable:withRmqIds:]_block_invoke', symObjAddr: 0x19A8, symBinAddr: 0x102D0, symSize: 0x438 }
+  - { offset: 0x8AF70, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s, symObjAddr: 0x1DE0, symBinAddr: 0x10708, symSize: 0x30 }
+  - { offset: 0x8AF99, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s, symObjAddr: 0x1E10, symBinAddr: 0x10738, symSize: 0x30 }
+  - { offset: 0x8AFB8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager nextRmqId]', symObjAddr: 0x1E40, symBinAddr: 0x10768, symSize: 0x34 }
+  - { offset: 0x8AFF0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager lastErrorMessage]', symObjAddr: 0x1E74, symBinAddr: 0x1079C, symSize: 0x44 }
+  - { offset: 0x8B049, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager lastErrorCode]', symObjAddr: 0x1EB8, symBinAddr: 0x107E0, symSize: 0x8 }
+  - { offset: 0x8B0A2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager logError]', symObjAddr: 0x1EC0, symBinAddr: 0x107E8, symSize: 0x74 }
+  - { offset: 0x8B0E4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager logErrorAndFinalizeStatement:]', symObjAddr: 0x1F34, symBinAddr: 0x1085C, symSize: 0x24 }
+  - { offset: 0x8B137, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager databaseOperationQueue]', symObjAddr: 0x1F58, symBinAddr: 0x10880, symSize: 0x8 }
+  - { offset: 0x8B16F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager databaseName]', symObjAddr: 0x1F60, symBinAddr: 0x10888, symSize: 0x8 }
+  - { offset: 0x8B1A6, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager setDatabaseName:]', symObjAddr: 0x1F68, symBinAddr: 0x10890, symSize: 0xC }
+  - { offset: 0x8B1E7, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager outstandingMessages]', symObjAddr: 0x1F74, symBinAddr: 0x1089C, symSize: 0x8 }
+  - { offset: 0x8B21E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager setOutstandingMessages:]', symObjAddr: 0x1F7C, symBinAddr: 0x108A4, symSize: 0xC }
+  - { offset: 0x8B25F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager rmqId]', symObjAddr: 0x1F88, symBinAddr: 0x108B0, symSize: 0x8 }
+  - { offset: 0x8B296, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager setRmqId:]', symObjAddr: 0x1F90, symBinAddr: 0x108B8, symSize: 0x8 }
+  - { offset: 0x8B2D3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingRmqManager .cxx_destruct]', symObjAddr: 0x1F98, symBinAddr: 0x108C0, symSize: 0x3C }
+  - { offset: 0x8B9D9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingSyncMessageManager init]', symObjAddr: 0x0, symBinAddr: 0x108FC, symSize: 0x28 }
+  - { offset: 0x8BA58, size: 0x8, addend: 0x0, symName: '-[FIRMessagingSyncMessageManager init]', symObjAddr: 0x0, symBinAddr: 0x108FC, symSize: 0x28 }
+  - { offset: 0x8BA8F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingSyncMessageManager initWithRmqManager:]', symObjAddr: 0x28, symBinAddr: 0x10924, symSize: 0x70 }
+  - { offset: 0x8BAD6, size: 0x8, addend: 0x0, symName: '-[FIRMessagingSyncMessageManager removeExpiredSyncMessages]', symObjAddr: 0x98, symBinAddr: 0x10994, symSize: 0x2C }
+  - { offset: 0x8BB09, size: 0x8, addend: 0x0, symName: '-[FIRMessagingSyncMessageManager didReceiveAPNSSyncMessage:]', symObjAddr: 0xC4, symBinAddr: 0x109C0, symSize: 0x130 }
+  - { offset: 0x8BBBE, size: 0x8, addend: 0x0, symName: '+[FIRMessagingSyncMessageManager expirationTimeForSyncMessage:]', symObjAddr: 0x1F4, symBinAddr: 0x10AF0, symSize: 0x88 }
+  - { offset: 0x8BC3B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingSyncMessageManager rmqManager]', symObjAddr: 0x27C, symBinAddr: 0x10B78, symSize: 0x8 }
+  - { offset: 0x8BC72, size: 0x8, addend: 0x0, symName: '-[FIRMessagingSyncMessageManager setRmqManager:]', symObjAddr: 0x284, symBinAddr: 0x10B80, symSize: 0xC }
+  - { offset: 0x8BCB3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingSyncMessageManager .cxx_destruct]', symObjAddr: 0x290, symBinAddr: 0x10B8C, symSize: 0xC }
+  - { offset: 0x8BDA3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenDeleteOperation initWithAuthorizedEntity:scope:checkinPreferences:instanceID:action:heartbeatLogger:]', symObjAddr: 0x0, symBinAddr: 0x10B98, symSize: 0x58 }
+  - { offset: 0x8BF54, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenDeleteOperation initWithAuthorizedEntity:scope:checkinPreferences:instanceID:action:heartbeatLogger:]', symObjAddr: 0x0, symBinAddr: 0x10B98, symSize: 0x58 }
+  - { offset: 0x8BFEB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenDeleteOperation performTokenOperation]', symObjAddr: 0x58, symBinAddr: 0x10BF0, symSize: 0x388 }
+  - { offset: 0x8C0F7, size: 0x8, addend: 0x0, symName: '___57-[FIRMessagingTokenDeleteOperation performTokenOperation]_block_invoke', symObjAddr: 0x3E0, symBinAddr: 0x10F78, symSize: 0x78 }
+  - { offset: 0x8C181, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenDeleteOperation handleResponseWithData:response:error:]', symObjAddr: 0x46C, symBinAddr: 0x10FF0, symSize: 0x1D4 }
+  - { offset: 0x8C3F0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenFetchOperation initWithAuthorizedEntity:scope:options:checkinPreferences:instanceID:heartbeatLogger:]', symObjAddr: 0x0, symBinAddr: 0x111C4, symSize: 0x54 }
+  - { offset: 0x8C40A, size: 0x8, addend: 0x0, symName: _kFIRMessagingFirebaseUserAgentKey, symObjAddr: 0x1048, symBinAddr: 0x30DC8, symSize: 0x0 }
+  - { offset: 0x8C42A, size: 0x8, addend: 0x0, symName: _kFIRMessagingFirebaseHeartbeatKey, symObjAddr: 0x1050, symBinAddr: 0x30DD0, symSize: 0x0 }
+  - { offset: 0x8C467, size: 0x8, addend: 0x0, symName: _phoneRegistrationErrorRetryCount, symObjAddr: 0x7864, symBinAddr: 0x3D9A0, symSize: 0x0 }
+  - { offset: 0x8C601, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenFetchOperation initWithAuthorizedEntity:scope:options:checkinPreferences:instanceID:heartbeatLogger:]', symObjAddr: 0x0, symBinAddr: 0x111C4, symSize: 0x54 }
+  - { offset: 0x8C698, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenFetchOperation performTokenOperation]', symObjAddr: 0x54, symBinAddr: 0x11218, symSize: 0x57C }
+  - { offset: 0x8C86B, size: 0x8, addend: 0x0, symName: '___56-[FIRMessagingTokenFetchOperation performTokenOperation]_block_invoke', symObjAddr: 0x5D0, symBinAddr: 0x11794, symSize: 0x78 }
+  - { offset: 0x8C8F5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenFetchOperation handleResponseWithData:response:error:]', symObjAddr: 0x65C, symBinAddr: 0x1180C, symSize: 0x388 }
+  - { offset: 0x8CACC, size: 0x8, addend: 0x0, symName: '___73-[FIRMessagingTokenFetchOperation handleResponseWithData:response:error:]_block_invoke', symObjAddr: 0x9E4, symBinAddr: 0x11B94, symSize: 0x3C }
+  - { offset: 0x8CB26, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenFetchOperation parseFetchTokenResponse:]', symObjAddr: 0xA20, symBinAddr: 0x11BD0, symSize: 0x18C }
+  - { offset: 0x8CDBD, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo initWithAuthorizedEntity:scope:token:appVersion:firebaseAppID:]', symObjAddr: 0x0, symBinAddr: 0x11D5C, symSize: 0x114 }
+  - { offset: 0x8CF25, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo initWithAuthorizedEntity:scope:token:appVersion:firebaseAppID:]', symObjAddr: 0x0, symBinAddr: 0x11D5C, symSize: 0x114 }
+  - { offset: 0x8CFAC, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo isFreshWithIID:]', symObjAddr: 0x114, symBinAddr: 0x11E70, symSize: 0x19C }
+  - { offset: 0x8D0FD, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo hasDenylistedScope]', symObjAddr: 0x2B0, symBinAddr: 0x1200C, symSize: 0x40 }
+  - { offset: 0x8D134, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo isDefaultToken]', symObjAddr: 0x2F0, symBinAddr: 0x1204C, symSize: 0x40 }
+  - { offset: 0x8D16B, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTokenInfo supportsSecureCoding]', symObjAddr: 0x330, symBinAddr: 0x1208C, symSize: 0x8 }
+  - { offset: 0x8D19E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo initWithCoder:]', symObjAddr: 0x338, symBinAddr: 0x12094, symSize: 0x40C }
+  - { offset: 0x8D2B5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo encodeWithCoder:]', symObjAddr: 0x744, symBinAddr: 0x124A0, symSize: 0x160 }
+  - { offset: 0x8D2F8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo authorizedEntity]', symObjAddr: 0x8A4, symBinAddr: 0x12600, symSize: 0x8 }
+  - { offset: 0x8D32F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo scope]', symObjAddr: 0x8AC, symBinAddr: 0x12608, symSize: 0x8 }
+  - { offset: 0x8D366, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo token]', symObjAddr: 0x8B4, symBinAddr: 0x12610, symSize: 0x8 }
+  - { offset: 0x8D39D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo appVersion]', symObjAddr: 0x8BC, symBinAddr: 0x12618, symSize: 0x8 }
+  - { offset: 0x8D3D4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo firebaseAppID]', symObjAddr: 0x8C4, symBinAddr: 0x12620, symSize: 0x8 }
+  - { offset: 0x8D40B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo APNSInfo]', symObjAddr: 0x8CC, symBinAddr: 0x12628, symSize: 0x8 }
+  - { offset: 0x8D442, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo setAPNSInfo:]', symObjAddr: 0x8D4, symBinAddr: 0x12630, symSize: 0xC }
+  - { offset: 0x8D483, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo cacheTime]', symObjAddr: 0x8E0, symBinAddr: 0x1263C, symSize: 0x8 }
+  - { offset: 0x8D4BA, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo setCacheTime:]', symObjAddr: 0x8E8, symBinAddr: 0x12644, symSize: 0x8 }
+  - { offset: 0x8D4F9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo needsMigration]', symObjAddr: 0x8F0, symBinAddr: 0x1264C, symSize: 0x8 }
+  - { offset: 0x8D530, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenInfo .cxx_destruct]', symObjAddr: 0x8F8, symBinAddr: 0x12654, symSize: 0x6C }
+  - { offset: 0x8D602, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager initWithHeartbeatLogger:]', symObjAddr: 0x0, symBinAddr: 0x126C0, symSize: 0xCC }
+  - { offset: 0x8DE5C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager initWithHeartbeatLogger:]', symObjAddr: 0x0, symBinAddr: 0x126C0, symSize: 0xCC }
+  - { offset: 0x8DEA3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager dealloc]', symObjAddr: 0xCC, symBinAddr: 0x1278C, symSize: 0x44 }
+  - { offset: 0x8DED6, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager tokenAndRequestIfNotExist]', symObjAddr: 0x110, symBinAddr: 0x127D0, symSize: 0x110 }
+  - { offset: 0x8DF2D, size: 0x8, addend: 0x0, symName: '___53-[FIRMessagingTokenManager tokenAndRequestIfNotExist]_block_invoke', symObjAddr: 0x220, symBinAddr: 0x128E0, symSize: 0x4 }
+  - { offset: 0x8DF6C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager defaultFCMToken]', symObjAddr: 0x224, symBinAddr: 0x128E4, symSize: 0x8 }
+  - { offset: 0x8DFA3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager postTokenRefreshNotificationWithDefaultFCMToken:]', symObjAddr: 0x22C, symBinAddr: 0x128EC, symSize: 0x5C }
+  - { offset: 0x8DFF2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager saveDefaultTokenInfoInKeychain:]', symObjAddr: 0x288, symBinAddr: 0x12948, symSize: 0x10C }
+  - { offset: 0x8E06E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager hasTokenChangedFromOldToken:toNewToken:]', symObjAddr: 0x394, symBinAddr: 0x12A54, symSize: 0x94 }
+  - { offset: 0x8E0C1, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager tokenOptions]', symObjAddr: 0x428, symBinAddr: 0x12AE8, symSize: 0x108 }
+  - { offset: 0x8E118, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager deviceAuthID]', symObjAddr: 0x530, symBinAddr: 0x12BF0, symSize: 0x3C }
+  - { offset: 0x8E14F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager secretToken]', symObjAddr: 0x56C, symBinAddr: 0x12C2C, symSize: 0x3C }
+  - { offset: 0x8E186, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager versionInfo]', symObjAddr: 0x5A8, symBinAddr: 0x12C68, symSize: 0x3C }
+  - { offset: 0x8E1BD, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager configureTokenOperations]', symObjAddr: 0x5E4, symBinAddr: 0x12CA4, symSize: 0x78 }
+  - { offset: 0x8E1F0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager tokenWithAuthorizedEntity:scope:options:handler:]', symObjAddr: 0x65C, symBinAddr: 0x12D1C, symSize: 0x430 }
+  - { offset: 0x8E362, size: 0x8, addend: 0x0, symName: '___76-[FIRMessagingTokenManager tokenWithAuthorizedEntity:scope:options:handler:]_block_invoke', symObjAddr: 0xA8C, symBinAddr: 0x1314C, symSize: 0x5C }
+  - { offset: 0x8E3CF, size: 0x8, addend: 0x0, symName: '___76-[FIRMessagingTokenManager tokenWithAuthorizedEntity:scope:options:handler:]_block_invoke.23', symObjAddr: 0xB00, symBinAddr: 0x131A8, symSize: 0xBC }
+  - { offset: 0x8E440, size: 0x8, addend: 0x0, symName: '___76-[FIRMessagingTokenManager tokenWithAuthorizedEntity:scope:options:handler:]_block_invoke_2', symObjAddr: 0xBBC, symBinAddr: 0x13264, symSize: 0x14 }
+  - { offset: 0x8E4A7, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48b, symObjAddr: 0xBD0, symBinAddr: 0x13278, symSize: 0x3C }
+  - { offset: 0x8E4D0, size: 0x8, addend: 0x0, symName: '___76-[FIRMessagingTokenManager tokenWithAuthorizedEntity:scope:options:handler:]_block_invoke.26', symObjAddr: 0xC3C, symBinAddr: 0x132B4, symSize: 0x1B0 }
+  - { offset: 0x8E5F6, size: 0x8, addend: 0x0, symName: '___76-[FIRMessagingTokenManager tokenWithAuthorizedEntity:scope:options:handler:]_block_invoke_2.29', symObjAddr: 0xDEC, symBinAddr: 0x13464, symSize: 0x16C }
+  - { offset: 0x8E722, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56b64w, symObjAddr: 0xF58, symBinAddr: 0x135D0, symSize: 0x50 }
+  - { offset: 0x8E74B, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s64w, symObjAddr: 0xFA8, symBinAddr: 0x13620, symSize: 0x40 }
+  - { offset: 0x8E76A, size: 0x8, addend: 0x0, symName: ___copy_helper_block_e8_32s40s48s56b64b72w, symObjAddr: 0xFE8, symBinAddr: 0x13660, symSize: 0x60 }
+  - { offset: 0x8E793, size: 0x8, addend: 0x0, symName: ___destroy_helper_block_e8_32s40s48s56s64s72w, symObjAddr: 0x1048, symBinAddr: 0x136C0, symSize: 0x48 }
+  - { offset: 0x8E7B2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager fetchNewTokenWithAuthorizedEntity:scope:instanceID:options:handler:]', symObjAddr: 0x1090, symBinAddr: 0x13708, symSize: 0x210 }
+  - { offset: 0x8E87C, size: 0x8, addend: 0x0, symName: '___95-[FIRMessagingTokenManager fetchNewTokenWithAuthorizedEntity:scope:instanceID:options:handler:]_block_invoke', symObjAddr: 0x12A0, symBinAddr: 0x13918, symSize: 0x200 }
+  - { offset: 0x8E9C9, size: 0x8, addend: 0x0, symName: '___95-[FIRMessagingTokenManager fetchNewTokenWithAuthorizedEntity:scope:instanceID:options:handler:]_block_invoke_2', symObjAddr: 0x14A0, symBinAddr: 0x13B18, symSize: 0xA4 }
+  - { offset: 0x8EA65, size: 0x8, addend: 0x0, symName: '___95-[FIRMessagingTokenManager fetchNewTokenWithAuthorizedEntity:scope:instanceID:options:handler:]_block_invoke.39', symObjAddr: 0x15C0, symBinAddr: 0x13BBC, symSize: 0xC0 }
+  - { offset: 0x8EAEC, size: 0x8, addend: 0x0, symName: '___95-[FIRMessagingTokenManager fetchNewTokenWithAuthorizedEntity:scope:instanceID:options:handler:]_block_invoke_2.40', symObjAddr: 0x1680, symBinAddr: 0x13C7C, symSize: 0x14 }
+  - { offset: 0x8EB69, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager cachedTokenInfoWithAuthorizedEntity:scope:]', symObjAddr: 0x1694, symBinAddr: 0x13C90, symSize: 0x8 }
+  - { offset: 0x8EBCC, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager isDefaultTokenWithAuthorizedEntity:scope:]', symObjAddr: 0x169C, symBinAddr: 0x13C98, symSize: 0x90 }
+  - { offset: 0x8EC26, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager deleteTokenWithAuthorizedEntity:scope:instanceID:handler:]', symObjAddr: 0x172C, symBinAddr: 0x13D28, symSize: 0x184 }
+  - { offset: 0x8ECC0, size: 0x8, addend: 0x0, symName: '___85-[FIRMessagingTokenManager deleteTokenWithAuthorizedEntity:scope:instanceID:handler:]_block_invoke', symObjAddr: 0x18B0, symBinAddr: 0x13EAC, symSize: 0xAC }
+  - { offset: 0x8ED76, size: 0x8, addend: 0x0, symName: '___85-[FIRMessagingTokenManager deleteTokenWithAuthorizedEntity:scope:instanceID:handler:]_block_invoke_2', symObjAddr: 0x195C, symBinAddr: 0x13F58, symSize: 0x10 }
+  - { offset: 0x8EDD1, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager deleteAllTokensWithHandler:]', symObjAddr: 0x19C8, symBinAddr: 0x13F68, symSize: 0xE8 }
+  - { offset: 0x8EE26, size: 0x8, addend: 0x0, symName: '___55-[FIRMessagingTokenManager deleteAllTokensWithHandler:]_block_invoke', symObjAddr: 0x1AB0, symBinAddr: 0x14050, symSize: 0x1E4 }
+  - { offset: 0x8EF06, size: 0x8, addend: 0x0, symName: '___55-[FIRMessagingTokenManager deleteAllTokensWithHandler:]_block_invoke_2', symObjAddr: 0x1C94, symBinAddr: 0x14234, symSize: 0x10 }
+  - { offset: 0x8EF61, size: 0x8, addend: 0x0, symName: '___55-[FIRMessagingTokenManager deleteAllTokensWithHandler:]_block_invoke_3', symObjAddr: 0x1CA4, symBinAddr: 0x14244, symSize: 0x10 }
+  - { offset: 0x8EFB2, size: 0x8, addend: 0x0, symName: '___55-[FIRMessagingTokenManager deleteAllTokensWithHandler:]_block_invoke_4', symObjAddr: 0x1CB4, symBinAddr: 0x14254, symSize: 0xA0 }
+  - { offset: 0x8F042, size: 0x8, addend: 0x0, symName: '___55-[FIRMessagingTokenManager deleteAllTokensWithHandler:]_block_invoke_5', symObjAddr: 0x1D54, symBinAddr: 0x142F4, symSize: 0x10 }
+  - { offset: 0x8F09D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager deleteAllTokensLocallyWithHandler:]', symObjAddr: 0x1DC4, symBinAddr: 0x14304, symSize: 0x8 }
+  - { offset: 0x8F0E0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager stopAllTokenOperations]', symObjAddr: 0x1DCC, symBinAddr: 0x1430C, symSize: 0x50 }
+  - { offset: 0x8F114, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager deleteWithHandler:]', symObjAddr: 0x1E1C, symBinAddr: 0x1435C, symSize: 0xCC }
+  - { offset: 0x8F169, size: 0x8, addend: 0x0, symName: '___46-[FIRMessagingTokenManager deleteWithHandler:]_block_invoke', symObjAddr: 0x1EE8, symBinAddr: 0x14428, symSize: 0xEC }
+  - { offset: 0x8F229, size: 0x8, addend: 0x0, symName: '___46-[FIRMessagingTokenManager deleteWithHandler:]_block_invoke_2', symObjAddr: 0x1FD4, symBinAddr: 0x14514, symSize: 0xCC }
+  - { offset: 0x8F29D, size: 0x8, addend: 0x0, symName: '___46-[FIRMessagingTokenManager deleteWithHandler:]_block_invoke_3', symObjAddr: 0x20A0, symBinAddr: 0x145E0, symSize: 0xC }
+  - { offset: 0x8F2FF, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager resetCredentialsIfNeeded]', symObjAddr: 0x20AC, symBinAddr: 0x145EC, symSize: 0xC8 }
+  - { offset: 0x8F363, size: 0x8, addend: 0x0, symName: '___52-[FIRMessagingTokenManager resetCredentialsIfNeeded]_block_invoke', symObjAddr: 0x2174, symBinAddr: 0x146B4, symSize: 0x104 }
+  - { offset: 0x8F3E3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager didDeleteFCMScopedTokensForCheckin:]', symObjAddr: 0x22A0, symBinAddr: 0x147B8, symSize: 0x70 }
+  - { offset: 0x8F439, size: 0x8, addend: 0x0, symName: '___63-[FIRMessagingTokenManager didDeleteFCMScopedTokensForCheckin:]_block_invoke', symObjAddr: 0x2310, symBinAddr: 0x14828, symSize: 0x60 }
+  - { offset: 0x8F4B7, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager createFetchOperationWithAuthorizedEntity:scope:options:instanceID:]', symObjAddr: 0x2370, symBinAddr: 0x14888, symSize: 0xE0 }
+  - { offset: 0x8F555, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager createDeleteOperationWithAuthorizedEntity:scope:checkinPreferences:instanceID:action:]', symObjAddr: 0x2450, symBinAddr: 0x14968, symSize: 0xC4 }
+  - { offset: 0x8F5F3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager checkTokenRefreshPolicyWithIID:]', symObjAddr: 0x2514, symBinAddr: 0x14A2C, symSize: 0x2A0 }
+  - { offset: 0x8F6BD, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager updateTokensToAPNSDeviceToken:isSandbox:]', symObjAddr: 0x27B4, symBinAddr: 0x14CCC, symSize: 0x330 }
+  - { offset: 0x8F798, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager setAPNSToken:withUserInfo:]', symObjAddr: 0x2AE4, symBinAddr: 0x14FFC, symSize: 0x284 }
+  - { offset: 0x8F86E, size: 0x8, addend: 0x0, symName: '___54-[FIRMessagingTokenManager setAPNSToken:withUserInfo:]_block_invoke', symObjAddr: 0x2D68, symBinAddr: 0x15280, symSize: 0x2F8 }
+  - { offset: 0x8F959, size: 0x8, addend: 0x0, symName: '___54-[FIRMessagingTokenManager setAPNSToken:withUserInfo:]_block_invoke_2', symObjAddr: 0x3060, symBinAddr: 0x15578, symSize: 0x4 }
+  - { offset: 0x8F99C, size: 0x8, addend: 0x0, symName: '___54-[FIRMessagingTokenManager setAPNSToken:withUserInfo:]_block_invoke_3', symObjAddr: 0x3064, symBinAddr: 0x1557C, symSize: 0x4 }
+  - { offset: 0x8F9DF, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager hasValidCheckinInfo]', symObjAddr: 0x3098, symBinAddr: 0x15580, symSize: 0x4C }
+  - { offset: 0x8FA17, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager fcmSenderID]', symObjAddr: 0x30E4, symBinAddr: 0x155CC, symSize: 0x8 }
+  - { offset: 0x8FA4E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager setFcmSenderID:]', symObjAddr: 0x30EC, symBinAddr: 0x155D4, symSize: 0x8 }
+  - { offset: 0x8FA8D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager firebaseAppID]', symObjAddr: 0x30F4, symBinAddr: 0x155DC, symSize: 0x8 }
+  - { offset: 0x8FAC4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager setFirebaseAppID:]', symObjAddr: 0x30FC, symBinAddr: 0x155E4, symSize: 0x8 }
+  - { offset: 0x8FB03, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager authService]', symObjAddr: 0x3104, symBinAddr: 0x155EC, symSize: 0x8 }
+  - { offset: 0x8FB3A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager setAuthService:]', symObjAddr: 0x310C, symBinAddr: 0x155F4, symSize: 0xC }
+  - { offset: 0x8FB7B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager checkinStore]', symObjAddr: 0x3118, symBinAddr: 0x15600, symSize: 0x8 }
+  - { offset: 0x8FBB2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager setCheckinStore:]', symObjAddr: 0x3120, symBinAddr: 0x15608, symSize: 0xC }
+  - { offset: 0x8FBF3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager tokenOperations]', symObjAddr: 0x312C, symBinAddr: 0x15614, symSize: 0x8 }
+  - { offset: 0x8FC2A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager currentAPNSInfo]', symObjAddr: 0x3134, symBinAddr: 0x1561C, symSize: 0x8 }
+  - { offset: 0x8FC61, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager setCurrentAPNSInfo:]', symObjAddr: 0x313C, symBinAddr: 0x15624, symSize: 0xC }
+  - { offset: 0x8FCA2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager installations]', symObjAddr: 0x3148, symBinAddr: 0x15630, symSize: 0x8 }
+  - { offset: 0x8FCD9, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager setInstallations:]', symObjAddr: 0x3150, symBinAddr: 0x15638, symSize: 0xC }
+  - { offset: 0x8FD1A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager heartbeatLogger]', symObjAddr: 0x315C, symBinAddr: 0x15644, symSize: 0xC }
+  - { offset: 0x8FD51, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenManager .cxx_destruct]', symObjAddr: 0x3168, symBinAddr: 0x15650, symSize: 0x90 }
+  - { offset: 0x90C80, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation initWithAction:forAuthorizedEntity:scope:options:checkinPreferences:instanceID:heartbeatLogger:]', symObjAddr: 0x0, symBinAddr: 0x156E0, symSize: 0x1A4 }
+  - { offset: 0x90F66, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation initWithAction:forAuthorizedEntity:scope:options:checkinPreferences:instanceID:heartbeatLogger:]', symObjAddr: 0x0, symBinAddr: 0x156E0, symSize: 0x1A4 }
+  - { offset: 0x9100C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation dealloc]', symObjAddr: 0x1A4, symBinAddr: 0x15884, symSize: 0x50 }
+  - { offset: 0x9103F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation addCompletionHandler:]', symObjAddr: 0x1F4, symBinAddr: 0x158D4, symSize: 0x54 }
+  - { offset: 0x91082, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation isAsynchronous]', symObjAddr: 0x248, symBinAddr: 0x15928, symSize: 0x8 }
+  - { offset: 0x910B5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation isExecuting]', symObjAddr: 0x250, symBinAddr: 0x15930, symSize: 0x10 }
+  - { offset: 0x910EC, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation setExecuting:]', symObjAddr: 0x260, symBinAddr: 0x15940, symSize: 0x4C }
+  - { offset: 0x9112B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation isFinished]', symObjAddr: 0x2AC, symBinAddr: 0x1598C, symSize: 0x10 }
+  - { offset: 0x91162, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation setFinished:]', symObjAddr: 0x2BC, symBinAddr: 0x1599C, symSize: 0x4C }
+  - { offset: 0x911A1, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation start]', symObjAddr: 0x308, symBinAddr: 0x159E8, symSize: 0x120 }
+  - { offset: 0x91200, size: 0x8, addend: 0x0, symName: '___35-[FIRMessagingTokenOperation start]_block_invoke', symObjAddr: 0x428, symBinAddr: 0x15B08, symSize: 0xA8 }
+  - { offset: 0x9125F, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation finishWithResult:token:error:]', symObjAddr: 0x4E0, symBinAddr: 0x15BB0, symSize: 0x170 }
+  - { offset: 0x912FB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation cancel]', symObjAddr: 0x650, symBinAddr: 0x15D20, symSize: 0x6C }
+  - { offset: 0x9132E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation performTokenOperation]', symObjAddr: 0x6BC, symBinAddr: 0x15D8C, symSize: 0x4 }
+  - { offset: 0x9135D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation tokenRequest]', symObjAddr: 0x6C0, symBinAddr: 0x15D90, symSize: 0x90 }
+  - { offset: 0x913A4, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTokenOperation requestWithAuthHeader:FISAuthToken:]', symObjAddr: 0x750, symBinAddr: 0x15E20, symSize: 0xEC }
+  - { offset: 0x9144B, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTokenOperation standardQueryItemsWithDeviceID:scope:]', symObjAddr: 0x83C, symBinAddr: 0x15F0C, symSize: 0x260 }
+  - { offset: 0x91545, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTokenOperation HTTPAuthHeaderFromCheckin:]', symObjAddr: 0xA9C, symBinAddr: 0x1616C, symSize: 0x7C }
+  - { offset: 0x915A8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation action]', symObjAddr: 0xB18, symBinAddr: 0x161E8, symSize: 0x10 }
+  - { offset: 0x915DF, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation authorizedEntity]', symObjAddr: 0xB28, symBinAddr: 0x161F8, symSize: 0x10 }
+  - { offset: 0x91616, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation scope]', symObjAddr: 0xB38, symBinAddr: 0x16208, symSize: 0x10 }
+  - { offset: 0x9164D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation options]', symObjAddr: 0xB48, symBinAddr: 0x16218, symSize: 0x10 }
+  - { offset: 0x91684, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation checkinPreferences]', symObjAddr: 0xB58, symBinAddr: 0x16228, symSize: 0x10 }
+  - { offset: 0x916BB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation instanceID]', symObjAddr: 0xB68, symBinAddr: 0x16238, symSize: 0x10 }
+  - { offset: 0x916F2, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation setInstanceID:]', symObjAddr: 0xB78, symBinAddr: 0x16248, symSize: 0x14 }
+  - { offset: 0x91733, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation result]', symObjAddr: 0xB8C, symBinAddr: 0x1625C, symSize: 0x10 }
+  - { offset: 0x9176A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation dataTask]', symObjAddr: 0xB9C, symBinAddr: 0x1626C, symSize: 0x10 }
+  - { offset: 0x917A1, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation setDataTask:]', symObjAddr: 0xBAC, symBinAddr: 0x1627C, symSize: 0xC }
+  - { offset: 0x917E0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation heartbeatLogger]', symObjAddr: 0xBB8, symBinAddr: 0x16288, symSize: 0x10 }
+  - { offset: 0x91817, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation FISAuthToken]', symObjAddr: 0xBC8, symBinAddr: 0x16298, symSize: 0x10 }
+  - { offset: 0x9184E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation setFISAuthToken:]', symObjAddr: 0xBD8, symBinAddr: 0x162A8, symSize: 0xC }
+  - { offset: 0x9188D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenOperation .cxx_destruct]', symObjAddr: 0xBE4, symBinAddr: 0x162B4, symSize: 0xCC }
+  - { offset: 0x91A90, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore init]', symObjAddr: 0x0, symBinAddr: 0x16380, symSize: 0x6C }
+  - { offset: 0x91AF8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore init]', symObjAddr: 0x0, symBinAddr: 0x16380, symSize: 0x6C }
+  - { offset: 0x91B2F, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTokenStore serviceKeyForAuthorizedEntity:scope:]', symObjAddr: 0x6C, symBinAddr: 0x163EC, symSize: 0x30 }
+  - { offset: 0x91B82, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore tokenInfoWithAuthorizedEntity:scope:]', symObjAddr: 0x9C, symBinAddr: 0x1641C, symSize: 0x174 }
+  - { offset: 0x91C33, size: 0x8, addend: 0x0, symName: '___62-[FIRMessagingTokenStore tokenInfoWithAuthorizedEntity:scope:]_block_invoke', symObjAddr: 0x210, symBinAddr: 0x16590, symSize: 0x6C }
+  - { offset: 0x91CCD, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore cachedTokenInfos]', symObjAddr: 0x2DC, symBinAddr: 0x165FC, symSize: 0x18C }
+  - { offset: 0x91D78, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTokenStore tokenInfoFromKeychainItem:]', symObjAddr: 0x468, symBinAddr: 0x16788, symSize: 0x144 }
+  - { offset: 0x91E03, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore saveTokenInfo:handler:]', symObjAddr: 0x5AC, symBinAddr: 0x168CC, symSize: 0x148 }
+  - { offset: 0x91E94, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore saveTokenInfoInCache:]', symObjAddr: 0x6F4, symBinAddr: 0x16A14, symSize: 0x12C }
+  - { offset: 0x91F15, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore removeTokenWithAuthorizedEntity:scope:]', symObjAddr: 0x820, symBinAddr: 0x16B40, symSize: 0xE8 }
+  - { offset: 0x91FA4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore removeAllTokensWithHandler:]', symObjAddr: 0x908, symBinAddr: 0x16C28, symSize: 0x6C }
+  - { offset: 0x92005, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore keychain]', symObjAddr: 0x974, symBinAddr: 0x16C94, symSize: 0x8 }
+  - { offset: 0x9203C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore setKeychain:]', symObjAddr: 0x97C, symBinAddr: 0x16C9C, symSize: 0xC }
+  - { offset: 0x9207D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTokenStore .cxx_destruct]', symObjAddr: 0x988, symBinAddr: 0x16CA8, symSize: 0xC }
+  - { offset: 0x92341, size: 0x8, addend: 0x0, symName: _FIRMessagingSubscriptionsServer, symObjAddr: 0x0, symBinAddr: 0x16CB4, symSize: 0x30 }
+  - { offset: 0x92354, size: 0x8, addend: 0x0, symName: _FIRMessagingSubscriptionsServer, symObjAddr: 0x0, symBinAddr: 0x16CB4, symSize: 0x30 }
+  - { offset: 0x9237A, size: 0x8, addend: 0x0, symName: _FIRMessagingSubscriptionsServer.serverHost, symObjAddr: 0x9410, symBinAddr: 0x3D9A8, symSize: 0x0 }
+  - { offset: 0x92390, size: 0x8, addend: 0x0, symName: _FIRMessagingSubscriptionsServer.onceToken, symObjAddr: 0x9418, symBinAddr: 0x3D9B0, symSize: 0x0 }
+  - { offset: 0x923BD, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTopicOperation sharedSession]', symObjAddr: 0xBC, symBinAddr: 0x16D70, symSize: 0x30 }
+  - { offset: 0x923E7, size: 0x8, addend: 0x0, symName: _sharedSession.subscriptionOperationSharedSession, symObjAddr: 0x9420, symBinAddr: 0x3D9B8, symSize: 0x0 }
+  - { offset: 0x923FD, size: 0x8, addend: 0x0, symName: _sharedSession.onceToken, symObjAddr: 0x9428, symBinAddr: 0x3D9C0, symSize: 0x0 }
+  - { offset: 0x92685, size: 0x8, addend: 0x0, symName: _FIRMessagingSubscriptionsServer.cold.1, symObjAddr: 0xD08, symBinAddr: 0x18A28, symSize: 0x14 }
+  - { offset: 0x926A1, size: 0x8, addend: 0x0, symName: _FIRMessagingSubscriptionsServer.cold.1, symObjAddr: 0xD08, symBinAddr: 0x18A28, symSize: 0x14 }
+  - { offset: 0x926B3, size: 0x8, addend: 0x0, symName: ___FIRMessagingSubscriptionsServer_block_invoke, symObjAddr: 0x30, symBinAddr: 0x16CE4, symSize: 0x8C }
+  - { offset: 0x92709, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTopicOperation sharedSession].cold.1', symObjAddr: 0xD1C, symBinAddr: 0x18A3C, symSize: 0x14 }
+  - { offset: 0x92725, size: 0x8, addend: 0x0, symName: '+[FIRMessagingTopicOperation sharedSession].cold.1', symObjAddr: 0xD1C, symBinAddr: 0x18A3C, symSize: 0x14 }
+  - { offset: 0x92737, size: 0x8, addend: 0x0, symName: '___43+[FIRMessagingTopicOperation sharedSession]_block_invoke', symObjAddr: 0xEC, symBinAddr: 0x16DA0, symSize: 0x78 }
+  - { offset: 0x9277D, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation initWithTopic:action:tokenManager:options:completion:]', symObjAddr: 0x164, symBinAddr: 0x16E18, symSize: 0x12C }
+  - { offset: 0x92804, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation dealloc]', symObjAddr: 0x290, symBinAddr: 0x16F44, symSize: 0x68 }
+  - { offset: 0x92837, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation isAsynchronous]', symObjAddr: 0x2F8, symBinAddr: 0x16FAC, symSize: 0x8 }
+  - { offset: 0x9286A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation isExecuting]', symObjAddr: 0x300, symBinAddr: 0x16FB4, symSize: 0x10 }
+  - { offset: 0x928A1, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation setExecuting:]', symObjAddr: 0x310, symBinAddr: 0x16FC4, symSize: 0x4C }
+  - { offset: 0x928E0, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation isFinished]', symObjAddr: 0x35C, symBinAddr: 0x17010, symSize: 0x10 }
+  - { offset: 0x92917, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation setFinished:]', symObjAddr: 0x36C, symBinAddr: 0x17020, symSize: 0x4C }
+  - { offset: 0x92956, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation start]', symObjAddr: 0x3B8, symBinAddr: 0x1706C, symSize: 0x7C }
+  - { offset: 0x929A8, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation finishWithError:]', symObjAddr: 0x434, symBinAddr: 0x170E8, symSize: 0x98 }
+  - { offset: 0x92A01, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation cancel]', symObjAddr: 0x4CC, symBinAddr: 0x17180, symSize: 0x88 }
+  - { offset: 0x92A44, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation performSubscriptionChange]', symObjAddr: 0x554, symBinAddr: 0x17208, symSize: 0x424 }
+  - { offset: 0x92BA6, size: 0x8, addend: 0x0, symName: '___55-[FIRMessagingTopicOperation performSubscriptionChange]_block_invoke', symObjAddr: 0x978, symBinAddr: 0x1762C, symSize: 0x228 }
+  - { offset: 0x92CB4, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation topic]', symObjAddr: 0xBB4, symBinAddr: 0x17854, symSize: 0x10 }
+  - { offset: 0x92CEB, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation setTopic:]', symObjAddr: 0xBC4, symBinAddr: 0x17864, symSize: 0xC }
+  - { offset: 0x92D2A, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation action]', symObjAddr: 0xBD0, symBinAddr: 0x17870, symSize: 0x10 }
+  - { offset: 0x92D61, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation setAction:]', symObjAddr: 0xBE0, symBinAddr: 0x17880, symSize: 0x10 }
+  - { offset: 0x92D9E, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation token]', symObjAddr: 0xBF0, symBinAddr: 0x17890, symSize: 0x10 }
+  - { offset: 0x92DD5, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation options]', symObjAddr: 0xC00, symBinAddr: 0x178A0, symSize: 0x10 }
+  - { offset: 0x92E0C, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation setOptions:]', symObjAddr: 0xC10, symBinAddr: 0x178B0, symSize: 0xC }
+  - { offset: 0x92E4B, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation tokenManager]', symObjAddr: 0xC1C, symBinAddr: 0x178BC, symSize: 0x10 }
+  - { offset: 0x92E82, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation setTokenManager:]', symObjAddr: 0xC2C, symBinAddr: 0x178CC, symSize: 0x14 }
+  - { offset: 0x92EC3, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation completion]', symObjAddr: 0xC40, symBinAddr: 0x178E0, symSize: 0x10 }
+  - { offset: 0x92EFA, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation setCompletion:]', symObjAddr: 0xC50, symBinAddr: 0x178F0, symSize: 0xC }
+  - { offset: 0x92F39, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation dataTask]', symObjAddr: 0xC5C, symBinAddr: 0x178FC, symSize: 0x10 }
+  - { offset: 0x92F70, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation setDataTask:]', symObjAddr: 0xC6C, symBinAddr: 0x1790C, symSize: 0xC }
+  - { offset: 0x92FAF, size: 0x8, addend: 0x0, symName: '-[FIRMessagingTopicOperation .cxx_destruct]', symObjAddr: 0xC78, symBinAddr: 0x17918, symSize: 0x90 }
+  - { offset: 0x93245, size: 0x8, addend: 0x0, symName: _FIRMessagingTokenRegisterServer, symObjAddr: 0x0, symBinAddr: 0x179A8, symSize: 0xC }
+  - { offset: 0x9325F, size: 0x8, addend: 0x0, symName: _kFIRMessagingInstanceIDUserDefaultsKeyLocale, symObjAddr: 0x2FD0, symBinAddr: 0x31188, symSize: 0x0 }
+  - { offset: 0x93281, size: 0x8, addend: 0x0, symName: _FIRMessagingIsSandboxApp, symObjAddr: 0xAB0, symBinAddr: 0x18458, symSize: 0x30 }
+  - { offset: 0x932A9, size: 0x8, addend: 0x0, symName: _FIRMessagingIsSandboxApp.isSandboxApp, symObjAddr: 0x3E10, symBinAddr: 0x3D938, symSize: 0x0 }
+  - { offset: 0x932C0, size: 0x8, addend: 0x0, symName: _FIRMessagingIsSandboxApp.onceToken, symObjAddr: 0x9A80, symBinAddr: 0x3D9C8, symSize: 0x0 }
+  - { offset: 0x93315, size: 0x8, addend: 0x0, symName: _FIRMessagingTokenRegisterServer, symObjAddr: 0x0, symBinAddr: 0x179A8, symSize: 0xC }
+  - { offset: 0x9332F, size: 0x8, addend: 0x0, symName: _FIRMessagingCurrentTimestampInSeconds, symObjAddr: 0xC, symBinAddr: 0x179B4, symSize: 0x3C }
+  - { offset: 0x93349, size: 0x8, addend: 0x0, symName: _FIRMessagingCurrentTimestampInMilliseconds, symObjAddr: 0x48, symBinAddr: 0x179F0, symSize: 0x28 }
+  - { offset: 0x93372, size: 0x8, addend: 0x0, symName: _FIRMessagingCurrentAppVersion, symObjAddr: 0x70, symBinAddr: 0x17A18, symSize: 0xAC }
+  - { offset: 0x933CC, size: 0x8, addend: 0x0, symName: _FIRMessagingBundleIDByRemovingLastPartFrom, symObjAddr: 0x11C, symBinAddr: 0x17AC4, symSize: 0x68 }
+  - { offset: 0x93417, size: 0x8, addend: 0x0, symName: _FIRMessagingAppIdentifier, symObjAddr: 0x184, symBinAddr: 0x17B2C, symSize: 0x40 }
+  - { offset: 0x93442, size: 0x8, addend: 0x0, symName: _FIRMessagingFirebaseAppID, symObjAddr: 0x1C4, symBinAddr: 0x17B6C, symSize: 0x40 }
+  - { offset: 0x9345C, size: 0x8, addend: 0x0, symName: _FIRMessagingIsWatchKitExtension, symObjAddr: 0x204, symBinAddr: 0x17BAC, symSize: 0x8 }
+  - { offset: 0x93476, size: 0x8, addend: 0x0, symName: _FIRMessagingSupportedDirectory, symObjAddr: 0x20C, symBinAddr: 0x17BB4, symSize: 0x8 }
+  - { offset: 0x93490, size: 0x8, addend: 0x0, symName: _FIRMessagingFirebaselocalesMap, symObjAddr: 0x214, symBinAddr: 0x17BBC, symSize: 0xC }
+  - { offset: 0x934AA, size: 0x8, addend: 0x0, symName: _FIRMessagingFirebaseLocales, symObjAddr: 0x220, symBinAddr: 0x17BC8, symSize: 0x124 }
+  - { offset: 0x93504, size: 0x8, addend: 0x0, symName: _FIRMessagingCurrentLocale, symObjAddr: 0x344, symBinAddr: 0x17CEC, symSize: 0x9C }
+  - { offset: 0x93561, size: 0x8, addend: 0x0, symName: _FIRMessagingHasLocaleChanged, symObjAddr: 0x3E0, symBinAddr: 0x17D88, symSize: 0x84 }
+  - { offset: 0x935AD, size: 0x8, addend: 0x0, symName: _FIRMessagingStringForAPNSDeviceToken, symObjAddr: 0x464, symBinAddr: 0x17E0C, symSize: 0xA8 }
+  - { offset: 0x9361C, size: 0x8, addend: 0x0, symName: _FIRMessagingAPNSTupleStringForTokenAndServerType, symObjAddr: 0x50C, symBinAddr: 0x17EB4, symSize: 0x8C }
+  - { offset: 0x936A3, size: 0x8, addend: 0x0, symName: _FIRMessagingIsProductionApp, symObjAddr: 0x598, symBinAddr: 0x17F40, symSize: 0x518 }
+  - { offset: 0x938EA, size: 0x8, addend: 0x0, symName: _FIRMessagingIsSandboxApp.cold.1, symObjAddr: 0xB00, symBinAddr: 0x18A50, symSize: 0x14 }
+  - { offset: 0x93906, size: 0x8, addend: 0x0, symName: _FIRMessagingIsSandboxApp.cold.1, symObjAddr: 0xB00, symBinAddr: 0x18A50, symSize: 0x14 }
+  - { offset: 0x93919, size: 0x8, addend: 0x0, symName: ___FIRMessagingIsSandboxApp_block_invoke, symObjAddr: 0xAE0, symBinAddr: 0x18488, symSize: 0x20 }
+  - { offset: 0x93A78, size: 0x8, addend: 0x0, symName: _fm_MessagingClientEvent_fields, symObjAddr: 0x0, symBinAddr: 0x1FCD8, symSize: 0x0 }
+  - { offset: 0x93AA6, size: 0x8, addend: 0x0, symName: _fm_MessagingClientEventExtension_fields, symObjAddr: 0x160, symBinAddr: 0x311B0, symSize: 0x0 }
+  - { offset: 0x93AF1, size: 0x8, addend: 0x0, symName: '-[NSDictionary(FIRMessaging) fcm_string]', symObjAddr: 0x0, symBinAddr: 0x184A8, symSize: 0x1B0 }
+  - { offset: 0x93B04, size: 0x8, addend: 0x0, symName: '-[NSDictionary(FIRMessaging) fcm_string]', symObjAddr: 0x0, symBinAddr: 0x184A8, symSize: 0x1B0 }
+  - { offset: 0x93B8D, size: 0x8, addend: 0x0, symName: '-[NSDictionary(FIRMessaging) fcm_hasNonStringKeysOrValues]', symObjAddr: 0x1B0, symBinAddr: 0x18658, symSize: 0x150 }
+  - { offset: 0x93BFA, size: 0x8, addend: 0x0, symName: '-[NSDictionary(FIRMessaging) fcm_trimNonStringValues]', symObjAddr: 0x300, symBinAddr: 0x187A8, symSize: 0x174 }
+  - { offset: 0x93C77, size: 0x8, addend: 0x0, symName: _FIRInclude_NSDictionary_FIRMessaging_Category, symObjAddr: 0x474, symBinAddr: 0x1891C, symSize: 0x4 }
+  - { offset: 0x93D17, size: 0x8, addend: 0x0, symName: '+[NSError(FIRMessaging) messagingErrorWithCode:failureReason:]', symObjAddr: 0x0, symBinAddr: 0x18920, symSize: 0x8C }
+  - { offset: 0x93DAB, size: 0x8, addend: 0x0, symName: '+[NSError(FIRMessaging) messagingErrorWithCode:failureReason:]', symObjAddr: 0x0, symBinAddr: 0x18920, symSize: 0x8C }
+  - { offset: 0x93E0E, size: 0x8, addend: 0x0, symName: _FIRInclude_NSError_FIRMessaging_Category, symObjAddr: 0x8C, symBinAddr: 0x189AC, symSize: 0x4 }
+...

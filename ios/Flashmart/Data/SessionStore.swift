@@ -39,6 +39,11 @@ final class SessionStore {
         persist()
     }
 
+    func patchUser(_ user: SessionUser) {
+        self.user = user
+        persist()
+    }
+
     func clear() {
         token = nil
         user = nil

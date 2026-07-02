@@ -29,11 +29,23 @@ if echo "$DATABASE_URL" | grep -q 'localhost:5435'; then
   [[ "$ans" == [yY]* ]] || exit 1
 fi
 
+MIGRATE_URL="${MIGRATE_DATABASE_URL:-$DATABASE_URL}"
+
 echo "1/3 Prisma migrate deploy..."
-npx prisma migrate deploy
+if [[ -n "${MIGRATE_DATABASE_URL:-}" ]]; then
+  echo "  Using MIGRATE_DATABASE_URL (postgres owner required for DDL)."
+  DATABASE_URL="$MIGRATE_URL" npx prisma migrate deploy
+else
+  echo "  Tip: set MIGRATE_DATABASE_URL to postgres if you see 'must be owner of table'."
+  npx prisma migrate deploy
+fi
 
 echo "2/3 Repair bulk-shipping columns (idempotent)..."
-npm run db:repair-product-bulk-shipping
+if [[ -n "${MIGRATE_DATABASE_URL:-}" ]]; then
+  DATABASE_URL="$MIGRATE_URL" npm run db:repair-product-bulk-shipping
+else
+  npm run db:repair-product-bulk-shipping
+fi
 
 echo "3/4 Import products from Mart/product_upload_template.xls..."
 npm run products:replace-from-template-xls
@@ -42,3 +54,6 @@ echo "4/4 Ensure dealer stock (import clears stock rows)..."
 npm run db:seed-dealer-stock
 
 echo "Done. Re-import finished — check script output for total product count."
+echo ""
+echo "Tip: create admin once (safe — does not wipe products):"
+echo "  ./scripts/prod-seed-admin-via-proxy.sh"

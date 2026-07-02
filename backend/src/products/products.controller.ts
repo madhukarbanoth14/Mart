@@ -54,14 +54,14 @@ export class ProductsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.DEALER)
   create(@Body() dto: CreateProductDto, @CurrentUser() user: AuthUser) {
     return this.productsService.create(user, dto);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.DEALER)
   update(
     @Param('id') id: string,
     @Body() dto: UpdateProductDto,
@@ -72,7 +72,7 @@ export class ProductsController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.DEALER)
   remove(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.productsService.remove(id, user);
   }

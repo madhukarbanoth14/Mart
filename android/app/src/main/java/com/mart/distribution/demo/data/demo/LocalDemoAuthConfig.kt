@@ -1,5 +1,6 @@
 package com.mart.distribution.demo.data.demo
 
+import com.mart.distribution.demo.data.api.dto.UserBriefDto
 import com.mart.distribution.demo.data.session.SessionUser
 
 /**
@@ -17,8 +18,8 @@ object LocalDemoAuthConfig {
             SessionUser("demo-user-admin", "Super Admin", "admin@martdemo.com", "ADMIN"),
             SessionUser("demo-user-employee", "Field Employee", "employee@martdemo.com", "EMPLOYEE"),
             SessionUser("demo-user-dealer", "City Dealer", "dealer@martdemo.com", "DEALER"),
-            SessionUser("demo-user-shop1", "Shopkeeper One", "shop1@martdemo.com", "SHOPKEEPER"),
-            SessionUser("demo-user-shop2", "Shopkeeper Two", "shop2@martdemo.com", "SHOPKEEPER"),
+            SessionUser("demo-user-shop1", "Shopkeeper One", "shop1@martdemo.com", "SHOPKEEPER", areaName = "Central Zone", assignedDealer = UserBriefDto("demo-user-dealer", "City Dealer", "dealer@martdemo.com", "9000000003")),
+            SessionUser("demo-user-shop2", "Shopkeeper Two", "shop2@martdemo.com", "SHOPKEEPER", areaName = "North Zone", assignedDealer = UserBriefDto("demo-user-dealer", "City Dealer", "dealer@martdemo.com", "9000000003")),
         ).associateBy { it.email.lowercase() }
 
     private val usersByPhone: Map<String, SessionUser> =

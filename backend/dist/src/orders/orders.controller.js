@@ -20,6 +20,7 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_decorator_1 = require("../roles/decorators/roles.decorator");
 const roles_guard_1 = require("../roles/guards/roles.guard");
 const create_order_dto_1 = require("./dto/create-order.dto");
+const order_return_dto_1 = require("./dto/order-return.dto");
 const orders_service_1 = require("./orders.service");
 let OrdersController = class OrdersController {
     ordersService;
@@ -40,6 +41,9 @@ let OrdersController = class OrdersController {
     }
     dealerSummary(user) {
         return this.ordersService.dealerSummary(user);
+    }
+    previewReorder(id, user) {
+        return this.ordersService.previewReorder(id, user);
     }
     findOne(id, user) {
         return this.ordersService.findOne(id, user);
@@ -70,6 +74,15 @@ let OrdersController = class OrdersController {
     }
     cancel(id, user) {
         return this.ordersService.cancelOrder(id, user);
+    }
+    requestReturn(id, dto, user) {
+        return this.ordersService.requestReturn(id, dto, user);
+    }
+    approveReturn(id, user) {
+        return this.ordersService.approveReturn(id, user);
+    }
+    rejectReturn(id, dto, user) {
+        return this.ordersService.rejectReturn(id, dto, user);
     }
     mockPayment(id) {
         return this.ordersService.mockPaymentSuccess(id);
@@ -121,6 +134,16 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], OrdersController.prototype, "dealerSummary", null);
+__decorate([
+    (0, common_1.Get)(':id/reorder-preview'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.SHOPKEEPER),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "previewReorder", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
@@ -222,9 +245,41 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrdersController.prototype, "cancel", null);
 __decorate([
+    (0, common_1.Patch)(':id/return-request'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.SHOPKEEPER),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, order_return_dto_1.OrderReturnRequestDto, Object]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "requestReturn", null);
+__decorate([
+    (0, common_1.Patch)(':id/return/approve'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.ADMIN, client_1.UserRole.EMPLOYEE, client_1.UserRole.DEALER),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "approveReturn", null);
+__decorate([
+    (0, common_1.Patch)(':id/return/reject'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.ADMIN, client_1.UserRole.EMPLOYEE, client_1.UserRole.DEALER),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, order_return_dto_1.OrderReturnRejectDto, Object]),
+    __metadata("design:returntype", void 0)
+], OrdersController.prototype, "rejectReturn", null);
+__decorate([
     (0, common_1.Post)(':id/payment/mock'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(client_1.UserRole.SHOPKEEPER, client_1.UserRole.ADMIN, client_1.UserRole.EMPLOYEE),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.SHOPKEEPER, client_1.UserRole.ADMIN, client_1.UserRole.EMPLOYEE, client_1.UserRole.DEALER),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

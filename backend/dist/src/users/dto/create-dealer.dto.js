@@ -19,6 +19,10 @@ class CreateDealerDto {
     password;
     areaId;
     onboardingNotes;
+    shopName;
+    address;
+    latitude;
+    longitude;
 }
 exports.CreateDealerDto = CreateDealerDto;
 __decorate([
@@ -52,4 +56,24 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateDealerDto.prototype, "onboardingNotes", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateDealerDto.prototype, "shopName", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateDealerDto.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsLatitude)(),
+    __metadata("design:type", Number)
+], CreateDealerDto.prototype, "latitude", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsLongitude)(),
+    __metadata("design:type", Number)
+], CreateDealerDto.prototype, "longitude", void 0);
 //# sourceMappingURL=create-dealer.dto.js.map

@@ -15,21 +15,26 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mart.distribution.demo.ui.theme.WholesaleBlue
+import com.mart.distribution.demo.ui.theme.WholesaleBlueDeep
 import com.mart.distribution.demo.ui.theme.WholesaleBlueTint
 import com.mart.distribution.demo.ui.theme.WholesaleBorder
+import com.mart.distribution.demo.ui.theme.WholesaleBrandGlow
+import com.mart.distribution.demo.ui.theme.WholesaleShadow
+import com.mart.distribution.demo.ui.util.pressScale
 import com.mart.distribution.demo.ui.theme.WholesaleGreen
 import com.mart.distribution.demo.ui.theme.WholesaleGreenTint
 import com.mart.distribution.demo.ui.theme.WholesaleMuted
@@ -46,10 +51,10 @@ fun MartElevatedCard(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val shape = RoundedCornerShape(16.dp)
+    val shape = RoundedCornerShape(18.dp)
     Column(
         modifier = modifier
-            .shadow(2.dp, shape)
+            .shadow(10.dp, shape, ambientColor = WholesaleShadow, spotColor = WholesaleShadow)
             .clip(shape)
             .background(Color.White)
             .border(1.dp, WholesaleBorder, shape)
@@ -58,7 +63,7 @@ fun MartElevatedCard(
     )
 }
 
-// ── Flashmart primary button (indigo) ─────────────────────────────────────────
+// ── Flashmart primary button (indigo gradient with brand glow) ────────────────
 @Composable
 fun GradientGoldButton(
     text: String,
@@ -66,19 +71,19 @@ fun GradientGoldButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Button(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = modifier.height(52.dp).fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = WholesaleBlue,
-            contentColor = Color.White,
-            disabledContainerColor = WholesaleBlue.copy(alpha = 0.45f),
-            disabledContentColor = Color.White.copy(alpha = 0.6f),
-        ),
+    val shape = RoundedCornerShape(14.dp)
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(52.dp)
+            .alpha(if (enabled) 1f else 0.5f)
+            .shadow(16.dp, shape, ambientColor = WholesaleBrandGlow, spotColor = WholesaleBrandGlow)
+            .clip(shape)
+            .background(Brush.linearGradient(listOf(WholesaleBlue, WholesaleBlueDeep)), shape)
+            .pressScale(enabled = enabled, onClick = onClick),
+        contentAlignment = Alignment.Center,
     ) {
-        Text(text = text, fontSize = 15.sp, fontWeight = FontWeight.Bold, letterSpacing = (-0.2).sp)
+        Text(text = text, fontSize = 15.sp, fontWeight = FontWeight.Bold, letterSpacing = (-0.2).sp, color = Color.White)
     }
 }
 

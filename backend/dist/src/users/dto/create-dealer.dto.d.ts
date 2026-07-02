@@ -5,4 +5,8 @@ export declare class CreateDealerDto {
     password?: string;
     areaId: string;
     onboardingNotes?: string;
+    shopName?: string;
+    address?: string;
+    latitude?: number;
+    longitude?: number;
 }

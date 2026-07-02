@@ -1,6 +1,5 @@
 package com.mart.distribution.demo.ui.screens
 
-import android.app.Activity
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -22,7 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.AccountBalance
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Inventory2
@@ -68,10 +67,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mart.distribution.demo.data.api.dto.UserRowDto
 import com.mart.distribution.demo.data.api.dto.Brand
-import com.mart.distribution.demo.data.payment.RazorpayBridge
 import com.mart.distribution.demo.data.session.SessionUser
 import com.mart.distribution.demo.feature.brands.BrandsViewModel
 import com.mart.distribution.demo.feature.home.LoadState
+import com.mart.distribution.demo.feature.finance.FinanceViewModel
+import com.mart.distribution.demo.feature.returns.ReturnsViewModel
 import com.mart.distribution.demo.feature.home.MainViewModel
 import com.mart.distribution.demo.ui.components.GradientGoldButton
 import com.mart.distribution.demo.ui.theme.WholesaleBg
@@ -103,13 +103,14 @@ import com.mart.distribution.demo.ui.dealer.DealerStockTab
 import com.mart.distribution.demo.ui.employee.EmployeeFlashmartHome
 import com.mart.distribution.demo.ui.employee.EmployeeNetworkTab
 import com.mart.distribution.demo.ui.employee.EmployeeProfileTab
+import com.mart.distribution.demo.ui.admin.AdminFinanceTab
 import com.mart.distribution.demo.ui.admin.AdminFlashmartHome
 import com.mart.distribution.demo.ui.admin.AdminOrdersTab
 import com.mart.distribution.demo.ui.admin.AdminProfileTab
 import com.mart.distribution.demo.ui.admin.AdminUsersTab
+import com.mart.distribution.demo.ui.LocalAppContainer
+import com.mart.distribution.demo.data.api.dto.cartMath
 import com.mart.distribution.demo.ui.util.formatDecimal
-import com.razorpay.Checkout
-import org.json.JSONObject
 import kotlinx.coroutines.launch
 
 private data class TabSpec(
@@ -123,9 +124,12 @@ fun RoleHomeScreen(
     user: SessionUser,
     mainViewModel: MainViewModel,
     brandsViewModel: BrandsViewModel,
+    financeViewModel: FinanceViewModel? = null,
+    returnsViewModel: ReturnsViewModel? = null,
     navController: NavHostController,
     onLogout: () -> Unit,
 ) {
+    val container = LocalAppContainer.current
     LaunchedEffect(Unit) {
         mainViewModel.refreshForRole()
         brandsViewModel.loadBrands()
@@ -138,9 +142,9 @@ fun RoleHomeScreen(
             cartLines.associate { it.productId to it.quantity }
         }
     val context = LocalContext.current
-    val activity = context as? Activity
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val onOpenPrivacyPolicy = { navController.navigate("legal/privacy") }
     val role = user.role.uppercase()
     val tabs =
         remember(role) {
@@ -155,7 +159,7 @@ fun RoleHomeScreen(
                 "DEALER" ->
                     listOf(
                         TabSpec("Home", Icons.Outlined.Home),
-                        TabSpec("Products", Icons.Outlined.GridView),
+                        TabSpec("SKUs", Icons.Outlined.GridView),
                         TabSpec("Orders", Icons.Outlined.ShoppingBag),
                         TabSpec("Stock", Icons.Outlined.Inventory2),
                         TabSpec("Profile", Icons.Outlined.Person),
@@ -169,6 +173,7 @@ fun RoleHomeScreen(
                 else ->
                     listOf(
                         TabSpec("Home", Icons.Outlined.Home),
+                        TabSpec("Finance", Icons.Outlined.AccountBalance),
                         TabSpec("Orders", Icons.AutoMirrored.Outlined.ReceiptLong),
                         TabSpec("Team", Icons.Outlined.People),
                     )
@@ -183,7 +188,7 @@ fun RoleHomeScreen(
             mainViewModel.ensureCatalogLoaded()
         }
         if (role == "DEALER" && tabIndex == 1) {
-            mainViewModel.ensureCatalogLoaded()
+            mainViewModel.loadProducts()
         }
         if (role == "DEALER" && tabIndex == 3) {
             mainViewModel.ensureStockLoaded()
@@ -191,50 +196,16 @@ fun RoleHomeScreen(
     }
 
     LaunchedEffect(Unit) {
-        RazorpayBridge.events.collect { event ->
-            mainViewModel.onRazorpayResult(
-                success = event.success,
-                razorpayOrderId = event.orderId,
-                razorpayPaymentId = event.paymentId,
-                razorpaySignature = event.signature,
-                error = event.error,
-            )
-        }
-    }
-
-    LaunchedEffect(
-        ui.pendingRazorpayOrderId,
-        ui.pendingRazorpayGatewayOrderId,
-        ui.pendingRazorpayKeyId,
-        ui.pendingRazorpayAmountPaise,
-        ui.pendingRazorpayCurrency,
-    ) {
-        val appOrderId = ui.pendingRazorpayOrderId ?: return@LaunchedEffect
-        val gatewayOrderId = ui.pendingRazorpayGatewayOrderId ?: return@LaunchedEffect
-        val keyId = ui.pendingRazorpayKeyId ?: return@LaunchedEffect
-        val amountPaise = ui.pendingRazorpayAmountPaise ?: return@LaunchedEffect
-        val currency = ui.pendingRazorpayCurrency ?: "INR"
-        val hostActivity = activity ?: return@LaunchedEffect
-
-        val checkout = Checkout().apply { setKeyID(keyId) }
-        val options =
-            JSONObject().apply {
-                put("name", "KNSR Mart")
-                put("description", "Order payment")
-                put("currency", currency)
-                put("amount", amountPaise)
-                put("order_id", gatewayOrderId)
-                put("prefill", JSONObject().apply { put("email", user.email) })
-                put("notes", JSONObject().apply { put("appOrderId", appOrderId) })
-                put("theme.color", "#C8A95A")
-            }
-        checkout.open(hostActivity, options)
-        mainViewModel.clearPendingRazorpayLaunch()
+        container.sessionManager.refreshProfileFromServerIfNeeded()
+        container.pushTokenRegistrar.registerCurrentToken()
     }
 
     LaunchedEffect(ui.placedOrder?.id) {
         val id = ui.placedOrder?.id ?: return@LaunchedEffect
-        navController.navigate("order-confirmation/$id")
+        navController.navigate("order-confirmation/$id") {
+            popUpTo("main") { inclusive = false }
+            launchSingleTop = true
+        }
         mainViewModel.clearOrderFeedback()
     }
 
@@ -242,8 +213,8 @@ fun RoleHomeScreen(
     val isFlashmartShell = true
     val cartCount = cartLines.sumOf { it.quantity }
     val cartTotalLabel =
-        remember(cartLines) {
-            val total = cartLines.sumOf { (it.referenceUnitPrice ?: 0.0) * it.quantity }
+        remember(cartLines, role) {
+            val total = cartLines.cartMath(role).total
             if (cartLines.isEmpty()) "—" else formatDecimal(total)
         }
     val activeOrdersBadge =
@@ -304,7 +275,7 @@ fun RoleHomeScreen(
                         "DEALER" ->
                             listOf(
                                 FmNavItem("home", "Home", Icons.Outlined.Home),
-                                FmNavItem("products", "Products", Icons.Outlined.GridView),
+                                FmNavItem("skus", "SKUs", Icons.Outlined.GridView),
                                 FmNavItem("orders", "Orders", Icons.Outlined.ShoppingBag, badge = activeOrdersBadge.takeIf { it > 0 }),
                                 FmNavItem("stock", "Stock", Icons.Outlined.Inventory2, badge = lowStockBadge.takeIf { it > 0 }),
                                 FmNavItem("profile", "Profile", Icons.Outlined.Person),
@@ -318,9 +289,9 @@ fun RoleHomeScreen(
                         else ->
                             listOf(
                                 FmNavItem("home", "Home", Icons.Outlined.Home),
+                                FmNavItem("finance", "Finance", Icons.Outlined.AccountBalance),
                                 FmNavItem("orders", "Orders", Icons.AutoMirrored.Outlined.ReceiptLong),
                                 FmNavItem("team", "Team", Icons.Outlined.People, badge = pendingApprovalBadge.takeIf { it > 0 }),
-                                FmNavItem("profile", "Profile", Icons.Outlined.Person),
                             )
                     },
                 activeId =
@@ -331,7 +302,7 @@ fun RoleHomeScreen(
                             }
                         "DEALER" ->
                             when (tabIndex) {
-                                0 -> "home"; 1 -> "products"; 2 -> "orders"; 3 -> "stock"; else -> "profile"
+                                0 -> "home"; 1 -> "skus"; 2 -> "orders"; 3 -> "stock"; else -> "profile"
                             }
                         "EMPLOYEE" ->
                             when (tabIndex) {
@@ -339,7 +310,7 @@ fun RoleHomeScreen(
                             }
                         else ->
                             when (tabIndex) {
-                                0 -> "home"; 1 -> "orders"; 2 -> "team"; else -> "profile"
+                                0 -> "home"; 1 -> "finance"; 2 -> "orders"; else -> "team"
                             }
                     },
                 onChange = { id ->
@@ -351,7 +322,7 @@ fun RoleHomeScreen(
                                 }
                             "DEALER" ->
                                 when (id) {
-                                    "home" -> 0; "products" -> 1; "orders" -> 2; "stock" -> 3; else -> 4
+                                    "home" -> 0; "skus" -> 1; "orders" -> 2; "stock" -> 3; else -> 4
                                 }
                             "EMPLOYEE" ->
                                 when (id) {
@@ -359,7 +330,7 @@ fun RoleHomeScreen(
                                 }
                             else ->
                                 when (id) {
-                                    "home" -> 0; "orders" -> 1; "team" -> 2; else -> 3
+                                    "home" -> 0; "finance" -> 1; "orders" -> 2; else -> 3
                                 }
                         }
                 },
@@ -384,6 +355,11 @@ fun RoleHomeScreen(
                                 onOpenCatalog = { tabIndex = 1 },
                                 onOpenOrders = { tabIndex = 2 },
                                 onOpenOrder = { id -> navController.navigate("order/$id") },
+                                onOpenInvoice = { id -> navController.navigate("invoice/$id") },
+                                onOpenTrack = { id -> navController.navigate("tracking/$id") },
+                                onOpenProfile = { tabIndex = 3 },
+                                onOpenWallet = { navController.navigate("wallet") },
+                                onOpenSupport = { navController.navigate("profile/help") },
                             )
                         1 ->
                             ShopkeeperCatalogTab(
@@ -398,17 +374,15 @@ fun RoleHomeScreen(
                                 cartQuantity = { id -> cartQtyByProductId[id] ?: 0 },
                                 cartCount = cartCount,
                                 cartTotalLabel = cartTotalLabel,
-                                onFirstAddToCart = {
-                                    mainViewModel.addToCart(it)
+                                onAddWithQuantity = { product, qty ->
+                                    mainViewModel.setCartLineQuantity(product, qty)
                                     scope.launch { snackbarHostState.showSnackbar("Added to cart") }
                                 },
-                                onIncrementCart = { mainViewModel.addToCart(it) },
-                                onDecrementCart = { product ->
-                                    val q = cartLines.find { it.productId == product.id }?.quantity ?: 0
-                                    if (q <= 1) {
+                                onSetCartQuantity = { product, qty ->
+                                    if (qty <= 0) {
                                         mainViewModel.removeCartLine(product.id)
                                     } else {
-                                        mainViewModel.setCartQuantity(product.id, q - 1)
+                                        mainViewModel.setCartLineQuantity(product, qty)
                                     }
                                 },
                                 onOpenProduct = { id ->
@@ -425,6 +399,21 @@ fun RoleHomeScreen(
                                 ShopkeeperOrdersTab(
                                     ui = ui,
                                     onOpen = { id -> navController.navigate("order/$id") },
+                                    onInvoice = { id -> navController.navigate("invoice/$id") },
+                                    onTrack = { id -> navController.navigate("tracking/$id") },
+                                    onReorder = { id ->
+                                        mainViewModel.reorderFromOrder(id) { success, message ->
+                                            scope.launch {
+                                                if (success) {
+                                                    navController.navigate("cart")
+                                                    message?.let { snackbarHostState.showSnackbar(it) }
+                                                } else {
+                                                    snackbarHostState.showSnackbar(message ?: "Could not reorder")
+                                                }
+                                            }
+                                        }
+                                    },
+                                    onBrowseCatalog = { tabIndex = 1 },
                                 )
                             }
                         else ->
@@ -438,7 +427,9 @@ fun RoleHomeScreen(
                                     onOpenPaymentMethods = { navController.navigate("profile/payment-methods") },
                                     onOpenGstDetails = { navController.navigate("profile/gst-details") },
                                     onOpenNotifications = { navController.navigate("profile/notifications") },
+                                    onOpenDocuments = { navController.navigate("profile/documents") },
                                     onOpenHelp = { navController.navigate("profile/help") },
+                                    onOpenPrivacyPolicy = onOpenPrivacyPolicy,
                                 )
                             }
                     }
@@ -452,39 +443,21 @@ fun RoleHomeScreen(
                                 summary = ui.dealerSummary,
                                 onOpenOrders = { tabIndex = 2 },
                                 onOpenStock = { tabIndex = 3 },
-                                onOpenProducts = { tabIndex = 1 },
+                                onManageSkus = { tabIndex = 1 },
                                 onOpenOrder = { id -> navController.navigate("order/$id") },
+                                onOpenProfile = { tabIndex = 4 },
+                                onOpenRevenue = { navController.navigate("dealer/revenue") },
+                                onOpenReturns = { navController.navigate("dealer/returns") },
                             )
                         1 ->
                             Column(modifier = Modifier.fillMaxSize()) {
                                 com.mart.distribution.demo.ui.flashmart.FmAppHeader(
-                                    title = "Browse products",
-                                    subtitle = "10% dealer discount · order stock from KNSR",
+                                    title = "SKU management",
+                                    subtitle = "Products · pricing · discounts",
                                 )
-                                ShopkeeperCatalogTab(
-                                    ui = ui,
-                                    brandsState = brandsUi.brands,
-                                    shelvesState = ui.shelves,
-                                    selectedBrandId = selectedBrandId,
-                                    buyerRole = "DEALER",
-                                    onSelectBrand = { selectedBrandId = it },
-                                    cartQuantity = { id -> cartQtyByProductId[id] ?: 0 },
-                                    cartCount = cartCount,
-                                    cartTotalLabel = cartTotalLabel,
-                                    onFirstAddToCart = { mainViewModel.addToCart(it) },
-                                    onIncrementCart = { mainViewModel.addToCart(it) },
-                                    onDecrementCart = { product ->
-                                        val q = cartLines.find { it.productId == product.id }?.quantity ?: 0
-                                        if (q <= 1) {
-                                            mainViewModel.removeCartLine(product.id)
-                                        } else {
-                                            mainViewModel.setCartQuantity(product.id, q - 1)
-                                        }
-                                    },
-                                    onOpenProduct = { id ->
-                                        navController.navigate("product/${Uri.encode(id)}")
-                                    },
-                                    onOpenCart = { navController.navigate("cart") },
+                                SkuManagementScreen(
+                                    mainViewModel = mainViewModel,
+                                    embeddedInTab = true,
                                 )
                             }
                         2 ->
@@ -501,12 +474,38 @@ fun RoleHomeScreen(
                                     title = "Stock",
                                     subtitle = "$lowStockBadge low SKUs",
                                 )
-                                DealerStockTab(ui = ui)
+                                DealerStockTab(
+                                    ui = ui,
+                                    onEnsureCatalog = { mainViewModel.loadProducts() },
+                                    onOpenSkus = { tabIndex = 1 },
+                                    onUpdateQuantity = { stockId, qty, cb ->
+                                        mainViewModel.updateStockQuantity(stockId, qty, cb)
+                                    },
+                                    onAddStock = { productId, qty, cb ->
+                                        mainViewModel.addStockSku(productId, qty, cb)
+                                    },
+                                    onShowMessage = { msg ->
+                                        scope.launch { snackbarHostState.showSnackbar(msg) }
+                                    },
+                                )
                             }
                         else ->
                             Column(modifier = Modifier.fillMaxSize()) {
                                 com.mart.distribution.demo.ui.flashmart.FmAppHeader(title = "Profile")
-                                DealerProfileTab(user = user, ui = ui, onLogout = onLogout)
+                                DealerProfileTab(
+                                    user = user,
+                                    ui = ui,
+                                    onLogout = onLogout,
+                                    onOpenAccount = { navController.navigate("dealer-profile/account") },
+                                    onOpenBusinessAddress = { navController.navigate("dealer-profile/business") },
+                                    onOpenPaymentDetails = { navController.navigate("dealer-profile/payment") },
+                                    onOpenGstDetails = { navController.navigate("dealer-profile/gst") },
+                                    onOpenNotifications = { navController.navigate("dealer-profile/notifications") },
+                                    onOpenDocuments = { navController.navigate("dealer-profile/documents") },
+                                    onOpenHelp = { navController.navigate("dealer-profile/help") },
+                                    onOpenPrivacyPolicy = onOpenPrivacyPolicy,
+                                    onManageSkus = { tabIndex = 1 },
+                                )
                             }
                     }
                 else ->
@@ -529,7 +528,12 @@ fun RoleHomeScreen(
                                 else ->
                                     Column(modifier = Modifier.fillMaxSize()) {
                                         com.mart.distribution.demo.ui.flashmart.FmAppHeader(title = "Profile")
-                                        EmployeeProfileTab(user = user, ui = ui, onLogout = onLogout)
+                                        EmployeeProfileTab(
+                                            user = user,
+                                            ui = ui,
+                                            onLogout = onLogout,
+                                            onOpenPrivacyPolicy = onOpenPrivacyPolicy,
+                                        )
                                     }
                             }
                         else ->
@@ -543,15 +547,35 @@ fun RoleHomeScreen(
                                         onAddDealer = { navController.navigate("onboard-dealer") },
                                         onManageSkus = { navController.navigate("sku-management") },
                                         onManageBrands = { navController.navigate("brands-management") },
-                                        onOpenOrders = { tabIndex = 1 },
-                                        onOpenTeam = { tabIndex = 2 },
+                                        onManageAreas = { navController.navigate("areas-management") },
+                                        onOpenOrders = { tabIndex = 2 },
+                                        onOpenTeam = { tabIndex = 3 },
+                                        onOpenFinance = { tabIndex = 1 },
                                     )
                                 1 ->
+                                    financeViewModel?.let { fv ->
+                                        AdminFinanceTab(
+                                            financeViewModel = fv,
+                                            returnsViewModel = returnsViewModel,
+                                            mainUi = ui,
+                                            onOpenSettlement = { id -> navController.navigate("finance/settlement/$id") },
+                                            onOpenDealer = { id ->
+                                                val name =
+                                                    when (val u = ui.users) {
+                                                        is LoadState.Ok -> u.data.firstOrNull { it.id == id }?.name ?: "Dealer"
+                                                        else -> "Dealer"
+                                                    }
+                                                navController.navigate("finance/dealer/$id/$name")
+                                            },
+                                            onOpenRefund = { id -> navController.navigate("admin/refund/$id") },
+                                        )
+                                    }
+                                2 ->
                                     Column(modifier = Modifier.fillMaxSize()) {
                                         com.mart.distribution.demo.ui.flashmart.FmAppHeader(title = "Orders", subtitle = "All network orders")
                                         AdminOrdersTab(ui = ui, onOpen = { id -> navController.navigate("order/$id") })
                                     }
-                                2 ->
+                                else ->
                                     Column(modifier = Modifier.fillMaxSize()) {
                                         com.mart.distribution.demo.ui.flashmart.FmAppHeader(
                                             title = "Network",
@@ -599,11 +623,6 @@ fun RoleHomeScreen(
                                                 }
                                             },
                                         )
-                                    }
-                                else ->
-                                    Column(modifier = Modifier.fillMaxSize()) {
-                                        com.mart.distribution.demo.ui.flashmart.FmAppHeader(title = "Profile")
-                                        AdminProfileTab(user = user, ui = ui, onLogout = onLogout)
                                     }
                             }
                     }
@@ -1042,6 +1061,7 @@ private fun MyOnboardedTab(
 @Composable
 private fun CartTab(
     lines: List<CartLine>,
+    buyerRole: String,
     onQty: (String, Int) -> Unit,
     onRemove: (String) -> Unit,
     onCheckout: () -> Unit,
@@ -1052,18 +1072,13 @@ private fun CartTab(
     paymentMessage: String?,
 ) {
     val linesWithRef = lines.count { it.referenceUnitPrice != null }
-    val pricedTotal =
-        remember(lines) {
-            lines.sumOf { line ->
-                line.referenceUnitPrice?.let { it * line.quantity } ?: 0.0
-            }
-        }
+    val math = remember(lines, buyerRole) { lines.cartMath(buyerRole) }
     val estimatedLabel =
-        remember(lines, pricedTotal, linesWithRef) {
+        remember(lines, math, linesWithRef) {
             when {
                 lines.isEmpty() -> "—"
-                linesWithRef == lines.size -> formatDecimal(pricedTotal)
-                linesWithRef > 0 -> "${formatDecimal(pricedTotal)} (partial)"
+                linesWithRef == lines.size -> formatDecimal(math.total)
+                linesWithRef > 0 -> "${formatDecimal(math.total)} (partial)"
                 else -> "—"
             }
         }

@@ -102,10 +102,16 @@ let PaymentsService = class PaymentsService {
         if (actor.role === client_1.UserRole.SHOPKEEPER && order.shopkeeperId !== actor.userId) {
             throw new common_1.ForbiddenException('Shopkeeper can only pay own orders');
         }
-        if (actor.role === client_1.UserRole.DEALER && order.dealerId !== actor.userId) {
+        if (actor.role === client_1.UserRole.DEALER && !this.dealerCanAccessOrder(order, actor.userId)) {
             throw new common_1.ForbiddenException('Dealer can only access assigned orders');
         }
         return order;
+    }
+    dealerCanAccessOrder(order, dealerUserId) {
+        if (order.dealerId === dealerUserId) {
+            return true;
+        }
+        return (order.kind === client_1.OrderKind.DEALER_RESTOCK && order.shopkeeperId === dealerUserId);
     }
     async createRazorpayOrder(dto, actor) {
         const razorpay = this.getRazorpayClient();
@@ -170,25 +176,39 @@ let PaymentsService = class PaymentsService {
         if (!payment) {
             throw new common_1.NotFoundException('Payment initiation record not found');
         }
-        const digest = crypto
-            .createHmac('sha256', this.razorpayKeySecret)
-            .update(`${dto.razorpayOrderId}|${dto.razorpayPaymentId}`)
-            .digest('hex');
-        if (digest !== dto.razorpaySignature) {
-            await this.prisma.payment.update({
-                where: { id: payment.id },
-                data: {
-                    status: client_1.PaymentStatus.FAILED,
-                    gatewayPaymentId: dto.razorpayPaymentId,
-                    gatewaySignature: dto.razorpaySignature,
-                    failureReason: 'INVALID_SIGNATURE',
-                },
-            });
-            await this.prisma.order.update({
-                where: { id: order.id },
-                data: { paymentStatus: client_1.OrderPaymentStatus.FAILED },
-            });
-            throw new common_1.BadRequestException('Invalid Razorpay payment signature');
+        const signature = dto.razorpaySignature?.trim() ?? '';
+        if (signature) {
+            const digest = crypto
+                .createHmac('sha256', this.razorpayKeySecret)
+                .update(`${dto.razorpayOrderId}|${dto.razorpayPaymentId}`)
+                .digest('hex');
+            if (digest !== signature) {
+                await this.prisma.payment.update({
+                    where: { id: payment.id },
+                    data: {
+                        status: client_1.PaymentStatus.FAILED,
+                        gatewayPaymentId: dto.razorpayPaymentId,
+                        gatewaySignature: signature,
+                        failureReason: 'INVALID_SIGNATURE',
+                    },
+                });
+                await this.prisma.order.update({
+                    where: { id: order.id },
+                    data: { paymentStatus: client_1.OrderPaymentStatus.FAILED },
+                });
+                throw new common_1.BadRequestException('Invalid Razorpay payment signature');
+            }
+        }
+        else {
+            const razorpay = this.getRazorpayClient();
+            const fetched = (await razorpay.payments.fetch(dto.razorpayPaymentId));
+            if (fetched.order_id !== dto.razorpayOrderId) {
+                throw new common_1.BadRequestException('Payment is not linked to this Razorpay order');
+            }
+            const okStatus = fetched.status === 'captured' || fetched.status === 'authorized';
+            if (!okStatus) {
+                throw new common_1.BadRequestException(`Payment is not complete (status: ${fetched.status ?? 'unknown'})`);
+            }
         }
         const [updatedPayment, updatedOrder] = await this.prisma.$transaction([
             this.prisma.payment.update({
@@ -284,6 +304,93 @@ let PaymentsService = class PaymentsService {
             ]);
         }
         return { received: true, event };
+    }
+    async refundOrderPayment(orderId, actor, amountInr, options) {
+        const order = await this.loadOrderForActor(orderId, actor);
+        if (order.paymentStatus === client_1.OrderPaymentStatus.REFUNDED) {
+            throw new common_1.BadRequestException('Order is already refunded');
+        }
+        if (order.paymentStatus !== client_1.OrderPaymentStatus.PAID) {
+            throw new common_1.BadRequestException('Only paid orders can be refunded');
+        }
+        const payment = await this.prisma.payment.findFirst({
+            where: {
+                orderId: order.id,
+                provider: client_1.PaymentProvider.RAZORPAY,
+                status: client_1.PaymentStatus.SUCCESS,
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+        const refundAmount = amountInr ?? Number(order.finalAmount);
+        const amountPaise = Math.round(refundAmount * 100);
+        if (!Number.isFinite(amountPaise) || amountPaise <= 0) {
+            throw new common_1.BadRequestException('Invalid order amount for refund');
+        }
+        let gatewayRefundId = null;
+        if (payment?.gatewayPaymentId) {
+            const refund = await this.getRazorpayClient().payments.refund(payment.gatewayPaymentId, { amount: amountPaise });
+            gatewayRefundId = refund.id ?? null;
+            if (!gatewayRefundId) {
+                throw new common_1.BadRequestException('Razorpay refund did not return a refund id');
+            }
+        }
+        const now = new Date();
+        const paymentUpdate = payment
+            ? this.prisma.payment.update({
+                where: { id: payment.id },
+                data: {
+                    status: client_1.PaymentStatus.REFUNDED,
+                    gatewayRefundId,
+                    failureReason: null,
+                },
+            })
+            : this.prisma.payment.create({
+                data: {
+                    companyId: order.companyId,
+                    orderId: order.id,
+                    provider: client_1.PaymentProvider.RAZORPAY,
+                    status: client_1.PaymentStatus.REFUNDED,
+                    amount: this.decimal(refundAmount),
+                    currency: 'INR',
+                    gatewayRefundId,
+                },
+            });
+        if (options?.skipOrderUpdate) {
+            const updatedPayment = await paymentUpdate;
+            return {
+                orderId: order.id,
+                paymentStatus: order.paymentStatus,
+                refundedAt: now,
+                refund: {
+                    id: updatedPayment.id,
+                    gatewayRefundId,
+                    status: client_1.PaymentStatus.REFUNDED,
+                },
+            };
+        }
+        const [updatedPayment, updatedOrder] = await this.prisma.$transaction([
+            paymentUpdate,
+            this.prisma.order.update({
+                where: { id: order.id },
+                data: {
+                    paymentStatus: client_1.OrderPaymentStatus.REFUNDED,
+                    refundedAt: now,
+                },
+            }),
+        ]);
+        return {
+            orderId: updatedOrder.id,
+            paymentStatus: client_1.OrderPaymentStatus.REFUNDED,
+            refundedAt: now,
+            refund: {
+                id: updatedPayment.id,
+                gatewayRefundId,
+                status: client_1.PaymentStatus.REFUNDED,
+            },
+        };
+    }
+    decimal(n) {
+        return new client_1.Prisma.Decimal(n.toFixed(2));
     }
 };
 exports.PaymentsService = PaymentsService;

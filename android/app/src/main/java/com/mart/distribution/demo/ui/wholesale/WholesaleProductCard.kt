@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -42,8 +43,10 @@ import com.mart.distribution.demo.ui.theme.WholesaleImageGradientEnd
 import com.mart.distribution.demo.ui.theme.WholesaleImageGradientStart
 import com.mart.distribution.demo.ui.theme.WholesaleMuted
 import com.mart.distribution.demo.ui.theme.WholesaleRed
+import com.mart.distribution.demo.ui.theme.WholesaleShadowSoft
 import com.mart.distribution.demo.ui.theme.WholesaleText
 import com.mart.distribution.demo.ui.util.formatDecimal
+import com.mart.distribution.demo.ui.util.pressScale
 import kotlin.math.roundToInt
 
 @Composable
@@ -70,11 +73,12 @@ fun WholesaleProductCard(
     Surface(
         modifier =
             modifier
-                .clip(RoundedCornerShape(14.dp))
-                .border(1.dp, WholesaleBorder, RoundedCornerShape(14.dp))
-                .clickable(onClick = onOpenDetail),
+                .shadow(8.dp, RoundedCornerShape(16.dp), ambientColor = WholesaleShadowSoft, spotColor = WholesaleShadowSoft)
+                .clip(RoundedCornerShape(16.dp))
+                .border(1.dp, WholesaleBorder, RoundedCornerShape(16.dp))
+                .pressScale(pressedScale = 0.98f, onClick = onOpenDetail),
         color = androidx.compose.ui.graphics.Color.White,
-        shadowElevation = 1.dp,
+        shadowElevation = 0.dp,
     ) {
         Column {
             Box(

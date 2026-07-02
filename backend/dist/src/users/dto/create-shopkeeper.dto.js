@@ -19,6 +19,10 @@ class CreateShopkeeperDto {
     password;
     areaId;
     onboardingNotes;
+    shopName;
+    address;
+    latitude;
+    longitude;
 }
 exports.CreateShopkeeperDto = CreateShopkeeperDto;
 __decorate([
@@ -52,4 +56,24 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateShopkeeperDto.prototype, "onboardingNotes", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateShopkeeperDto.prototype, "shopName", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateShopkeeperDto.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsLatitude)(),
+    __metadata("design:type", Number)
+], CreateShopkeeperDto.prototype, "latitude", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsLongitude)(),
+    __metadata("design:type", Number)
+], CreateShopkeeperDto.prototype, "longitude", void 0);
 //# sourceMappingURL=create-shopkeeper.dto.js.map

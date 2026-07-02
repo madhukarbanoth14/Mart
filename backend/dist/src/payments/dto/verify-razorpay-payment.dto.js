@@ -31,6 +31,7 @@ __decorate([
     __metadata("design:type", String)
 ], VerifyRazorpayPaymentDto.prototype, "razorpayPaymentId", void 0);
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], VerifyRazorpayPaymentDto.prototype, "razorpaySignature", void 0);

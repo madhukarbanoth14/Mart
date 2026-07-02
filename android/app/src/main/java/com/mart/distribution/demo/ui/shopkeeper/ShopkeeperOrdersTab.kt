@@ -5,17 +5,22 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,15 +37,20 @@ import androidx.compose.ui.unit.sp
 import com.mart.distribution.demo.data.api.dto.OrderDto
 import com.mart.distribution.demo.feature.home.LoadState
 import com.mart.distribution.demo.feature.home.MainUiState
-import com.mart.distribution.demo.ui.components.ProductImageStyle
-import com.mart.distribution.demo.ui.components.ProductThumbnail
 import com.mart.distribution.demo.ui.flashmart.FmBadge
+import com.mart.distribution.demo.ui.flashmart.FmButton
+import com.mart.distribution.demo.ui.flashmart.FmButtonVariant
 import com.mart.distribution.demo.ui.flashmart.FmCard
+import com.mart.distribution.demo.ui.flashmart.FmEmptyStateHero
+import com.mart.distribution.demo.ui.flashmart.FmErrorScreen
 import com.mart.distribution.demo.ui.flashmart.FmSegmentedControl
+import com.mart.distribution.demo.ui.flashmart.FmSkeletonListScreen
 import com.mart.distribution.demo.ui.theme.WholesaleBg
 import com.mart.distribution.demo.ui.theme.WholesaleBlue
 import com.mart.distribution.demo.ui.theme.WholesaleInk4
 import com.mart.distribution.demo.ui.theme.WholesaleMuted
+import com.mart.distribution.demo.ui.theme.WholesaleRed
+import com.mart.distribution.demo.ui.theme.WholesaleSurface3
 import com.mart.distribution.demo.ui.theme.WholesaleText
 import com.mart.distribution.demo.ui.util.formatDecimal
 
@@ -48,14 +58,25 @@ import com.mart.distribution.demo.ui.util.formatDecimal
 fun ShopkeeperOrdersTab(
     ui: MainUiState,
     onOpen: (String) -> Unit,
+    onInvoice: (String) -> Unit = {},
+    onTrack: (String) -> Unit = {},
+    onReorder: (String) -> Unit = {},
+    onBrowseCatalog: () -> Unit = {},
 ) {
     var segment by rememberSaveable { mutableStateOf("All") }
     val orders = when (val o = ui.orders) { is LoadState.Ok -> o.data; else -> emptyList() }
     val filtered =
         remember(orders, segment) {
             when (segment) {
-                "Active" -> orders.filter { !it.status.equals("DELIVERED", true) && !it.status.equals("CANCELLED", true) }
+                "Pending" ->
+                    orders.filter {
+                        it.status.equals("PENDING", true) ||
+                            it.status.equals("PLACED", true) ||
+                            it.status.equals("DEALER_CONFIRMED", true) ||
+                            it.status.equals("OUT_FOR_DELIVERY", true)
+                    }
                 "Delivered" -> orders.filter { it.status.equals("DELIVERED", true) }
+                "Cancelled" -> orders.filter { it.status.equals("CANCELLED", true) }
                 else -> orders
             }
         }
@@ -65,32 +86,53 @@ fun ShopkeeperOrdersTab(
     ) {
         Spacer(Modifier.height(8.dp))
         FmSegmentedControl(
-            options = listOf("All", "Active", "Delivered"),
+            options = listOf("All", "Pending", "Delivered", "Cancelled"),
             selected = segment,
             onSelect = { segment = it },
         )
         Spacer(Modifier.height(14.dp))
         when (val o = ui.orders) {
-            is LoadState.Loading ->
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = WholesaleBlue)
-                }
-            is LoadState.Err -> Text(o.message, color = com.mart.distribution.demo.ui.theme.WholesaleRed)
+            is LoadState.Loading -> FmSkeletonListScreen(modifier = Modifier.weight(1f))
+            is LoadState.Err ->
+                FmErrorScreen(
+                    title = "Couldn't load orders",
+                    message = o.message,
+                    onPrimaryAction = { /* parent reloads via tab */ },
+                    modifier = Modifier.weight(1f),
+                )
             is LoadState.Ok ->
                 if (filtered.isEmpty()) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            "No ${segment.lowercase()} orders",
-                            fontSize = 14.sp,
-                            color = WholesaleInk4,
-                        )
-                    }
+                    FmEmptyStateHero(
+                        icon = Icons.Outlined.ShoppingBag,
+                        title = if (segment == "All") "No orders yet" else "No ${segment.lowercase()} orders",
+                        message =
+                            if (segment == "All") {
+                                "When you place your first order, it'll show up here with live delivery tracking."
+                            } else {
+                                "Try another filter or browse the catalog to place an order."
+                            },
+                        actionLabel = if (segment == "All") "Browse catalog" else null,
+                        onAction = if (segment == "All") onBrowseCatalog else null,
+                        modifier = Modifier.weight(1f),
+                    )
                 } else {
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(11.dp)) {
-                        items(filtered, key = { it.id }) { order ->
-                            ShopkeeperOrderCard(order = order, onClick = { onOpen(order.id) })
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(11.dp),
+                    ) {
+                        itemsIndexed(
+                            filtered,
+                            key = { index, order -> "${order.id}-$index" },
+                        ) { _, order ->
+                            ShopkeeperOrderCard(
+                                order = order,
+                                onView = { onOpen(order.id) },
+                                onInvoice = { onInvoice(order.id) },
+                                onTrack = { onTrack(order.id) },
+                                onReorder = { onReorder(order.id) },
+                            )
                         }
-                        item { Spacer(Modifier.height(16.dp)) }
+                        item { Spacer(Modifier.height(88.dp)) }
                     }
                 }
             else -> {}
@@ -98,64 +140,117 @@ fun ShopkeeperOrdersTab(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ShopkeeperOrderCard(
     order: OrderDto,
-    onClick: () -> Unit,
+    onView: () -> Unit,
+    onInvoice: () -> Unit,
+    onTrack: () -> Unit,
+    onReorder: () -> Unit,
 ) {
     val items = order.items.orEmpty()
-    FmCard(onClick = onClick) {
+    val delivered = order.status.equals("DELIVERED", true)
+    FmCard(onClick = onView) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(11.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(9.dp)) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(WholesaleSurface3),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(Icons.Outlined.ShoppingBag, contentDescription = null, tint = WholesaleMuted, modifier = Modifier.size(19.dp))
+            }
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     order.id.takeLast(8).uppercase(),
-                    fontSize = 15.sp,
+                    fontSize = 14.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = WholesaleText,
                 )
-            }
-            FmBadge(order.status)
-        }
-        Spacer(Modifier.height(12.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Row {
-                items.take(4).forEachIndexed { i, line ->
-                    Box(
-                        modifier =
-                            Modifier
-                                .padding(start = if (i > 0) (-10).dp else 0.dp)
-                                .clip(RoundedCornerShape(9.dp))
-                                .background(com.mart.distribution.demo.ui.theme.WholesaleSurface),
-                    ) {
-                        ProductThumbnail(
-                            imageUrl = line.product?.imageUrl,
-                            brandLogoUrl = line.product?.brand?.logoUrl,
-                            productName = line.product?.name ?: "Item",
-                            brandName = line.product?.brand?.name,
-                            style = ProductImageStyle.Grid,
-                            cornerRadius = 9.dp,
-                            modifier = Modifier.size(38.dp),
-                        )
-                    }
-                }
-            }
-            Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
                 Text(
                     "${order.createdAt?.take(10) ?: "—"} · ${items.size} items",
                     fontSize = 12.sp,
                     color = WholesaleMuted,
                 )
             }
+            FmBadge(order.status)
+        }
+
+        if (items.isNotEmpty()) {
+            Spacer(Modifier.height(12.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                items.take(3).forEach { line ->
+                    val name = line.product?.name?.split(" ")?.take(2)?.joinToString(" ") ?: "Item"
+                    Text(
+                        "${line.quantity}× $name",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = WholesaleMuted,
+                        modifier =
+                            Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(WholesaleSurface3)
+                                .padding(horizontal = 9.dp, vertical = 4.dp),
+                    )
+                }
+            }
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .padding(bottom = 4.dp),
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(com.mart.distribution.demo.ui.theme.WholesaleBorder),
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(
                 formatDecimal(order.finalAmount),
-                fontSize = 16.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = WholesaleText,
             )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (delivered) {
+                    FmButton(
+                        text = "Invoice",
+                        onClick = onInvoice,
+                        variant = FmButtonVariant.Outline,
+                        fullWidth = false,
+                    )
+                    FmButton(
+                        text = "Reorder",
+                        onClick = onReorder,
+                        variant = FmButtonVariant.Soft,
+                        fullWidth = false,
+                    )
+                } else {
+                    FmButton(
+                        text = "Track",
+                        onClick = onTrack,
+                        variant = FmButtonVariant.Primary,
+                        fullWidth = false,
+                    )
+                }
+            }
         }
     }
 }

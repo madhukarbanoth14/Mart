@@ -31,4 +31,8 @@ final class CartStore {
     func clear() {
         lines.removeAll()
     }
+
+    func restoreLines(_ restored: [CartLine]) {
+        lines = restored
+    }
 }

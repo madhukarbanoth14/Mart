@@ -1,0 +1,160 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Auth/LoginView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Welcome back",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 33
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sign in with your demo account",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 36
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sign in with your mobile or email",
+        "location": {
+          "startingColumn": 90,
+          "startingLine": 36
+        }
+      },
+      {
+        "comment": "",
+        "key": "⚡",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "FlashMart",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 23
+        }
+      },
+      {
+        "comment": "",
+        "key": "Distribution OS",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 26
+        }
+      },
+      {
+        "comment": "",
+        "key": "Developer demo · password: %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 44
+        }
+      },
+      {
+        "comment": "",
+        "key": "Forgot password?",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 81
+        }
+      },
+      {
+        "comment": "",
+        "key": "New user? Create account",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "Demo accounts",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 111
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sign up with",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 205
+        }
+      },
+      {
+        "comment": "",
+        "key": "Mobile",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 209
+        }
+      },
+      {
+        "comment": "",
+        "key": "Email",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 210
+        }
+      },
+      {
+        "comment": "",
+        "key": "State",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 310
+        }
+      },
+      {
+        "comment": "",
+        "key": "State",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 311
+        }
+      },
+      {
+        "comment": "",
+        "key": "District",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 328
+        }
+      },
+      {
+        "comment": "",
+        "key": "District",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 329
+        }
+      },
+      {
+        "comment": "",
+        "key": "Service area",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 344
+        }
+      },
+      {
+        "comment": "",
+        "key": "Area",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 345
+        }
+      }
+    ]
+  },
+  "version": 1
+}

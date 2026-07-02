@@ -2,6 +2,7 @@ package com.mart.distribution.demo.data.cart
 
 import com.mart.distribution.demo.data.api.dto.ProductDto
 import com.mart.distribution.demo.data.api.dto.catalogUnitPrice
+import com.mart.distribution.demo.data.api.dto.discountPercentForRole
 import com.mart.distribution.demo.data.api.dto.toDoubleFromApiOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,8 @@ data class CartLine(
     val quantity: Int,
     /** Catalog base price when the line was added — UI estimate only; checkout uses server pricing. */
     val referenceUnitPrice: Double? = null,
+    val gstPercentage: Double? = null,
+    val discountPercent: Double? = null,
     val imageUrl: String? = null,
     val brandLogoUrl: String? = null,
 )
@@ -33,6 +36,8 @@ class CartRepository {
                         productName = product.name,
                         quantity = 1,
                         referenceUnitPrice = unit,
+                        gstPercentage = product.gstPercentage.toDoubleFromApiOrNull(),
+                        discountPercent = product.discountPercentForRole(role),
                         imageUrl = product.imageUrl,
                         brandLogoUrl = product.brand?.logoUrl,
                     )
@@ -79,6 +84,8 @@ class CartRepository {
                         productName = product.name,
                         quantity = quantity,
                         referenceUnitPrice = unit,
+                        gstPercentage = product.gstPercentage.toDoubleFromApiOrNull(),
+                        discountPercent = product.discountPercentForRole(role),
                         imageUrl = product.imageUrl,
                         brandLogoUrl = product.brand?.logoUrl,
                     )
@@ -96,5 +103,9 @@ class CartRepository {
 
     fun clear() {
         _lines.value = emptyList()
+    }
+
+    fun restoreLines(lines: List<CartLine>) {
+        _lines.value = lines
     }
 }

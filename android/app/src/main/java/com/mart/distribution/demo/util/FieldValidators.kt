@@ -32,13 +32,13 @@ object FieldFilters {
             .take(maxLen)
             .trimEnd()
 
-    /** Mobile or email login id — digits-only until @ appears, then email chars. */
+    /** Mobile or email login id — digits-only for phone; letters + email chars once typing email. */
     fun loginIdentifier(
         raw: String,
         maxLen: Int = 120,
     ): String {
         val trimmed = raw.trimStart().take(maxLen)
-        return if ('@' in trimmed) {
+        return if ('@' in trimmed || trimmed.any { it.isLetter() }) {
             email(trimmed, maxLen)
         } else {
             phone(raw, maxLen = 10)
@@ -91,6 +91,18 @@ object FieldFilters {
             .filter { it.isLetterOrDigit() }
             .take(15)
 
+    fun ifsc(raw: String): String =
+        raw
+            .uppercase()
+            .filter { it.isLetterOrDigit() }
+            .take(11)
+
+    fun upiId(raw: String): String =
+        raw
+            .lowercase()
+            .filter { it.isLetterOrDigit() || it in "@._-" }
+            .take(50)
+
     fun brandType(raw: String): String =
         raw
             .uppercase()
@@ -124,7 +136,7 @@ object FieldFilters {
 }
 
 object FieldValidators {
-    private val personNamePattern = Regex("^[\\p{L}][\\p{L}\\s.'-&]{1,79}$")
+    private val personNamePattern = Regex("^[\\p{L}][\\p{L}\\s.'&-]{1,79}$")
     private val gstinPattern = Regex("^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$")
     private val indianPhonePattern = Regex("^[6-9]\\d{9}$")
 
@@ -200,6 +212,24 @@ object FieldValidators {
         if (trimmed.isEmpty()) return null
         if (trimmed.length != 15 || !gstinPattern.matches(trimmed)) {
             return "Enter a valid 15-character GSTIN"
+        }
+        return null
+    }
+
+    fun ifscOptional(value: String): String? {
+        val trimmed = value.trim().uppercase()
+        if (trimmed.isEmpty()) return null
+        if (!Regex("^[A-Z]{4}0[A-Z0-9]{6}$").matches(trimmed)) {
+            return "Enter a valid 11-character IFSC code"
+        }
+        return null
+    }
+
+    fun upiIdOptional(value: String): String? {
+        val trimmed = value.trim().lowercase()
+        if (trimmed.isEmpty()) return null
+        if (!Regex("^[\\w.+-]+@[\\w]+$").matches(trimmed)) {
+            return "Enter a valid UPI ID (e.g. name@bank)"
         }
         return null
     }

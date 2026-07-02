@@ -25,6 +25,75 @@ data class AuthMeDto(
     val email: String,
     val role: String,
     val companyId: String?,
+    val name: String? = null,
+    val phone: String? = null,
+    val status: String? = null,
+    val shopName: String? = null,
+    val address: String? = null,
+    val state: String? = null,
+    val district: String? = null,
+    val documentUploaded: Boolean = false,
+    val canPlaceOrders: Boolean = false,
+    val documentStatus: String = "NOT_UPLOADED",
+    val documents: List<OnboardingDocumentDto> = emptyList(),
+    val area: UserAreaBriefDto? = null,
+    val assignedDealer: UserBriefDto? = null,
+)
+
+data class SendOtpRequest(
+    val phone: String,
+    val purpose: String = "REGISTER",
+)
+
+data class SendOtpResponse(
+    val success: Boolean,
+    val message: String,
+    val expiresInSeconds: Int? = null,
+    val devOtp: String? = null,
+)
+
+data class VerifyOtpRequest(
+    val phone: String,
+    val code: String,
+)
+
+data class VerifyOtpResponse(
+    val success: Boolean,
+    val verificationToken: String,
+    val phone: String,
+)
+
+data class RegistrationGeoResponse(
+    val states: List<RegistrationStateDto>,
+)
+
+data class RegistrationStateDto(
+    val name: String,
+    val districts: List<String>,
+)
+
+data class RegistrationAreaDto(
+    val id: String,
+    val name: String,
+    val state: String? = null,
+    val district: String? = null,
+    val dealerId: String? = null,
+)
+
+data class SelfRegisterRequest(
+    val verificationToken: String? = null,
+    val phone: String? = null,
+    val name: String,
+    val email: String? = null,
+    val password: String? = null,
+    val areaId: String,
+    val state: String,
+    val district: String,
+    val address: String,
+    val shopName: String,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val referralCode: String? = null,
 )
 
 data class ProductDto(
@@ -125,9 +194,21 @@ data class OrderDto(
     val gstAmount: Any? = null,
     val discountAmount: Any? = null,
     val finalAmount: Any? = null,
+    val returnReason: String? = null,
+    val returnRequestedAt: String? = null,
+    val returnedAt: String? = null,
+    val refundedAt: String? = null,
     val items: List<OrderItemDto>? = null,
     val shopkeeper: UserBriefDto? = null,
     val dealer: UserBriefDto? = null,
+)
+
+data class OrderReturnRequest(
+    val reason: String,
+)
+
+data class OrderReturnRejectRequest(
+    val note: String? = null,
 )
 
 data class OrderItemDto(
@@ -145,6 +226,11 @@ data class UserBriefDto(
     val id: String,
     val name: String? = null,
     val email: String? = null,
+    val phone: String? = null,
+    val shopName: String? = null,
+    val address: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
 )
 
 data class MockPaymentResponse(
@@ -172,7 +258,7 @@ data class VerifyRazorpayPaymentRequest(
     val orderId: String,
     val razorpayOrderId: String,
     val razorpayPaymentId: String,
-    val razorpaySignature: String,
+    val razorpaySignature: String = "",
 )
 
 data class VerifyRazorpayPaymentResponse(
@@ -205,6 +291,15 @@ data class StockRowDto(
     val dealer: UserBriefDto? = null,
 )
 
+data class UpdateStockRequest(
+    val quantity: Int,
+)
+
+data class UpsertStockRequest(
+    val productId: String,
+    val quantity: Int,
+)
+
 data class UserAreaBriefDto(
     val id: String? = null,
     val name: String? = null,
@@ -225,6 +320,10 @@ data class CreateShopkeeperRequest(
     val password: String,
     val areaId: String,
     val onboardingNotes: String? = null,
+    val shopName: String? = null,
+    val address: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
 )
 
 data class CreateDealerRequest(
@@ -234,6 +333,24 @@ data class CreateDealerRequest(
     val password: String? = null,
     val areaId: String,
     val onboardingNotes: String? = null,
+    val shopName: String? = null,
+    val address: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+)
+
+data class CreateAreaRequest(
+    val name: String,
+)
+
+data class UpdateAreaRequest(
+    val name: String,
+)
+
+/** GET /stock/available — lightweight availability for the shopkeeper's dealer. */
+data class StockAvailabilityDto(
+    val productId: String,
+    val quantity: Int,
 )
 
 data class CreateEmployeeRequest(
@@ -298,10 +415,15 @@ data class ResetPasswordResponse(
 data class OnboardingDocumentDto(
     val id: String,
     val label: String,
+    val documentType: String? = null,
     val fileName: String,
     val mimeType: String? = null,
     val fileSize: Long? = null,
     val uploadedAt: String? = null,
+    val verificationStatus: String = "PENDING_VERIFICATION",
+    val verifiedAt: String? = null,
+    val rejectionReason: String? = null,
+    val verifiedBy: UserBriefDto? = null,
     /** Offline demo: absolute path on device for admin preview. */
     val localPath: String? = null,
 )
@@ -313,6 +435,8 @@ data class UserRowDto(
     val role: String,
     val phone: String? = null,
     val area: UserAreaBriefDto? = null,
+    val state: String? = null,
+    val district: String? = null,
     val onboardedById: String? = null,
     val onboardingNotes: String? = null,
     val onboardingDocuments: List<OnboardingDocumentDto> = emptyList(),
@@ -320,6 +444,11 @@ data class UserRowDto(
     val status: String = "ACTIVE",
     val statusReason: String? = null,
     val approvedAt: String? = null,
+    val documentUploaded: Boolean = false,
+    val canPlaceOrders: Boolean = false,
+    val documentStatus: String = "NOT_UPLOADED",
+    val lastFollowUpAt: String? = null,
+    val totalOrders: Int = 0,
     val onboardedBy: UserBriefDto? = null,
     val approvedBy: UserBriefDto? = null,
 )
@@ -357,4 +486,28 @@ data class DealerSummaryDto(
     val pendingOrders: Int,
     val todaysDeliveries: Int,
     val weeklyRevenue: Double,
+)
+
+data class OrderingConfigDto(
+    val minOrderQuantity: Int = 1,
+    val maxOrderQuantity: Int = 10000,
+    val quickQuantityChips: List<Int> = listOf(10, 25, 50, 100, 250, 500, 1000),
+)
+
+data class ReorderPreviewItemDto(
+    val productId: String,
+    val quantity: Int,
+    val product: ProductDto? = null,
+)
+
+data class ReorderSkippedItemDto(
+    val productId: String,
+    val productName: String? = null,
+    val reason: String,
+)
+
+data class ReorderPreviewDto(
+    val items: List<ReorderPreviewItemDto>,
+    val warnings: List<String> = emptyList(),
+    val skipped: List<ReorderSkippedItemDto> = emptyList(),
 )

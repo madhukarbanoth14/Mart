@@ -1,0 +1,168 @@
+/* ============================================================
+   Flashmart — Premium fintech design system
+   Type: Schibsted Grotesk (UI/display) + JetBrains Mono (figures)
+   ============================================================ */
+
+:root {
+  /* Surfaces — cool, restrained off-whites */
+  --bg:        #eef0f4;          /* stage / page behind cards */
+  --surface:   #ffffff;
+  --surface-2: #f6f7f9;          /* subtle raised / inset */
+  --surface-3: #eceef2;
+
+  /* Ink */
+  --ink:       #131722;          /* near-black, cool */
+  --ink-2:     #3d4452;          /* secondary text */
+  --ink-3:     #6b7280;          /* tertiary / captions */
+  --ink-4:     #9aa1ad;          /* faint */
+  --line:      #e4e7ec;          /* hairline border */
+  --line-2:    #d4d8e0;
+
+  /* Brand — FlashMart emerald green (logo: lightning "F") */
+  --brand:      #15924b;
+  --brand-600:  #0f7d3f;
+  --brand-700:  #0b6332;
+  --brand-tint: #e6f4ec;
+  --brand-ink:  #0a4f29;         /* text on tint */
+
+  /* Gold accent (logo: handshake "M") — offers, ratings, highlights */
+  --gold:      #e3a008;
+  --gold-600:  #c6890a;
+  --gold-tint: #fbf0d6;
+  --gold-ink:  #7a5400;          /* text on gold tint */
+
+  /* Secondary — dark blue (spec) — dealer / info accents */
+  --blue:      #2746c9;
+  --blue-700:  #16307a;
+  --blue-tint: #e8ecfb;
+
+  /* Semantic — refined, not neon */
+  --pos:       #15924b;          /* money / success / delivered — on brand */
+  --pos-tint:  #e6f4ec;
+  --warn:      #c97a16;          /* pending */
+  --warn-tint: #fbf0df;
+  --neg:       #d6453f;          /* danger */
+  --neg-tint:  #fbe9e8;
+  --info:      #2746c9;
+
+  /* Dark surface (admin charts / hero) */
+  --ink-surface:   #0c1f17;
+  --ink-surface-2: #123a26;
+
+  /* Radii */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+
+  /* Shadows — soft, layered */
+  --sh-sm: 0 1px 2px rgba(19,23,34,.05), 0 1px 1px rgba(19,23,34,.04);
+  --sh-md: 0 2px 4px rgba(19,23,34,.05), 0 6px 16px rgba(19,23,34,.06);
+  --sh-lg: 0 12px 30px rgba(19,23,34,.10), 0 4px 8px rgba(19,23,34,.05);
+  --sh-xl: 0 30px 60px rgba(19,23,34,.16), 0 8px 20px rgba(19,23,34,.08);
+
+  --font: "Schibsted Grotesk", -apple-system, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* numbers */
+.mono { font-family: var(--mono); font-feature-settings: "tnum" 1; letter-spacing: -.02em; }
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* scrollbars inside apps */
+.fm-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.fm-scroll::-webkit-scrollbar-thumb { background: rgba(19,23,34,.14); border-radius: 99px; }
+.fm-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* tap feedback */
+.tap { cursor: pointer; transition: transform .12s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease, opacity .15s; -webkit-tap-highlight-color: transparent; }
+.tap:active { transform: scale(.975); }
+
+/* generic enter animation — transform-only so content is NEVER hidden
+   even if the animation is paused (inactive tab / capture context). */
+@keyframes fmFade { from { transform: translateY(6px); } to { transform: none; } }
+@keyframes fmPop  { 0% { opacity: 0; transform: scale(.9); } 60% { transform: scale(1.04); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes fmRise { from { transform: translateY(10px); } to { transform: none; } }
+@keyframes fmCheck { 0% { stroke-dashoffset: 60; } 100% { stroke-dashoffset: 0; } }
+@keyframes fmBarGrow { from { transform: scaleY(.04); } to { transform: scaleY(1); } }
+@keyframes fmSpin { to { transform: rotate(360deg); } }
+
+.fm-fade { animation: fmFade .3s cubic-bezier(.2,.7,.2,1) both; }
+.fm-rise { animation: fmRise .45s cubic-bezier(.2,.7,.2,1) both; }
+
+/* keyframe-staggered children */
+.stagger > * { animation: fmRise .5s cubic-bezier(.2,.7,.2,1) both; }
+.stagger > *:nth-child(1){ animation-delay:.03s }
+.stagger > *:nth-child(2){ animation-delay:.07s }
+.stagger > *:nth-child(3){ animation-delay:.11s }
+.stagger > *:nth-child(4){ animation-delay:.15s }
+.stagger > *:nth-child(5){ animation-delay:.19s }
+.stagger > *:nth-child(6){ animation-delay:.23s }
+.stagger > *:nth-child(7){ animation-delay:.27s }
+.stagger > *:nth-child(8){ animation-delay:.31s }
+
+button { font-family: inherit; }
+
+/* ============================================================
+   Material 3 — tonal tokens (FlashMart green seed)
+   Used by the Android (Material You) gallery.
+   ============================================================ */
+:root {
+  --m3-primary:            #15924b;
+  --m3-on-primary:         #ffffff;
+  --m3-primary-container:  #a6f2bf;
+  --m3-on-primary-container:#00210f;
+  --m3-secondary:          #4f6353;   /* muted green-grey */
+  --m3-secondary-container:#d2e8d4;
+  --m3-on-secondary-container:#0d1f13;
+  --m3-tertiary:           #8a6b00;   /* gold */
+  --m3-tertiary-container: #ffe08a;
+  --m3-on-tertiary-container:#2a1f00;
+  --m3-error:              #ba1a1a;
+  --m3-error-container:    #ffdad6;
+  --m3-on-error-container:  #410002;
+
+  --m3-surface:            #f7faf4;   /* surface (M3 neutral, faint green) */
+  --m3-surface-dim:        #d7dbd3;
+  --m3-surface-bright:     #f7faf4;
+  --m3-surface-cont-lowest:#ffffff;
+  --m3-surface-cont-low:   #f1f5ee;
+  --m3-surface-cont:       #ebefe8;   /* cards */
+  --m3-surface-cont-high:  #e5e9e2;
+  --m3-surface-cont-highest:#e0e4dc;
+  --m3-on-surface:         #181d18;
+  --m3-on-surface-var:     #414941;   /* secondary text */
+  --m3-outline:            #717971;
+  --m3-outline-var:        #c1c9bf;
+
+  --m3-state-hover:  rgba(21,146,75,.08);
+  --m3-state-press:  rgba(21,146,75,.12);
+
+  /* M3 elevation shadows (lighter than fintech card shadows) */
+  --m3-e1: 0 1px 2px rgba(0,0,0,.30), 0 1px 3px 1px rgba(0,0,0,.15);
+  --m3-e2: 0 1px 2px rgba(0,0,0,.30), 0 2px 6px 2px rgba(0,0,0,.15);
+  --m3-e3: 0 1px 3px rgba(0,0,0,.30), 0 4px 8px 3px rgba(0,0,0,.15);
+
+  --m3-r-xs: 4px; --m3-r-sm: 8px; --m3-r-md: 12px; --m3-r-lg: 16px; --m3-r-xl: 28px; --m3-r-full: 999px;
+  --roboto: "Schibsted Grotesk", "Roboto", system-ui, sans-serif;
+}
+
+/* FlashMart wordmark — Flash (green) · Mart (gold) */
+.fm-word { font-weight: 800; letter-spacing: -.03em; }
+.fm-word .fl { color: var(--brand); }
+.fm-word .mt { color: var(--gold); }
+
+/* Material ripple keyframe */
+@keyframes m3Ripple { to { transform: scale(2.6); opacity: 0; } }
+@keyframes m3FabIn { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }

@@ -6,6 +6,7 @@ import {
   IsString,
   validateSync,
 } from 'class-validator';
+import { assertSafeDatabaseUrl } from './assert-safe-database-url';
 
 /**
  * Validates process.env at startup. Extend as new configuration is added.
@@ -49,6 +50,10 @@ class EnvironmentVariables {
 
   @IsOptional()
   @IsString()
+  FIREBASE_PROJECT_ID?: string;
+
+  @IsOptional()
+  @IsString()
   SMTP_HOST?: string;
 
   @IsOptional()
@@ -74,6 +79,34 @@ class EnvironmentVariables {
   @IsOptional()
   @IsString()
   MAIL_APP_NAME?: string;
+
+  @IsOptional()
+  @IsString()
+  TWILIO_ACCOUNT_SID?: string;
+
+  @IsOptional()
+  @IsString()
+  TWILIO_AUTH_TOKEN?: string;
+
+  @IsOptional()
+  @IsString()
+  TWILIO_VERIFY_SERVICE_SID?: string;
+
+  @IsOptional()
+  @IsString()
+  TWILIO_MESSAGING_SERVICE_SID?: string;
+
+  @IsOptional()
+  @IsString()
+  TWILIO_SMS_FROM?: string;
+
+  @IsOptional()
+  @IsString()
+  TWILIO_SMS_OTP_MESSAGE?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  SMS_OTP_EXPIRY_MINUTES?: string;
 }
 
 export function validateEnv(
@@ -92,6 +125,12 @@ export function validateEnv(
       .join('; ');
     throw new Error(`Environment validation failed: ${messages}`);
   }
+
+  assertSafeDatabaseUrl(
+    validated.DATABASE_URL,
+    validated.NODE_ENV ?? 'development',
+  );
+
   return {
     ...config,
     ...(validated as unknown as Record<string, unknown>),

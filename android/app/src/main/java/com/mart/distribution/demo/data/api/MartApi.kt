@@ -11,4 +11,7 @@ interface MartApi :
     InvoiceApi,
     UserApi,
     StockApi,
-    AreasApi
+    AreasApi,
+    ConfigApi,
+    FinanceApi,
+    ReturnsApi

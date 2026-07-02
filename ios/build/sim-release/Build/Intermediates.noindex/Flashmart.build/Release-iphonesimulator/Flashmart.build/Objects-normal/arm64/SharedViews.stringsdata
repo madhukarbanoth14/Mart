@@ -1,0 +1,248 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shared/SharedViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Your cart is empty",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 20
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delivered by %@ · usually within a day",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 46
+        }
+      },
+      {
+        "comment": "",
+        "key": "To place orders, please upload at least one valid business document for verification.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "·",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 110
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%% off",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 111
+        }
+      },
+      {
+        "comment": "",
+        "key": "Complete payment",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 162
+        }
+      },
+      {
+        "comment": "",
+        "key": "Demo mode — no real charge",
+        "location": {
+          "startingColumn": 63,
+          "startingLine": 164
+        }
+      },
+      {
+        "comment": "",
+        "key": "Mock or Razorpay",
+        "location": {
+          "startingColumn": 96,
+          "startingLine": 164
+        }
+      },
+      {
+        "comment": "",
+        "key": "Request return",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 398
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reorder",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 414
+        }
+      },
+      {
+        "comment": "",
+        "key": "Qty %lld",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 350
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reason (damaged, wrong item…)",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 399
+        }
+      },
+      {
+        "comment": "",
+        "key": "Submit",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 400
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 410
+        }
+      },
+      {
+        "comment": "",
+        "key": "Describe why you want to return this delivered order.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 412
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 418
+        }
+      },
+      {
+        "comment": "",
+        "key": "Return notes",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 432
+        }
+      },
+      {
+        "comment": "",
+        "key": "Requested: %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 435
+        }
+      },
+      {
+        "comment": "",
+        "key": "Restock order — awaiting admin confirmation and delivery.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 479
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax Invoice",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 528
+        }
+      },
+      {
+        "comment": "",
+        "key": "×%lld",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 547
+        }
+      },
+      {
+        "comment": "",
+        "key": "Generated: %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 573
+        }
+      },
+      {
+        "comment": "",
+        "key": "Order: %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 576
+        }
+      },
+      {
+        "comment": "",
+        "key": "Your dealer has been notified and will confirm shortly.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 670
+        }
+      },
+      {
+        "comment": "",
+        "key": "Payment successful!",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 666
+        }
+      },
+      {
+        "comment": "",
+        "key": "Order placed!",
+        "location": {
+          "startingColumn": 49,
+          "startingLine": 666
+        }
+      },
+      {
+        "comment": "",
+        "key": "✓",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 662
+        }
+      },
+      {
+        "comment": "",
+        "key": "FlashMart collects business contact details, order history, and verification documents to operate the distribution platform. Documents are reviewed for eligibility only. We do not sell personal data to third parties.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 717
+        }
+      },
+      {
+        "comment": "",
+        "key": "Estimated delivery",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 747
+        }
+      },
+      {
+        "comment": "",
+        "key": "Your dealer · Central Zone",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 772
+        }
+      }
+    ]
+  },
+  "version": 1
+}

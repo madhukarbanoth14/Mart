@@ -1,0 +1,168 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shopkeeper/ShopkeeperCheckoutView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Enter card details",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 49
+        }
+      },
+      {
+        "comment": "",
+        "key": "Pay with UPI",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 55
+        }
+      },
+      {
+        "comment": "",
+        "key": "Document required",
+        "location": {
+          "startingColumn": 13,
+          "startingLine": 62
+        }
+      },
+      {
+        "comment": "",
+        "key": "Pay %@",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 50
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 51
+        }
+      },
+      {
+        "comment": "",
+        "key": "Demo card 4111 1111 1111 1111\nExpiry 12/28 · CVV 123",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 53
+        }
+      },
+      {
+        "comment": "",
+        "key": "Pay now",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 56
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 57
+        }
+      },
+      {
+        "comment": "",
+        "key": "Confirm demo UPI payment of %@?",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 59
+        }
+      },
+      {
+        "comment": "",
+        "key": "Upload documents",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 68
+        }
+      },
+      {
+        "comment": "",
+        "key": "Not now",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "Please upload at least one valid business document before placing orders.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "Your dealer · %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 132
+        }
+      },
+      {
+        "comment": "",
+        "key": "FM",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 213
+        }
+      },
+      {
+        "comment": "",
+        "key": "FlashMart",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 215
+        }
+      },
+      {
+        "comment": "",
+        "key": "Secured by Razorpay",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 216
+        }
+      },
+      {
+        "comment": "",
+        "key": "Continue in Razorpay for cards, wallets & net banking",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 234
+        }
+      },
+      {
+        "comment": "",
+        "key": "Outstanding balance",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 369
+        }
+      },
+      {
+        "comment": "",
+        "key": "Credit limit %@ · Available %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 371
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %lld items",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 395
+        }
+      }
+    ]
+  },
+  "version": 1
+}

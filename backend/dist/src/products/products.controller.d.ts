@@ -8,18 +8,20 @@ export declare class ProductsController {
     constructor(productsService: ProductsService);
     findAll(user: AuthUser, query: ProductsQueryDto): import("@prisma/client").Prisma.PrismaPromise<({
         brand: {
+            name: string;
             id: string;
             companyId: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            manufacturer: string | null;
             category: string | null;
+            manufacturer: string | null;
             logoUrl: string | null;
         } | null;
     } & {
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -29,7 +31,6 @@ export declare class ProductsController {
         caseQty: number | null;
         gstRate: import("@prisma/client-runtime-utils").Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -38,24 +39,25 @@ export declare class ProductsController {
         shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
         bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     })[]>;
     shelves(user: AuthUser): Promise<string[]>;
     paged(user: AuthUser, query: ProductsQueryDto): Promise<{
         items: ({
             brand: {
+                name: string;
                 id: string;
                 companyId: string;
-                name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                manufacturer: string | null;
                 category: string | null;
+                manufacturer: string | null;
                 logoUrl: string | null;
             } | null;
         } & {
+            name: string;
             id: string;
             companyId: string | null;
+            createdAt: Date;
             brandId: string | null;
             imageUrl: string | null;
             sku: string | null;
@@ -65,7 +67,6 @@ export declare class ProductsController {
             caseQty: number | null;
             gstRate: import("@prisma/client-runtime-utils").Decimal;
             isActive: boolean;
-            name: string;
             brandType: import("@prisma/client").$Enums.BrandType;
             shelf: import("@prisma/client").$Enums.ProductShelf;
             basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -74,7 +75,6 @@ export declare class ProductsController {
             shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
             bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
             bulkShippingMinQty: number;
-            createdAt: Date;
         })[];
         page: number;
         limit: number;
@@ -83,18 +83,20 @@ export declare class ProductsController {
     }>;
     findOne(id: string, user: AuthUser): Promise<{
         brand: {
+            name: string;
             id: string;
             companyId: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            manufacturer: string | null;
             category: string | null;
+            manufacturer: string | null;
             logoUrl: string | null;
         } | null;
     } & {
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -104,7 +106,6 @@ export declare class ProductsController {
         caseQty: number | null;
         gstRate: import("@prisma/client-runtime-utils").Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -113,11 +114,12 @@ export declare class ProductsController {
         shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
         bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     }>;
     create(dto: CreateProductDto, user: AuthUser): Promise<{
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -127,7 +129,6 @@ export declare class ProductsController {
         caseQty: number | null;
         gstRate: import("@prisma/client-runtime-utils").Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -136,11 +137,12 @@ export declare class ProductsController {
         shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
         bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     }>;
     update(id: string, dto: UpdateProductDto, user: AuthUser): Promise<{
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -150,7 +152,6 @@ export declare class ProductsController {
         caseQty: number | null;
         gstRate: import("@prisma/client-runtime-utils").Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -159,11 +160,12 @@ export declare class ProductsController {
         shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
         bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     }>;
     remove(id: string, user: AuthUser): Promise<{
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -173,7 +175,6 @@ export declare class ProductsController {
         caseQty: number | null;
         gstRate: import("@prisma/client-runtime-utils").Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -182,6 +183,5 @@ export declare class ProductsController {
         shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
         bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     }>;
 }

@@ -10,15 +10,10 @@ struct DealerTabHost: View {
     var body: some View {
         switch selectedTab {
         case "products":
-            CatalogView(
-                path: $path,
-                buyerRole: "DEALER",
-                title: "Browse products",
-                subtitle: "10% dealer discount · order stock from KNSR"
-            )
+            SkuManagementView(path: $path, embeddedInTab: true)
         case "orders": DealerOrdersView(path: $path)
         case "stock": DealerStockView(selectedTab: $selectedTab)
-        case "profile": DealerProfileView(user: user, onLogout: onLogout)
+        case "profile": DealerProfileView(path: $path, user: user, onLogout: onLogout)
         default: DealerHomeView(selectedTab: $selectedTab, path: $path, user: user)
         }
     }
@@ -35,7 +30,7 @@ struct DealerHomeView: View {
             FMTopBar(
                 title: user.name,
                 kicker: "Dealer dashboard",
-                accent: FMTheme.pos,
+                accent: FMTheme.dealerBlue,
                 trailing: AnyView(
                     HStack(spacing: 8) {
                         if lowStockCount > 0 {
@@ -44,7 +39,7 @@ struct DealerHomeView: View {
                             }
                         }
                         Button { selectedTab = "profile" } label: {
-                            FMAvatar(name: user.name, tint: FMTheme.pos)
+                            FMAvatar(name: user.name, tint: FMTheme.dealerBlue)
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("Open profile")
@@ -54,43 +49,42 @@ struct DealerHomeView: View {
 
             VStack(spacing: 16) {
                 revenueHero
+                dealerStatGrid
+
+                HStack(spacing: 10) {
+                    Button { path.append(AppRoute.dealerRevenue) } label: {
+                        FMCard(padding: 14) {
+                            Image(systemName: "indianrupeesign.circle").foregroundStyle(FMTheme.dealerBlue)
+                            Text("Revenue").font(.system(size: 13, weight: .bold))
+                            Text("Analytics").font(.system(size: 11)).foregroundStyle(FMTheme.ink3)
+                        }
+                    }.buttonStyle(.plain)
+                    Button { path.append(AppRoute.dealerReturns) } label: {
+                        FMCard(padding: 14) {
+                            Image(systemName: "arrow.uturn.left.circle").foregroundStyle(FMTheme.gold)
+                            Text("Returns").font(.system(size: 13, weight: .bold))
+                            Text("Review").font(.system(size: 11)).foregroundStyle(FMTheme.ink3)
+                        }
+                    }.buttonStyle(.plain)
+                }
 
                 Button { selectedTab = "products" } label: {
                     FMCard {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Browse & order stock")
+                                Text("Manage SKUs")
                                     .font(.system(size: 15, weight: .bold))
-                                Text("Place restock orders for your warehouse")
+                                Text("Products, pricing & discounts")
                                     .font(.system(size: 12))
                                     .foregroundStyle(FMTheme.ink3)
                             }
                             Spacer()
-                            Image(systemName: "cart.badge.plus")
+                            Image(systemName: "cube.box")
                                 .foregroundStyle(FMTheme.brand)
                         }
                     }
                 }
                 .buttonStyle(.plain)
-
-                HStack(spacing: 11) {
-                    FMStatTile(
-                        label: "Pending orders",
-                        value: "\(env.mainViewModel.dealerSummary?.pendingOrders ?? 0)",
-                        icon: "clock",
-                        accent: FMTheme.warn,
-                        tint: FMTheme.warnTint,
-                        subtitle: "Need your action"
-                    )
-                    FMStatTile(
-                        label: "In transit",
-                        value: "\(env.mainViewModel.dealerSummary?.todaysDeliveries ?? 0)",
-                        icon: "shippingbox",
-                        accent: FMTheme.brand,
-                        tint: FMTheme.brandTint,
-                        subtitle: "Accepted / out"
-                    )
-                }
 
                 if let pending = pendingShopkeeperOrder {
                     FMSectionLabel(title: "Awaiting confirmation", actionTitle: "View all") { selectedTab = "orders" }
@@ -102,11 +96,68 @@ struct DealerHomeView: View {
         .task { await env.mainViewModel.loadStock() }
     }
 
+    private var dealerStatGrid: some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 11) {
+            dealerHomeStat(icon: "clock", label: "Pending", value: "\(pendingOrdersCount)", bg: FMTheme.goldTint, fg: FMTheme.goldInk)
+            dealerHomeStat(icon: "shippingbox", label: "In transit", value: "\(inTransitCount)", bg: FMTheme.dealerBlueTint, fg: FMTheme.dealerBlue)
+            dealerHomeStat(icon: "archivebox", label: "Inventory", value: FMTheme.inr(inventoryValue), bg: FMTheme.surface3, fg: FMTheme.ink)
+            dealerHomeStat(icon: "person.2", label: "Shopkeepers", value: "\(shopkeeperCount)", bg: FMTheme.brandTint, fg: FMTheme.brand)
+        }
+    }
+
+    private func dealerHomeStat(icon: String, label: String, value: String, bg: Color, fg: Color) -> some View {
+        FMCard(padding: 15) {
+            Image(systemName: icon)
+                .font(.system(size: 17))
+                .foregroundStyle(fg)
+                .frame(width: 36, height: 36)
+                .background(bg)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            Text(value)
+                .font(.system(size: 20, weight: .bold, design: .monospaced))
+                .foregroundStyle(FMTheme.ink)
+                .padding(.top, 10)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Text(label)
+                .font(.system(size: 12.5, weight: .semibold))
+                .foregroundStyle(FMTheme.ink3)
+        }
+    }
+
+    private var pendingOrdersCount: Int {
+        guard case .ok(let list) = env.mainViewModel.orders else {
+            return env.mainViewModel.dealerSummary?.pendingOrders ?? 0
+        }
+        return list.filter { $0.status.uppercased() == "PENDING" }.count
+    }
+
+    private var inTransitCount: Int {
+        guard case .ok(let list) = env.mainViewModel.orders else {
+            return env.mainViewModel.dealerSummary?.todaysDeliveries ?? 0
+        }
+        return list.filter {
+            ["DEALER_CONFIRMED", "ACCEPTED", "OUT_FOR_DELIVERY"].contains($0.status.uppercased())
+        }.count
+    }
+
+    private var shopkeeperCount: Int {
+        guard case .ok(let list) = env.mainViewModel.orders else { return 0 }
+        return Set(list.compactMap(\.shopkeeperId)).count
+    }
+
+    private var inventoryValue: Double {
+        guard case .ok(let rows) = env.mainViewModel.stock else { return 0 }
+        return rows.reduce(0) { sum, row in
+            sum + (row.product?.basePrice?.doubleValue ?? 0) * Double(row.quantity)
+        }
+    }
+
     private var revenueHero: some View {
         ZStack(alignment: .leading) {
             RoundedRectangle(cornerRadius: FMTheme.heroRadius, style: .continuous)
                 .fill(FMTheme.dealerHeroGradient)
-                .shadow(color: FMTheme.pos.opacity(0.25), radius: 12, y: 6)
+                .shadow(color: FMTheme.dealerBlue.opacity(0.25), radius: 12, y: 6)
             Circle().fill(.white.opacity(0.08)).frame(width: 150).offset(x: 230, y: -30)
 
             VStack(alignment: .leading, spacing: 6) {
@@ -182,10 +233,16 @@ struct DealerOrdersView: View {
 struct DealerStockView: View {
     @Environment(AppEnvironment.self) private var env
     @Binding var selectedTab: String
+    @State private var editingStock: StockRow?
+    @State private var editQty = 0
+    @State private var stockError: String?
 
     var body: some View {
         FMScreen(showNav: true) {
             FMTopBar(title: "Stock", subtitle: stockSubtitle)
+            if let stockError {
+                FMErrorBanner(text: stockError).padding(.horizontal, 16)
+            }
             VStack(spacing: 10) {
                 if case .ok(let rows) = env.mainViewModel.stock {
                     if rows.isEmpty {
@@ -196,14 +253,17 @@ struct DealerStockView: View {
                         }
                     }
                 } else if case .loading = env.mainViewModel.stock {
-                    ProgressView().padding()
+                    FMLoadingState()
                 } else if case .err(let msg) = env.mainViewModel.stock {
-                    Text(msg).foregroundStyle(FMTheme.neg).font(.system(size: 13)).padding()
+                    FMErrorBanner(text: msg).padding(.horizontal, 16)
                 }
             }
             .padding(.horizontal, 16)
         }
         .task { await env.mainViewModel.loadStock() }
+        .sheet(item: $editingStock) { row in
+            stockEditSheet(stockId: row.id)
+        }
     }
 
     private var emptyStockState: some View {
@@ -215,7 +275,7 @@ struct DealerStockView: View {
                     .font(.system(size: 13))
                     .foregroundStyle(FMTheme.ink3)
                     .multilineTextAlignment(.center)
-                FMButton(title: "Browse products", variant: .soft, icon: "square.grid.2x2") {
+                FMButton(title: "Manage SKUs", variant: .soft, icon: "cube.box") {
                     selectedTab = "products"
                 }
             }
@@ -256,19 +316,45 @@ struct DealerStockView: View {
                 Text("\(row.quantity)")
                     .font(.system(size: 12, weight: .bold, design: .monospaced))
                     .foregroundStyle(low ? FMTheme.neg : FMTheme.ink2)
-                if low {
-                    FMButton(title: "Reorder", variant: .soft, icon: "arrow.clockwise", fullWidth: false) {
-                        selectedTab = "products"
+                FMButton(title: "Edit", variant: .outline, fullWidth: false) {
+                    editQty = row.quantity
+                    editingStock = row
+                }
+                .frame(width: 72)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func stockEditSheet(stockId: String) -> some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Text("Update quantity").font(.system(size: 16, weight: .bold))
+                FMStepper(value: editQty, onChange: { editQty = $0 }, min: 0)
+                FMButton(title: "Save") {
+                    Task {
+                        stockError = await env.mainViewModel.updateStockQuantity(stockId: stockId, quantity: editQty)
+                        editingStock = nil
                     }
-                    .frame(width: 100)
+                }
+                Spacer()
+            }
+            .padding(20)
+            .navigationTitle("Edit stock")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { editingStock = nil }
                 }
             }
         }
+        .presentationDetents([.medium])
     }
 }
 
 struct DealerProfileView: View {
     @Environment(AppEnvironment.self) private var env
+    @Binding var path: NavigationPath
     let user: SessionUser
     let onLogout: () -> Void
 
@@ -284,6 +370,9 @@ struct DealerProfileView: View {
                             Text("\(user.email) · Dealer")
                                 .font(.system(size: 13))
                                 .foregroundStyle(FMTheme.ink3)
+                            Text(user.documentStatus.replacingOccurrences(of: "_", with: " ").capitalized)
+                                .font(.system(size: 12))
+                                .foregroundStyle(FMTheme.brand)
                         }
                         Spacer()
                         FMBadge(status: "ACTIVE")
@@ -294,6 +383,33 @@ struct DealerProfileView: View {
                     statCard("Orders", "\(orderCount)")
                     statCard("Revenue", FMTheme.inr(env.mainViewModel.dealerSummary?.weeklyRevenue ?? 0))
                     statCard("Pending", "\(env.mainViewModel.dealerSummary?.pendingOrders ?? 0)")
+                }
+
+                FMCard(padding: 6) {
+                    FMRow(icon: "doc.badge.plus", title: "Documents", subtitle: user.documentStatus.replacingOccurrences(of: "_", with: " ").capitalized, showDivider: true) {
+                        path.append(AppRoute.profileDocuments)
+                    }
+                    FMRow(icon: "cube.box", title: "SKU management", subtitle: "Products & pricing", showDivider: true) {
+                        path.append(AppRoute.skuManagement)
+                    }
+                    FMRow(icon: "mappin.and.ellipse", title: "Business address", subtitle: "Warehouse location", showDivider: true) {
+                        path.append(AppRoute.profileStoreAddress)
+                    }
+                    FMRow(icon: "creditcard", title: "Payment details", subtitle: "Bank & settlement", showDivider: true) {
+                        path.append(AppRoute.profilePaymentMethods)
+                    }
+                    FMRow(icon: "doc.text", title: "GST details", subtitle: "Tax registration", showDivider: true) {
+                        path.append(AppRoute.profileGstDetails)
+                    }
+                    FMRow(icon: "bell", title: "Notifications", subtitle: "Order alerts", showDivider: true) {
+                        path.append(AppRoute.profileNotifications)
+                    }
+                    FMRow(icon: "questionmark.circle", title: "Help & support", subtitle: "Contact support", showDivider: true) {
+                        path.append(AppRoute.profileHelp)
+                    }
+                    FMRow(icon: "hand.raised", title: "Privacy policy", subtitle: "Data & documents", showDivider: false) {
+                        path.append(AppRoute.privacyPolicy)
+                    }
                 }
 
                 FMButton(title: "Sign out", variant: .outline, icon: "rectangle.portrait.and.arrow.right", action: onLogout)

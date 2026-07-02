@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashmart — iOS Screen Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="app/theme.css" />
+  <style>
+    html, body { height: 100%; margin: 0; background: #f4f1ec; }
+    #root { height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <template id="__bundler_thumbnail" data-bg-color="#15924b">
+    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1200" height="800" fill="#15924b"/>
+      <rect x="460" y="200" width="280" height="400" rx="46" fill="#0b6332"/>
+      <path d="M636 260 L556 380 H616 L606 460 L696 340 H636 L646 260 Z" fill="#fff"/>
+      <polygon points="740,440 740,600 580,600" fill="#e3a008"/>
+      <rect x="780" y="200" width="280" height="400" rx="46" fill="#0f7d3f"/>
+      <path d="M916 260 L836 380 H896 L886 460 L976 340 H916 L926 260 Z" fill="rgba(255,255,255,.45)"/>
+    </svg>
+  </template>
+
+  <!-- React + Babel (pinned) -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- data -->
+  <script src="app/data.js"></script>
+
+  <!-- frames -->
+  <script type="text/babel" src="frames/ios-frame.jsx"></script>
+  <script type="text/babel" src="frames/design-canvas.jsx"></script>
+
+  <!-- design system primitives -->
+  <script type="text/babel" src="app/ui.jsx"></script>
+  <script type="text/babel" src="app/ui2.jsx"></script>
+  <script type="text/babel" src="app/shell.jsx"></script>
+
+  <!-- iOS gallery -->
+  <script type="text/babel" src="ios/kit.jsx"></script>
+  <script type="text/babel" src="ios/auth.jsx"></script>
+  <script type="text/babel" src="ios/flow.jsx"></script>
+  <script type="text/babel" src="ios/screens_shopkeeper.jsx"></script>
+  <script type="text/babel" src="ios/screens_dealer_emp.jsx"></script>
+  <script type="text/babel" src="ios/screens_states.jsx"></script>
+  <script type="text/babel" src="ios/screens_shopkeeper2.jsx"></script>
+  <script type="text/babel" src="ios/screens_shared.jsx"></script>
+  <script type="text/babel" src="ios/screens_admin.jsx"></script>
+  <script type="text/babel" src="ios/gallery.jsx"></script>
+</body>
+</html>

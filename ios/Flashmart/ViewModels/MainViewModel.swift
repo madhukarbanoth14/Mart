@@ -20,11 +20,19 @@ final class MainViewModel {
     var paymentMessage: String?
     var lastPlacedOrder: Order?
     var pendingRazorpay: PendingRazorpayCheckout?
+    var documentCheckoutBlocked = false
+    var myDocuments: LoadState<[OnboardingDocument]> = .idle
+    var maxOrderQuantity = 10000
+    var quickQuantityChips = [10, 25, 50, 100, 250, 500, 1000]
 
     private let apiClient: MartAPIClient
     private let sessionStore: SessionStore
     let cartStore: CartStore
     private let localDemoStore: LocalDemoStore
+
+    private var razorpayCartRestore: [CartLine]?
+    private var activeRazorpayAppOrderId: String?
+    private var razorpayResultHandled = false
 
     init(apiClient: MartAPIClient, sessionStore: SessionStore, cartStore: CartStore, localDemoStore: LocalDemoStore) {
         self.apiClient = apiClient
@@ -52,13 +60,15 @@ final class MainViewModel {
             async let o: Void = loadMyOrders()
             async let s: Void = loadShopkeeperSummary()
             async let p: Void = loadProducts()
-            _ = await (o, s, p)
+            async let cfg: Void = loadOrderingConfig()
+            _ = await (o, s, p, cfg)
         case .dealer:
             async let o: Void = loadDealerOrders()
             async let s: Void = loadDealerSummary()
             async let st: Void = loadStock()
             async let p: Void = loadProducts()
-            _ = await (o, s, st, p)
+            async let cfg: Void = loadOrderingConfig()
+            _ = await (o, s, st, p, cfg)
         case .admin:
             async let o: Void = loadAllOrders()
             async let u: Void = loadUsers()
@@ -174,7 +184,99 @@ final class MainViewModel {
     }
 
     @MainActor
+    func refreshAuthProfile() async {
+        guard var user = sessionStore.user else { return }
+        if AppConfig.useLocalDemoAuth || sessionStore.isLocalDemoMode {
+            if let demo = sessionStore.user {
+                user = demo
+                sessionStore.patchUser(user)
+            }
+            return
+        }
+        do {
+            let me = try await apiClient.me()
+            user.canPlaceOrders = me.canPlaceOrders ?? user.canPlaceOrders
+            user.documentStatus = me.documentStatus ?? user.documentStatus
+            user.areaName = me.area?.name ?? user.areaName
+            user.assignedDealer = me.assignedDealer ?? user.assignedDealer
+            sessionStore.patchUser(user)
+        } catch {}
+    }
+
+    @MainActor
+    func loadMyDocuments() async {
+        myDocuments = .loading
+        do {
+            let docs = try await apiClient.myDocuments()
+            myDocuments = .ok(docs)
+        } catch {
+            myDocuments = .err(error.localizedDescription)
+        }
+    }
+
+    @MainActor
+    func uploadMyDocument(
+        documentType: String,
+        fileURL: URL,
+        fileName: String,
+        mimeType: String
+    ) async -> String? {
+        do {
+            _ = try await apiClient.uploadMyDocument(
+                documentType: documentType,
+                fileURL: fileURL,
+                fileName: fileName,
+                mimeType: mimeType
+            )
+            if sessionStore.isLocalDemoMode, var user = sessionStore.user {
+                let docs = try await apiClient.myDocuments()
+                let hasEligible = docs.contains {
+                    $0.verificationStatus == "PENDING_VERIFICATION" || $0.verificationStatus == "VERIFIED"
+                }
+                user.canPlaceOrders = hasEligible
+                user.documentStatus = docs.isEmpty ? "NOT_UPLOADED" : (hasEligible ? "PENDING_VERIFICATION" : "REJECTED")
+                sessionStore.patchUser(user)
+            } else {
+                await refreshAuthProfile()
+            }
+            await loadMyDocuments()
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
+    }
+
+    @MainActor
+    func showDocumentCheckoutBlock() {
+        documentCheckoutBlocked = true
+    }
+
+    @MainActor
+    func dismissDocumentCheckoutBlock() {
+        documentCheckoutBlocked = false
+    }
+
+    @MainActor
+    func canProceedToCheckout() -> Bool {
+        if sessionStore.user?.canPlaceOrders == false {
+            documentCheckoutBlocked = true
+            return false
+        }
+        return true
+    }
+
+    @MainActor
+    private func ensureCanCheckout() -> Bool {
+        if sessionStore.user?.canPlaceOrders == false {
+            documentCheckoutBlocked = true
+            return false
+        }
+        return true
+    }
+
+    @MainActor
     func placeOrderFromCart() async -> Order? {
+        guard ensureCanCheckout() else { return nil }
         guard !cartStore.lines.isEmpty else {
             placeOrderError = "Cart is empty"
             return nil
@@ -220,6 +322,7 @@ final class MainViewModel {
     /// Demo card/UPI/COD — creates order and marks mock-paid (matches Android `placeOrderFromCartWithDemoPayment`).
     @MainActor
     func placeOrderWithDemoPayment(method: String) async -> Order? {
+        guard ensureCanCheckout() else { return nil }
         guard !cartStore.lines.isEmpty else {
             placeOrderError = "Cart is empty"
             return nil
@@ -272,7 +375,8 @@ final class MainViewModel {
 
     /// Live API: create order then stage Razorpay checkout (matches Android `placeOrderFromCartRazorpay`).
     @MainActor
-    func placeOrderForRazorpay() async -> PendingRazorpayCheckout? {
+    func placeOrderForRazorpay(paymentMethod: String = "card") async -> PendingRazorpayCheckout? {
+        guard ensureCanCheckout() else { return nil }
         guard !cartStore.lines.isEmpty else {
             placeOrderError = "Cart is empty"
             return nil
@@ -282,7 +386,7 @@ final class MainViewModel {
         pendingRazorpay = nil
 
         if AppConfig.useLocalDemoAuth || sessionStore.isLocalDemoMode {
-            if let order = await placeOrderWithDemoPayment(method: "card") {
+            if let order = await placeOrderWithDemoPayment(method: paymentMethod) {
                 placeOrderMessage = "Demo mode — Razorpay skipped. Order \(order.id) paid."
             }
             return nil
@@ -291,6 +395,7 @@ final class MainViewModel {
         let items = cartStore.lines.map { CreateOrderItem(productId: $0.product.id, quantity: $0.quantity) }
         let email = sessionStore.user?.email ?? ""
         let role = sessionStore.user?.role.uppercased() ?? "SHOPKEEPER"
+        let cartSnapshot = cartStore.lines
         do {
             let created: CreateOrderWithPaymentResponse
             do {
@@ -298,12 +403,19 @@ final class MainViewModel {
             } catch {
                 let order = try await createOrderForCurrentRole(items: items)
                 let rz = try await apiClient.createRazorpayOrder(orderId: order.id)
+                rememberRazorpayCheckout(appOrderId: order.id, cartSnapshot: cartSnapshot)
                 cartStore.clear()
                 lastPlacedOrder = order
                 await refreshOrdersForCurrentRole()
                 let pending = PendingRazorpayCheckout(
-                    appOrderId: order.id, gatewayOrderId: rz.razorpayOrderId,
-                    keyId: rz.keyId, amountPaise: rz.amountPaise, currency: rz.currency, userEmail: email
+                    appOrderId: order.id,
+                    gatewayOrderId: rz.razorpayOrderId,
+                    keyId: rz.keyId,
+                    amountPaise: rz.amountPaise,
+                    currency: rz.currency,
+                    userEmail: email,
+                    userPhone: nil,
+                    paymentMethod: paymentMethod
                 )
                 pendingRazorpay = pending
                 placeOrderMessage = role == "DEALER"
@@ -329,6 +441,7 @@ final class MainViewModel {
                 currency = rz.currency
             }
 
+            rememberRazorpayCheckout(appOrderId: created.orderId, cartSnapshot: cartSnapshot)
             cartStore.clear()
             if let order = try? await apiClient.orderById(created.orderId) {
                 lastPlacedOrder = order
@@ -336,8 +449,14 @@ final class MainViewModel {
             await refreshOrdersForCurrentRole()
 
             let pending = PendingRazorpayCheckout(
-                appOrderId: created.orderId, gatewayOrderId: gatewayId,
-                keyId: keyId, amountPaise: amountPaise, currency: currency, userEmail: email
+                appOrderId: created.orderId,
+                gatewayOrderId: gatewayId,
+                keyId: keyId,
+                amountPaise: amountPaise,
+                currency: currency,
+                userEmail: email,
+                userPhone: nil,
+                paymentMethod: paymentMethod
             )
             pendingRazorpay = pending
             placeOrderMessage = role == "DEALER"
@@ -351,7 +470,7 @@ final class MainViewModel {
     }
 
     @MainActor
-    func initRazorpayForOrder(_ orderId: String) async -> PendingRazorpayCheckout? {
+    func initRazorpayForOrder(_ orderId: String, paymentMethod: String? = nil) async -> PendingRazorpayCheckout? {
         placeOrderError = nil
         let email = sessionStore.user?.email ?? ""
         if AppConfig.useLocalDemoAuth || sessionStore.isLocalDemoMode {
@@ -363,8 +482,14 @@ final class MainViewModel {
         do {
             let rz = try await apiClient.createRazorpayOrder(orderId: orderId)
             let pending = PendingRazorpayCheckout(
-                appOrderId: orderId, gatewayOrderId: rz.razorpayOrderId,
-                keyId: rz.keyId, amountPaise: rz.amountPaise, currency: rz.currency, userEmail: email
+                appOrderId: orderId,
+                gatewayOrderId: rz.razorpayOrderId,
+                keyId: rz.keyId,
+                amountPaise: rz.amountPaise,
+                currency: rz.currency,
+                userEmail: email,
+                userPhone: nil,
+                paymentMethod: paymentMethod
             )
             pendingRazorpay = pending
             return pending
@@ -376,12 +501,33 @@ final class MainViewModel {
 
     @MainActor
     func onRazorpayResult(_ result: RazorpayPaymentResult, appOrderId: String) async -> Bool {
+        if !result.success {
+            if razorpayResultHandled { return false }
+            razorpayResultHandled = true
+            if razorpayCartRestore != nil {
+                await abandonPendingRazorpayCheckout(
+                    message: result.error ?? "Payment cancelled — order removed. Your cart has been restored."
+                )
+            } else {
+                clearPendingRazorpayOnly(message: result.error ?? "Payment cancelled or failed")
+            }
+            return false
+        }
+        if razorpayResultHandled { return false }
+        razorpayResultHandled = true
+
         pendingRazorpay = nil
-        guard result.success,
-              let gatewayOrderId = result.orderId,
+        guard let gatewayOrderId = result.orderId,
               let paymentId = result.paymentId,
               let signature = result.signature else {
-            paymentMessage = result.error ?? "Payment cancelled"
+            if razorpayCartRestore != nil {
+                await abandonPendingRazorpayCheckout(
+                    message: "Payment result incomplete — order removed. Your cart has been restored."
+                )
+            } else {
+                clearPendingRazorpayOnly(message: "Payment result incomplete, please retry.")
+            }
+            razorpayResultHandled = false
             return false
         }
         do {
@@ -392,16 +538,119 @@ final class MainViewModel {
                 razorpaySignature: signature
             ))
             paymentMessage = verified.verified ? "Payment successful." : "Payment verification failed."
+            clearRazorpayCheckoutSession()
             await refreshOrdersForCurrentRole()
             return verified.verified
         } catch {
-            paymentMessage = error.localizedDescription
+            if razorpayCartRestore != nil {
+                await abandonPendingRazorpayCheckout(message: error.localizedDescription)
+            } else {
+                paymentMessage = error.localizedDescription
+            }
+            razorpayResultHandled = false
             return false
         }
     }
 
     func clearPendingRazorpay() {
         pendingRazorpay = nil
+    }
+
+    private func rememberRazorpayCheckout(appOrderId: String, cartSnapshot: [CartLine]) {
+        activeRazorpayAppOrderId = appOrderId
+        razorpayCartRestore = cartSnapshot
+        razorpayResultHandled = false
+    }
+
+    private func clearRazorpayCheckoutSession() {
+        activeRazorpayAppOrderId = nil
+        razorpayCartRestore = nil
+        razorpayResultHandled = false
+    }
+
+    @MainActor
+    private func abandonPendingRazorpayCheckout(message: String) async {
+        let orderId = pendingRazorpay?.appOrderId ?? activeRazorpayAppOrderId
+        let isFreshCheckout = razorpayCartRestore != nil
+        if isFreshCheckout, let orderId {
+            try? await apiClient.cancelOrder(orderId: orderId)
+        }
+        if let snap = razorpayCartRestore {
+            cartStore.restoreLines(snap)
+        }
+        clearRazorpayCheckoutSession()
+        pendingRazorpay = nil
+        paymentMessage = message
+        if isFreshCheckout {
+            await refreshOrdersForCurrentRole()
+        }
+    }
+
+    @MainActor
+    private func clearPendingRazorpayOnly(message: String) {
+        pendingRazorpay = nil
+        paymentMessage = message
+    }
+
+    @MainActor
+    func requestOrderReturn(orderId: String, reason: String) async -> Bool {
+        do {
+            _ = try await apiClient.requestOrderReturn(orderId: orderId, reason: reason)
+            await refreshOrdersForCurrentRole()
+            placeOrderMessage = "Return request submitted"
+            return true
+        } catch {
+            placeOrderError = error.localizedDescription
+            return false
+        }
+    }
+
+    @MainActor
+    func createDetailedReturn(
+        orderId: String,
+        reason: String,
+        reasonText: String?,
+        comments: String?,
+        items: [CreateReturnItemRequest]
+    ) async -> Bool {
+        do {
+            _ = try await apiClient.createReturn(
+                orderId: orderId,
+                body: CreateReturnRequest(reason: reason, reasonText: reasonText, comments: comments, items: items)
+            )
+            await refreshOrdersForCurrentRole()
+            placeOrderMessage = "Return request submitted"
+            return true
+        } catch {
+            placeOrderError = error.localizedDescription
+            return false
+        }
+    }
+
+    @MainActor
+    func approveOrderReturn(orderId: String) async -> Bool {
+        do {
+            _ = try await apiClient.approveOrderReturn(orderId: orderId)
+            await refreshOrdersForCurrentRole()
+            placeOrderMessage = "Return approved — raise refund request when ready"
+            return true
+        } catch {
+            placeOrderError = error.localizedDescription
+            return false
+        }
+    }
+
+    @MainActor
+    func rejectOrderReturn(orderId: String, note: String?) async -> Bool {
+        do {
+            _ = try await apiClient.rejectOrderReturn(orderId: orderId, note: note)
+            await refreshOrdersForCurrentRole()
+            placeOrderMessage = "Return request rejected"
+            return true
+        } catch {
+            placeOrderError = error.localizedDescription
+            return false
+        }
     }
 
     @MainActor
@@ -635,6 +884,33 @@ final class MainViewModel {
         cartStore.add(product: product, quantity: qty)
     }
 
+    @MainActor
+    func loadOrderingConfig() async {
+        do {
+            let cfg = try await apiClient.orderingConfig()
+            maxOrderQuantity = cfg.maxOrderQuantity
+            quickQuantityChips = cfg.quickQuantityChips
+        } catch {
+            // Keep defaults.
+        }
+    }
+
+    @MainActor
+    func reorderFromOrder(orderId: String) async -> (success: Bool, message: String?) {
+        do {
+            let preview = try await apiClient.reorderPreview(orderId)
+            cartStore.clear()
+            for item in preview.items {
+                if let product = item.product {
+                    cartStore.add(product: product, quantity: item.quantity)
+                }
+            }
+            return (!preview.items.isEmpty, preview.warnings.first)
+        } catch {
+            return (false, error.localizedDescription)
+        }
+    }
+
     func setCartQty(productId: String, qty: Int) {
         cartStore.setQuantity(productId: productId, quantity: qty)
     }
@@ -731,6 +1007,57 @@ final class MainViewModel {
             try await apiClient.deleteBrand(id)
             await loadBrands()
         } catch { placeOrderError = error.localizedDescription }
+    }
+
+    @MainActor
+    func updateStockQuantity(stockId: String, quantity: Int) async -> String? {
+        do {
+            _ = try await apiClient.updateStock(stockId, quantity: quantity)
+            await loadStock()
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
+    }
+
+    @MainActor
+    func addStockSku(productId: String, quantity: Int) async -> String? {
+        do {
+            _ = try await apiClient.upsertStock(productId: productId, quantity: quantity)
+            await loadStock()
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
+    }
+
+    @MainActor
+    func createArea(name: String) async -> Bool {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.count >= 2 else {
+            placeOrderError = "Area name must be at least 2 characters"
+            return false
+        }
+        do {
+            _ = try await apiClient.createArea(name: trimmed)
+            await loadAreas()
+            placeOrderError = nil
+            return true
+        } catch {
+            placeOrderError = error.localizedDescription
+            return false
+        }
+    }
+
+    @MainActor
+    func recordFollowUp(userId: String) async -> String? {
+        do {
+            _ = try await apiClient.recordFollowUp(userId: userId)
+            await loadUsers()
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
     }
 
     @MainActor

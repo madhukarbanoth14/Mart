@@ -1,0 +1,176 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Admin/AdminFinanceViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "No revenue data yet",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "No settlements yet.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 200
+        }
+      },
+      {
+        "comment": "",
+        "key": "No dealers onboarded yet.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 220
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tap for sales & settlement KPIs",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 231
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %lf%%",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 305
+        }
+      },
+      {
+        "comment": "",
+        "key": "Dealer: %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 307
+        }
+      },
+      {
+        "comment": "",
+        "key": "Product: %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 310
+        }
+      },
+      {
+        "comment": "",
+        "key": "No audit logs yet.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 351
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %@…",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 359
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ → %@ · %lld orders",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 404
+        }
+      },
+      {
+        "comment": "",
+        "key": "Payable %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 407
+        }
+      },
+      {
+        "comment": "",
+        "key": "Loading…",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 500
+        }
+      },
+      {
+        "comment": "",
+        "key": "Gross %@ · GST %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 439
+        }
+      },
+      {
+        "comment": "",
+        "key": "Commission %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 440
+        }
+      },
+      {
+        "comment": "",
+        "key": "Dealer payable %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 441
+        }
+      },
+      {
+        "comment": "",
+        "key": "Settled %@ · Balance %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 442
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %@",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 451
+        }
+      },
+      {
+        "comment": "",
+        "key": "UTR: %@",
+        "location": {
+          "startingColumn": 67,
+          "startingLine": 453
+        }
+      },
+      {
+        "comment": "",
+        "key": "Loading…",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 556
+        }
+      },
+      {
+        "comment": "",
+        "key": "No sales data",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 537
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %lld qty",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 549
+        }
+      }
+    ]
+  },
+  "version": 1
+}

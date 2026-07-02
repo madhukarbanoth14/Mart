@@ -34,14 +34,28 @@ New users see a **3-screen onboarding carousel** (Order → Deliver → Bill) fr
 
 ## Configuration
 
-| Setting | Debug (simulator) | Release |
-|---------|-------------------|---------|
+| Setting | Debug (Xcode ⌘R) | Release / simulator zip |
+|---------|------------------|-------------------------|
 | `MART_API_BASE_URL` | `http://127.0.0.1:3005` | `https://mart-api-95628498734.asia-south1.run.app` |
-| `MART_USE_LOCAL_DEMO_AUTH` | `YES` | `YES` |
-| `MART_DEMO_MODE` | `YES` | `YES` |
+| `MART_USE_LOCAL_DEMO_AUTH` | `YES` | `NO` |
+| `MART_DEMO_MODE` | `YES` | `NO` |
 | `MART_RAZORPAY_KEY_ID` | `rzp_test_YOUR_KEY_HERE` | your Razorpay test/live key |
 
 Edit `Config.xcconfig` / `Config.Release.xcconfig`, then regenerate the project.
+
+### Simulator zip (production API)
+
+```bash
+cd Mart/ios
+./scripts/build-simulator-zip.sh
+```
+
+Produces `Mart/FlashMart-simulator-prod.zip` and `Mart/FlashMart-release-ios.zip` (Release config → Cloud Run). Install on a booted simulator:
+
+```bash
+xcrun simctl install booted /path/to/Flashmart.app
+xcrun simctl launch booted com.knsrmart.flashmart
+```
 
 ## Payments
 
@@ -68,9 +82,9 @@ Password for all seed accounts: **Password@123**
 | Shopkeeper | shop1@martdemo.com |
 | Shopkeeper | shop2@martdemo.com |
 
-With `MART_USE_LOCAL_DEMO_AUTH = YES`, login works offline (in-memory demo store). Set to `NO` and run the Nest backend on port 3005 for live API + Razorpay.
+With `MART_USE_LOCAL_DEMO_AUTH = YES` (Debug only), login works offline (in-memory demo store). Release builds and the simulator zip script use the production API — no local backend required.
 
-## Backend (optional live mode)
+## Backend (optional, Debug builds only)
 
 ```bash
 cd Mart/backend

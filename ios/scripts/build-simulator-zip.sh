@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Build FlashMart for iOS Simulator (local API, no demo mode).
+# Build FlashMart for iOS Simulator against production Cloud Run API.
+# Uses Release configuration (same API URL as FlashMart-release-ios / Android release APK).
 # Requires full Xcode (not Command Line Tools only).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -21,7 +22,7 @@ mkdir -p "$DERIVED"
 xcodebuild \
   -workspace Flashmart.xcworkspace \
   -scheme Flashmart \
-  -configuration Debug \
+  -configuration Release \
   -sdk iphonesimulator \
   -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath "$DERIVED" \
@@ -32,13 +33,17 @@ xcodebuild \
   EXCLUDED_ARCHS=x86_64 \
   build
 
-APP="$DERIVED/Build/Products/Debug-iphonesimulator/Flashmart.app"
-OUT="$ROOT/../FlashMart-simulator-local.zip"
-rm -f "$OUT"
+APP="$DERIVED/Build/Products/Release-iphonesimulator/Flashmart.app"
+OUT="$ROOT/../FlashMart-simulator-prod.zip"
+RELEASE_OUT="$ROOT/../FlashMart-release-ios.zip"
+rm -f "$OUT" "$RELEASE_OUT"
 ditto -c -k --sequesterRsrc --keepParent "$APP" "$OUT"
+cp -f "$OUT" "$RELEASE_OUT"
 echo ""
 echo "Simulator build: $APP"
-echo "Zip for sharing: $OUT"
+echo "API: https://mart-api-95628498734.asia-south1.run.app"
+echo "Zip: $OUT"
+echo "Release zip: $RELEASE_OUT"
 echo ""
 echo "Install on booted simulator:"
 echo "  xcrun simctl install booted \"$APP\""

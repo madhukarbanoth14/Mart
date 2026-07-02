@@ -17,7 +17,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.AccountBalance
+import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.Map
+import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.Store
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.People
@@ -49,11 +54,20 @@ import com.mart.distribution.demo.ui.flashmart.FmBadge
 import com.mart.distribution.demo.ui.flashmart.FmButton
 import com.mart.distribution.demo.ui.flashmart.FmButtonVariant
 import com.mart.distribution.demo.ui.flashmart.FmCard
+import com.mart.distribution.demo.ui.flashmart.FmEmptyState
+import com.mart.distribution.demo.ui.flashmart.FmHomeStat
+import com.mart.distribution.demo.ui.flashmart.FmHomeStatGrid
+import com.mart.distribution.demo.ui.flashmart.FmMiniBarChart
 import com.mart.distribution.demo.ui.flashmart.FmSectionLabel
 import com.mart.distribution.demo.ui.flashmart.FmStatCard
 import com.mart.distribution.demo.ui.theme.WholesaleBg
 import com.mart.distribution.demo.ui.theme.WholesaleBlue
 import com.mart.distribution.demo.ui.theme.WholesaleBlueTint
+import com.mart.distribution.demo.ui.theme.WholesaleBorder
+import com.mart.distribution.demo.ui.theme.WholesaleGold
+import com.mart.distribution.demo.ui.theme.WholesaleGoldInk
+import com.mart.distribution.demo.ui.theme.WholesaleGoldTint
+import com.mart.distribution.demo.ui.theme.WholesaleGreen
 import com.mart.distribution.demo.ui.theme.WholesaleInkSurface
 import com.mart.distribution.demo.ui.theme.WholesaleMuted
 import com.mart.distribution.demo.ui.theme.WholesaleOrange
@@ -73,8 +87,10 @@ fun AdminFlashmartHome(
     onAddDealer: () -> Unit,
     onManageSkus: () -> Unit,
     onManageBrands: () -> Unit,
+    onManageAreas: () -> Unit,
     onOpenOrders: () -> Unit,
     onOpenTeam: () -> Unit,
+    onOpenFinance: () -> Unit = {},
 ) {
     val orders = when (val o = ui.orders) { is LoadState.Ok -> o.data; else -> emptyList() }
     val users = when (val u = ui.users) { is LoadState.Ok -> u.data; else -> emptyList() }
@@ -88,6 +104,60 @@ fun AdminFlashmartHome(
                     else -> 0.0
                 }
             }
+        }
+    val pendingKyc =
+        remember(users) {
+            users.count {
+                it.documentStatus.contains("PENDING", true) ||
+                    it.documentStatus.contains("NOT_UPLOADED", true) ||
+                    !it.documentUploaded
+            }
+        }
+    val gmvChart =
+        remember(orders) {
+            if (orders.isEmpty()) {
+                listOf(31f, 28f, 45f, 38f, 52f, 49f, 61f, 55f, 68f, 72f, 58f, 78f)
+            } else {
+                val byDay =
+                    orders.groupBy { it.createdAt?.take(10) ?: "unknown" }
+                        .mapValues { (_, dayOrders) ->
+                            dayOrders.sumOf { o ->
+                                when (val v = o.finalAmount) {
+                                    is Number -> v.toDouble()
+                                    is String -> v.toDoubleOrNull() ?: 0.0
+                                    else -> 0.0
+                                }
+                            }.toFloat()
+                        }
+                val values = byDay.values.toList()
+                if (values.size >= 12) values.takeLast(12) else values + List(12 - values.size) { values.lastOrNull() ?: 1f }
+            }
+        }
+    val areaPerf =
+        remember(orders, users, ui.areas) {
+            when (val a = ui.areas) {
+                is LoadState.Ok ->
+                    a.data.take(4).map { area ->
+                        val areaUserIds = users.filter { it.area?.id == area.id }.map { it.id }.toSet()
+                        val areaOrders = orders.filter { it.shopkeeperId in areaUserIds || it.dealerId in areaUserIds }
+                        val rev =
+                            areaOrders.sumOf { o ->
+                                when (val v = o.finalAmount) {
+                                    is Number -> v.toDouble()
+                                    is String -> v.toDoubleOrNull() ?: 0.0
+                                    else -> 0.0
+                                }
+                            }
+                        Triple(area.name, rev, areaOrders.size)
+                    }.sortedByDescending { it.second }
+                else -> emptyList()
+            }
+        }
+    val maxAreaRev = areaPerf.maxOfOrNull { it.second }?.coerceAtLeast(1.0) ?: 1.0
+    val monthLabel =
+        remember {
+            java.time.LocalDate.now().month.name.lowercase().replaceFirstChar { it.uppercase() } +
+                " " + java.time.LocalDate.now().year
         }
 
     LazyColumn(
@@ -145,45 +215,100 @@ fun AdminFlashmartHome(
                         .background(WholesaleInkSurface)
                         .padding(20.dp),
             ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopEnd)
+                            .size(130.dp)
+                            .clip(RoundedCornerShape(65.dp))
+                            .background(Color.White.copy(alpha = 0.05f)),
+                )
                 Column {
-                    Text("Overview", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color.White.copy(0.6f))
-                    Text(formatDecimal(revenue), fontSize = 34.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text("GMV · $monthLabel", fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold, color = Color.White.copy(0.7f))
+                    Text(formatDecimal(revenue), fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color.White, letterSpacing = (-0.5).sp)
                     Text(
-                        "${orders.size} orders · ${users.size} network users",
-                        fontSize = 12.sp,
-                        color = Color.White.copy(0.65f),
-                        modifier = Modifier.padding(top = 4.dp),
+                        "${orders.size} orders across the network",
+                        fontSize = 12.5.sp,
+                        color = Color.White.copy(0.6f),
+                        modifier = Modifier.padding(top = 4.dp, bottom = 16.dp),
                     )
+                    FmMiniBarChart(data = gmvChart, barColor = WholesaleGreen, height = 52.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text("Start", fontSize = 10.sp, color = Color.White.copy(0.45f))
+                        Text("Today", fontSize = 10.sp, color = Color.White.copy(0.45f))
+                    }
                 }
             }
         }
 
         item {
-            Row(horizontalArrangement = Arrangement.spacedBy(11.dp)) {
-                FmStatCard("Orders", "${orders.size}", modifier = Modifier.weight(1f))
-                FmStatCard("SKUs", "${products.size}", modifier = Modifier.weight(1f))
-            }
+            FmHomeStatGrid(
+                stats =
+                    listOf(
+                        FmHomeStat(Icons.Outlined.Groups, "Dealers", "${users.count { it.role.equals("DEALER", true) }}", WholesaleBlueTint, WholesaleBlue),
+                        FmHomeStat(Icons.Outlined.Store, "Shopkeepers", "${users.count { it.role.equals("SHOPKEEPER", true) }}", WholesaleGreen.copy(0.12f), WholesaleGreen),
+                        FmHomeStat(Icons.Outlined.Schedule, "Pending KYC", "$pendingKyc", WholesaleGoldTint, WholesaleGoldInk),
+                        FmHomeStat(Icons.Outlined.Inventory2, "SKU approvals", "$pendingCount", Color(0xFFFFEBEE), WholesaleRed),
+                    ),
+            )
         }
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(11.dp)) {
-                FmStatCard(
-                    "Dealers",
-                    "${users.count { it.role.equals("DEALER", true) }}",
-                    modifier = Modifier.weight(1f),
-                )
-                FmStatCard(
-                    "Shopkeepers",
-                    "${users.count { it.role.equals("SHOPKEEPER", true) }}",
-                    modifier = Modifier.weight(1f),
-                )
+
+        if (areaPerf.isNotEmpty()) {
+            item { FmSectionLabel(title = "Area performance") }
+            item {
+                FmCard(padding = androidx.compose.foundation.layout.PaddingValues(6.dp)) {
+                    areaPerf.forEachIndexed { i, (name, rev, count) ->
+                        val pct = (rev / maxAreaRev).coerceIn(0.0, 1.0)
+                        Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)) {
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                Text(name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = WholesaleText)
+                                Text(formatDecimal(rev), fontSize = 13.5.sp, fontWeight = FontWeight.Bold, color = WholesaleText)
+                            }
+                            Spacer(Modifier.height(7.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .weight(1f)
+                                            .height(5.dp)
+                                            .clip(RoundedCornerShape(99.dp))
+                                            .background(WholesaleBorder),
+                                ) {
+                                    Box(
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth(pct.toFloat())
+                                                .height(5.dp)
+                                                .clip(RoundedCornerShape(99.dp))
+                                                .background(WholesaleGreen),
+                                    )
+                                }
+                                Text("$count orders", fontSize = 11.5.sp, fontWeight = FontWeight.SemiBold, color = WholesaleMuted)
+                            }
+                        }
+                        if (i < areaPerf.lastIndex) {
+                            Box(Modifier.fillMaxWidth().height(1.dp).background(WholesaleBorder))
+                        }
+                    }
+                }
             }
         }
 
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 AdminQuickTile("Orders", Icons.Outlined.ReceiptLong, onOpenOrders, Modifier.weight(1f))
-                AdminQuickTile("SKUs", Icons.Outlined.Inventory2, onManageSkus, Modifier.weight(1f))
+                AdminQuickTile("Finance", Icons.Outlined.AccountBalance, onOpenFinance, Modifier.weight(1f))
                 AdminQuickTile("Team", Icons.Outlined.People, onOpenTeam, Modifier.weight(1f))
+            }
+        }
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                AdminQuickTile("SKUs", Icons.Outlined.Inventory2, onManageSkus, Modifier.weight(1f))
+                AdminQuickTile("Brands", Icons.Outlined.GridView, onManageBrands, Modifier.weight(1f))
+                AdminQuickTile("Areas", Icons.Outlined.Map, onManageAreas, Modifier.weight(1f))
             }
         }
 
@@ -191,6 +316,7 @@ fun AdminFlashmartHome(
         item { FmButton("Onboard shopkeeper", onClick = onAddShopkeeper, variant = FmButtonVariant.Soft) }
         item { FmButton("Onboard dealer", onClick = onAddDealer, variant = FmButtonVariant.Outline) }
         item { FmButton("Manage brands", onClick = onManageBrands, variant = FmButtonVariant.Soft) }
+        item { FmButton("Manage areas", onClick = onManageAreas, variant = FmButtonVariant.Outline) }
     }
 }
 
@@ -307,7 +433,11 @@ fun AdminUsersTab(
         item { FmSectionLabel(title = "Network · ${filtered.size}") }
         if (filtered.isEmpty()) {
             item {
-                Text("No users in this view", color = WholesaleMuted, modifier = Modifier.padding(vertical = 24.dp))
+                FmEmptyState(
+                    icon = Icons.Outlined.People,
+                    title = "No users in this view",
+                    message = "Try a different filter or onboard dealers and shopkeepers from the home screen.",
+                )
             }
         }
         items(filtered, key = { it.id }) { row ->
@@ -472,6 +602,7 @@ fun AdminProfileTab(
     user: SessionUser,
     ui: MainUiState,
     onLogout: () -> Unit,
+    onOpenPrivacyPolicy: () -> Unit = {},
 ) {
     val users = when (val u = ui.users) { is LoadState.Ok -> u.data; else -> emptyList() }
     val pending =
@@ -523,6 +654,9 @@ fun AdminProfileTab(
             FmCard(onClick = onLogout) {
                 Text("Sign out", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = WholesaleRed)
             }
+        }
+        item {
+            com.mart.distribution.demo.ui.components.MartAppFooter(onPrivacyPolicy = onOpenPrivacyPolicy)
         }
     }
 }

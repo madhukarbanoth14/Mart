@@ -5,14 +5,17 @@ export declare class DealerAssignmentsService {
     constructor(areasService: AreasService);
     listAssignments(actor: AuthUser): import("@prisma/client").Prisma.PrismaPromise<({
         dealer: {
-            id: string;
             name: string;
+            id: string;
             email: string;
         } | null;
     } & {
+        name: string;
         id: string;
         companyId: string | null;
-        name: string;
         dealerId: string | null;
+        state: string | null;
+        district: string | null;
+        employeeId: string | null;
     })[]>;
 }

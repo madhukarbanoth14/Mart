@@ -1,6 +1,7 @@
 package com.mart.distribution.demo.ui.flashmart
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,8 +36,9 @@ import com.mart.distribution.demo.ui.components.ProductImageStyle
 import com.mart.distribution.demo.ui.components.ProductThumbnail
 import com.mart.distribution.demo.ui.theme.WholesaleBlue
 import com.mart.distribution.demo.ui.theme.WholesaleBorder
-import com.mart.distribution.demo.ui.theme.WholesaleGreen
-import com.mart.distribution.demo.ui.theme.WholesaleGreenTint
+import com.mart.distribution.demo.ui.theme.WholesaleGold
+import com.mart.distribution.demo.ui.theme.WholesaleGoldInk
+import com.mart.distribution.demo.ui.theme.WholesaleGoldTint
 import com.mart.distribution.demo.ui.theme.WholesaleInk4
 import com.mart.distribution.demo.ui.theme.WholesaleMuted
 import com.mart.distribution.demo.ui.theme.WholesaleSurface3
@@ -49,12 +51,16 @@ fun FlashmartProductRow(
     product: ProductDto,
     cartQty: Int,
     buyerRole: String = "SHOPKEEPER",
+    /** Max orderable quantity (available stock). null = no stock gating. */
+    maxQuantity: Int? = null,
+    maxOrderQuantity: Int = FmQuantityDefaults.maxQuantity,
     onOpenDetail: () -> Unit,
     onFirstAdd: () -> Unit,
-    onIncrement: () -> Unit,
-    onDecrement: () -> Unit,
+    onSetQuantity: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val outOfStock = maxQuantity != null && maxQuantity <= 0
+    val effectiveMax = minOf(maxOrderQuantity, maxQuantity ?: maxOrderQuantity)
     val brandName = product.brand?.name ?: product.brandType
     val price = product.catalogUnitPrice(buyerRole)
     val mrp = product.mrp.toDoubleFromApiOrNull()
@@ -114,6 +120,7 @@ fun FlashmartProductRow(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(7.dp),
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 2.dp),
             ) {
                 Text(
                     formatDecimal(price),
@@ -121,61 +128,53 @@ fun FlashmartProductRow(
                     fontWeight = FontWeight.Bold,
                     color = WholesaleText,
                 )
-                product.weight?.takeIf { it.isNotBlank() }?.let {
-                    Text("/ $it", fontSize = 11.sp, color = WholesaleInk4)
-                }
-                discPct?.takeIf { it > 0 }?.let {
-                    Text(
-                        "$it% off",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = WholesaleGreen,
-                        modifier =
-                            Modifier
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(WholesaleGreenTint)
-                                .padding(horizontal = 6.dp, vertical = 2.dp),
-                    )
-                }
-                gstPct?.let {
-                    Text(
-                        "GST $it%",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = WholesaleMuted,
-                        modifier =
-                            Modifier
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(WholesaleSurface3)
-                                .padding(horizontal = 6.dp, vertical = 2.dp),
-                    )
-                }
+                discPct.takeIf { it > 0 }?.let { FmGoldDiscountBadge(it) }
+            }
+            gstPct?.let {
+                Text(
+                    "incl. $it% GST",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = WholesaleMuted,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
             }
         }
-        if (cartQty > 0) {
-            FmStepper(
-                value = cartQty,
-                onChange = { v ->
-                    when {
-                        v <= 0 -> onDecrement()
-                        v > cartQty -> onIncrement()
-                        v < cartQty -> onDecrement()
-                    }
-                },
-                min = 0,
-            )
-        } else {
-            Box(
-                modifier =
-                    Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(WholesaleBlue)
-                        .clickable(onClick = onFirstAdd),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Add", tint = Color.White, modifier = Modifier.size(20.dp))
-            }
+        when {
+            outOfStock ->
+                Text(
+                    "Out of stock",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = WholesaleMuted,
+                    modifier =
+                        Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(WholesaleSurface3)
+                            .padding(horizontal = 10.dp, vertical = 8.dp),
+                )
+            cartQty > 0 ->
+                FmQuantityInput(
+                    value = cartQty,
+                    onValueChange = { v ->
+                        if (v <= 0) onSetQuantity(0) else onSetQuantity(v)
+                    },
+                    min = 0,
+                    max = effectiveMax,
+                    compact = true,
+                )
+            else ->
+                Box(
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(WholesaleBlue)
+                            .clickable(onClick = onFirstAdd),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add", tint = Color.White, modifier = Modifier.size(20.dp))
+                }
         }
     }
 }

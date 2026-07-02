@@ -9,7 +9,7 @@ private func employeeOnboarded(from users: LoadState<[UserRow]>, employeeId: Str
 
 struct EmployeeTabHost: View {
     @Environment(AppEnvironment.self) private var env
-    let selectedTab: String
+    @Binding var selectedTab: String
     @Binding var path: NavigationPath
     let user: SessionUser
     let onLogout: () -> Void
@@ -18,13 +18,14 @@ struct EmployeeTabHost: View {
         switch selectedTab {
         case "network": EmployeeNetworkView(user: user)
         case "profile": EmployeeProfileView(path: $path, user: user, onLogout: onLogout)
-        default: EmployeeHomeView(path: $path, user: user)
+        default: EmployeeHomeView(selectedTab: $selectedTab, path: $path, user: user)
         }
     }
 }
 
 struct EmployeeHomeView: View {
     @Environment(AppEnvironment.self) private var env
+    @Binding var selectedTab: String
     @Binding var path: NavigationPath
     let user: SessionUser
 
@@ -44,6 +45,48 @@ struct EmployeeHomeView: View {
 
             VStack(spacing: 16) {
                 onboardingHero
+
+                if !todayTasks.isEmpty {
+                    FMSectionLabel(title: "Today's tasks · \(todayTasks.count)", actionTitle: "All tasks") {
+                        selectedTab = "network"
+                    }
+                    FMCard(padding: 6) {
+                        ForEach(Array(todayTasks.prefix(4).enumerated()), id: \.offset) { index, task in
+                            Button {
+                                selectedTab = "network"
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: task.icon)
+                                        .font(.system(size: 17))
+                                        .foregroundStyle(task.color)
+                                        .frame(width: 40, height: 40)
+                                        .background(task.color.opacity(0.12))
+                                        .clipShape(RoundedRectangle(cornerRadius: 11))
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(task.title)
+                                            .font(.system(size: 14, weight: .bold))
+                                            .foregroundStyle(FMTheme.ink)
+                                            .lineLimit(1)
+                                        Text(task.subtitle)
+                                            .font(.system(size: 12))
+                                            .foregroundStyle(FMTheme.ink3)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundStyle(FMTheme.ink4)
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 12)
+                            }
+                            .buttonStyle(.plain)
+                            if index < min(3, todayTasks.prefix(4).count - 1) {
+                                Divider().padding(.leading, 62)
+                            }
+                        }
+                    }
+                }
+
                 onboardAction(
                     icon: "shippingbox.fill",
                     title: "Add a dealer",
@@ -59,10 +102,64 @@ struct EmployeeHomeView: View {
                     tint: FMTheme.brandTint,
                     accent: FMTheme.brand
                 ) { path.append(AppRoute.onboardShopkeeper) }
+
+                if !myOnboarded.isEmpty {
+                    FMSectionLabel(title: "Recently onboarded")
+                    ForEach(myOnboarded.prefix(3)) { row in
+                        FMCard(padding: 12) {
+                            HStack {
+                                FMAvatar(name: row.name, size: 36, tint: row.role == "DEALER" ? FMTheme.pos : FMTheme.brand)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(row.name).font(.system(size: 14, weight: .semibold))
+                                    Text(row.role.capitalized).font(.system(size: 11)).foregroundStyle(FMTheme.ink3)
+                                }
+                                Spacer()
+                                FMBadge(status: row.documentStatus ?? row.status)
+                            }
+                        }
+                    }
+                }
             }
             .padding(.horizontal, 16)
         }
         .task { await env.mainViewModel.loadUsers() }
+    }
+
+    private struct EmployeeTaskItem {
+        let title: String
+        let subtitle: String
+        let icon: String
+        let color: Color
+    }
+
+    private var todayTasks: [EmployeeTaskItem] {
+        var tasks: [EmployeeTaskItem] = []
+        for row in myOnboarded where row.documentStatus?.uppercased().contains("PENDING") == true || row.documentStatus?.uppercased().contains("NOT_UPLOADED") == true {
+            tasks.append(EmployeeTaskItem(
+                title: "Verify docs · \(row.name)",
+                subtitle: "Document \(row.documentStatus?.replacingOccurrences(of: "_", with: " ").lowercased() ?? "pending")",
+                icon: "doc.text",
+                color: FMTheme.neg
+            ))
+        }
+        for row in myOnboarded where row.lastFollowUpAt == nil {
+            tasks.append(EmployeeTaskItem(
+                title: "Follow-up · \(row.name)",
+                subtitle: "No follow-up recorded yet",
+                icon: "phone",
+                color: FMTheme.warn
+            ))
+        }
+        for row in myOnboarded.prefix(2) {
+            tasks.append(EmployeeTaskItem(
+                title: "Onboard · \(row.name)",
+                subtitle: "\(row.role.capitalized) · \(row.area?.name ?? "Area TBD")",
+                icon: "checklist",
+                color: FMTheme.brand
+            ))
+        }
+        var seen = Set<String>()
+        return tasks.filter { seen.insert($0.title).inserted }.prefix(6).map { $0 }
     }
 
     private var myOnboarded: [UserRow] {
@@ -152,15 +249,44 @@ struct EmployeeNetworkView: View {
     @Environment(AppEnvironment.self) private var env
     let user: SessionUser
     @State private var segment = "Dealers"
+    @State private var chip = "All areas"
+    @State private var followUpBusyId: String?
+    @State private var followUpError: String?
+
+    private let chips = ["All areas", "Doc pending", "Active", "Follow-up due"]
 
     var body: some View {
         FMScreen(showNav: true) {
             FMTopBar(title: "My network", subtitle: networkSubtitle)
             FMSegmented(options: ["Dealers", "Shopkeepers"], selection: $segment)
                 .padding(.horizontal, 16)
-                .padding(.bottom, 14)
+                .padding(.bottom, 10)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(chips, id: \.self) { label in
+                        Button {
+                            chip = label
+                        } label: {
+                            Text(label)
+                                .font(.system(size: 12, weight: chip == label ? .bold : .semibold))
+                                .foregroundStyle(chip == label ? FMTheme.ink : FMTheme.ink3)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(chip == label ? FMTheme.posTint : FMTheme.surface)
+                                .clipShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+            .padding(.bottom, 12)
 
             VStack(spacing: 10) {
+                if let followUpError {
+                    FMErrorBanner(text: followUpError).padding(.horizontal, 16)
+                }
                 ForEach(filteredNetwork) { user in
                     networkCard(user)
                 }
@@ -182,22 +308,58 @@ struct EmployeeNetworkView: View {
     }
 
     private var filteredNetwork: [UserRow] {
-        myOnboarded.filter { segment == "Dealers" ? $0.role == "DEALER" : $0.role == "SHOPKEEPER" }
+        let roleFiltered = myOnboarded.filter { segment == "Dealers" ? $0.role == "DEALER" : $0.role == "SHOPKEEPER" }
+        switch chip {
+        case "Doc pending":
+            return roleFiltered.filter {
+                ($0.documentStatus?.uppercased().contains("PENDING") == true) ||
+                    ($0.documentStatus?.uppercased().contains("NOT_UPLOADED") == true)
+            }
+        case "Follow-up due":
+            return roleFiltered.filter { $0.lastFollowUpAt == nil }
+        default:
+            return roleFiltered
+        }
     }
 
     private func networkCard(_ user: UserRow) -> some View {
         FMCard(padding: 13) {
-            HStack(spacing: 13) {
-                FMAvatar(name: user.name, tint: user.role == "DEALER" ? FMTheme.pos : FMTheme.brand)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(user.name).font(.system(size: 14.5, weight: .bold)).lineLimit(1)
-                    Text("\(user.email) · \(user.area?.name ?? "—")")
-                        .font(.system(size: 12.5, design: .monospaced))
-                        .foregroundStyle(FMTheme.ink3)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 13) {
+                    FMAvatar(name: user.name, tint: user.role == "DEALER" ? FMTheme.pos : FMTheme.brand)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(user.name).font(.system(size: 14.5, weight: .bold)).lineLimit(1)
+                        Text(user.phone ?? user.email)
+                            .font(.system(size: 12.5, design: .monospaced))
+                            .foregroundStyle(FMTheme.ink3)
+                        Text(user.area?.name ?? "—")
+                            .font(.system(size: 11))
+                            .foregroundStyle(FMTheme.brand)
+                    }
+                    Spacer()
+                    FMBadge(status: user.documentStatus ?? user.status, label: (user.documentStatus ?? user.status).replacingOccurrences(of: "_", with: " "))
                 }
-                Spacer()
-                VStack(alignment: .trailing, spacing: 5) {
-                    FMBadge(status: user.status)
+                Text("Employee: \(user.onboardedBy?.name ?? "—") · Orders: \(user.totalOrders ?? 0) · Registered: \((user.createdAt ?? "—").prefix(10))")
+                    .font(.system(size: 11))
+                    .foregroundStyle(FMTheme.ink3)
+                HStack {
+                    Text("Last follow-up: \((user.lastFollowUpAt ?? "Not recorded").prefix(10))")
+                        .font(.system(size: 11))
+                        .foregroundStyle(FMTheme.ink3)
+                    Spacer()
+                    FMButton(
+                        title: followUpBusyId == user.id ? "Saving…" : "Record follow-up",
+                        variant: .soft,
+                        fullWidth: false,
+                        enabled: followUpBusyId != user.id
+                    ) {
+                        Task {
+                            followUpBusyId = user.id
+                            followUpError = await env.mainViewModel.recordFollowUp(userId: user.id)
+                            followUpBusyId = nil
+                        }
+                    }
+                    .frame(width: 150)
                 }
             }
         }

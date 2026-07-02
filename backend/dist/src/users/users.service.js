@@ -50,8 +50,10 @@ const crypto_1 = require("crypto");
 const fs_1 = require("fs");
 const path_1 = require("path");
 const email_service_1 = require("../email/email.service");
+const notifications_service_1 = require("../notifications/notifications.service");
 const prisma_service_1 = require("../prisma/prisma.service");
 const credential_vault_1 = require("./credential-vault");
+const document_eligibility_util_1 = require("./document-eligibility.util");
 const PASSWORD_RESET_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const ONBOARDING_UPLOAD_DIR = (0, path_1.join)(process.cwd(), 'uploads', 'onboarding');
 const MAX_ONBOARDING_FILE_BYTES = 10 * 1024 * 1024;
@@ -62,9 +64,41 @@ function generateLoginPassword() {
 let UsersService = class UsersService {
     prisma;
     email;
-    constructor(prisma, email) {
+    notifications;
+    constructor(prisma, email, notifications) {
         this.prisma = prisma;
         this.email = email;
+        this.notifications = notifications;
+    }
+    async registerFcmToken(actor, token) {
+        const trimmed = token.trim();
+        await this.prisma.user.updateMany({
+            where: { fcmToken: trimmed, NOT: { id: actor.userId } },
+            data: { fcmToken: null },
+        });
+        await this.prisma.user.update({
+            where: { id: actor.userId },
+            data: { fcmToken: trimmed },
+        });
+        return { success: true };
+    }
+    async clearFcmToken(actor) {
+        await this.prisma.user.update({
+            where: { id: actor.userId },
+            data: { fcmToken: null },
+        });
+        return { success: true };
+    }
+    async notifyAdminsOfPendingApproval(companyId, pendingName, roleLabel, pendingUserId) {
+        const admins = await this.prisma.user.findMany({
+            where: {
+                companyId,
+                role: client_1.UserRole.ADMIN,
+                status: client_1.UserStatus.ACTIVE,
+            },
+            select: { id: true },
+        });
+        await this.notifications.sendToUsers(admins.map((a) => a.id), 'Approval needed', `${pendingName} (${roleLabel}) is awaiting your approval`, { type: 'APPROVAL', userId: pendingUserId });
     }
     findAll(actor, query = {}) {
         const where = {};
@@ -77,11 +111,20 @@ let UsersService = class UsersService {
         if (query.status) {
             where.status = query.status;
         }
-        return this.prisma.user.findMany({
+        return this.prisma.user
+            .findMany({
             where,
             select: this.userRosterSelect,
             orderBy: { createdAt: 'desc' },
-        });
+        })
+            .then((rows) => rows.map((row) => ({
+            ...row,
+            totalOrders: row.role === client_1.UserRole.SHOPKEEPER
+                ? row._count.shopkeeperOrders
+                : row.role === client_1.UserRole.DEALER
+                    ? row._count.dealerOrders
+                    : 0,
+        })));
     }
     countPendingApprovals(actor) {
         const where = {
@@ -98,10 +141,13 @@ let UsersService = class UsersService {
     }
     findByLoginIdentifier(identifier) {
         const loginId = identifier.trim();
+        const phone = this.normalizePhone(loginId);
+        const or = [{ email: loginId.toLowerCase() }];
+        if (phone) {
+            or.push({ phone });
+        }
         return this.prisma.user.findFirst({
-            where: {
-                OR: [{ email: loginId.toLowerCase() }, { phone: loginId }],
-            },
+            where: { OR: or },
         });
     }
     findByPasswordResetToken(token) {
@@ -206,6 +252,48 @@ let UsersService = class UsersService {
             },
         });
     }
+    getAuthProfile(userId) {
+        return this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                companyId: true,
+                phone: true,
+                status: true,
+                shopName: true,
+                address: true,
+                state: true,
+                district: true,
+                documentUploaded: true,
+                canPlaceOrders: true,
+                documentStatus: true,
+                area: {
+                    select: {
+                        id: true,
+                        name: true,
+                        dealer: {
+                            select: { id: true, name: true, email: true, phone: true },
+                        },
+                    },
+                },
+                onboardingDocuments: {
+                    select: {
+                        id: true,
+                        label: true,
+                        documentType: true,
+                        fileName: true,
+                        verificationStatus: true,
+                        uploadedAt: true,
+                        rejectionReason: true,
+                    },
+                    orderBy: { uploadedAt: 'desc' },
+                },
+            },
+        });
+    }
     userRosterSelect = {
         id: true,
         name: true,
@@ -219,8 +307,14 @@ let UsersService = class UsersService {
         status: true,
         statusReason: true,
         approvedAt: true,
+        state: true,
+        district: true,
+        documentUploaded: true,
+        canPlaceOrders: true,
+        documentStatus: true,
+        lastFollowUpAt: true,
         area: {
-            select: { id: true, name: true },
+            select: { id: true, name: true, state: true, district: true },
         },
         onboardedBy: {
             select: { id: true, name: true, email: true },
@@ -232,12 +326,23 @@ let UsersService = class UsersService {
             select: {
                 id: true,
                 label: true,
+                documentType: true,
                 fileName: true,
                 mimeType: true,
                 fileSize: true,
                 uploadedAt: true,
+                verificationStatus: true,
+                verifiedAt: true,
+                verifiedBy: { select: { id: true, name: true } },
+                rejectionReason: true,
             },
             orderBy: { uploadedAt: 'asc' },
+        },
+        _count: {
+            select: {
+                shopkeeperOrders: true,
+                dealerOrders: true,
+            },
         },
     };
     initialStatusForOnboarding(actor) {
@@ -269,8 +374,16 @@ let UsersService = class UsersService {
     normalizePhone(phone) {
         if (!phone)
             return null;
-        const digits = phone.replace(/\D/g, '');
-        return digits.length > 0 ? digits : null;
+        let digits = phone.replace(/\D/g, '');
+        if (digits.length === 0)
+            return null;
+        if (digits.length === 12 && digits.startsWith('91')) {
+            digits = digits.slice(2);
+        }
+        else if (digits.length === 11 && digits.startsWith('0')) {
+            digits = digits.slice(1);
+        }
+        return digits;
     }
     async assertPhoneAvailable(phone) {
         const normalized = this.normalizePhone(phone);
@@ -383,7 +496,7 @@ let UsersService = class UsersService {
             emailError,
         };
     }
-    async uploadOnboardingDocument(actor, userId, label, file) {
+    async uploadOnboardingDocument(actor, userId, label, file, documentType) {
         const trimmedLabel = label?.trim();
         if (!trimmedLabel) {
             throw new common_1.BadRequestException('Document label is required');
@@ -414,36 +527,393 @@ let UsersService = class UsersService {
             throw new common_1.ForbiddenException('User is outside your company');
         }
         const isAdmin = actor.role === client_1.UserRole.ADMIN;
+        const isSelf = actor.userId === userId;
         const isOnboarder = actor.role === client_1.UserRole.EMPLOYEE && user.onboardedById === actor.userId;
-        if (!isAdmin && !isOnboarder) {
+        if (!isAdmin && !isOnboarder && !isSelf) {
             throw new common_1.ForbiddenException('You cannot upload documents for this user');
         }
-        if (user.status !== client_1.UserStatus.PENDING_APPROVAL && !isAdmin) {
+        if (user.status !== client_1.UserStatus.PENDING_APPROVAL &&
+            !isAdmin &&
+            !isSelf) {
             throw new common_1.BadRequestException('Documents can only be added while awaiting approval');
         }
+        const resolvedType = documentType ??
+            (0, document_eligibility_util_1.resolveDocumentTypeFromLabel)(trimmedLabel) ??
+            null;
         (0, fs_1.mkdirSync)(ONBOARDING_UPLOAD_DIR, { recursive: true });
         const storageKey = `${userId}/${(0, crypto_1.randomBytes)(16).toString('hex')}-${file.originalname.replace(/[^\w.\-]+/g, '_')}`;
         const absolutePath = (0, path_1.join)(ONBOARDING_UPLOAD_DIR, storageKey);
         (0, fs_1.mkdirSync)((0, path_1.join)(ONBOARDING_UPLOAD_DIR, userId), { recursive: true });
         (0, fs_1.writeFileSync)(absolutePath, file.buffer);
-        return this.prisma.onboardingDocument.create({
+        const created = await this.prisma.onboardingDocument.create({
             data: {
                 userId,
                 label: trimmedLabel,
+                documentType: resolvedType,
                 fileName: file.originalname || 'document',
                 mimeType: file.mimetype || null,
                 storageKey,
                 fileSize: file.size,
+                verificationStatus: client_1.DocumentVerificationStatus.PENDING_VERIFICATION,
             },
             select: {
                 id: true,
                 label: true,
+                documentType: true,
                 fileName: true,
                 mimeType: true,
                 fileSize: true,
                 uploadedAt: true,
+                verificationStatus: true,
             },
         });
+        await this.syncUserDocumentEligibility(userId);
+        if (isSelf) {
+            void this.notifyEmployeesOfDocumentUpload(userId);
+            void this.notifications.sendToUser(userId, 'Document uploaded', 'Your document was uploaded successfully and is pending verification.', { type: 'DOCUMENT', status: 'UPLOADED' });
+        }
+        return created;
+    }
+    async uploadMyDocument(actor, documentType, file) {
+        if (actor.role !== client_1.UserRole.DEALER && actor.role !== client_1.UserRole.SHOPKEEPER) {
+            throw new common_1.ForbiddenException('Only dealers and shopkeepers can upload documents');
+        }
+        const label = document_eligibility_util_1.ACCEPTED_DOCUMENT_LABELS[documentType] ?? documentType;
+        return this.uploadOnboardingDocument(actor, actor.userId, label, file, documentType);
+    }
+    listMyDocuments(actor) {
+        return this.prisma.onboardingDocument.findMany({
+            where: { userId: actor.userId },
+            select: {
+                id: true,
+                label: true,
+                documentType: true,
+                fileName: true,
+                mimeType: true,
+                fileSize: true,
+                uploadedAt: true,
+                verificationStatus: true,
+                verifiedAt: true,
+                rejectionReason: true,
+                verifiedBy: { select: { id: true, name: true } },
+            },
+            orderBy: { uploadedAt: 'desc' },
+        });
+    }
+    async syncUserDocumentEligibility(userId) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                status: true,
+                onboardingDocuments: {
+                    select: { verificationStatus: true },
+                },
+            },
+        });
+        if (!user)
+            return;
+        const flags = (0, document_eligibility_util_1.computeDocumentEligibility)({
+            status: user.status,
+            documents: user.onboardingDocuments,
+        });
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: flags,
+        });
+    }
+    async assertCanPlaceOrders(userId) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                status: true,
+                canPlaceOrders: true,
+                documentStatus: true,
+                documentUploaded: true,
+            },
+        });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        if (user.status !== client_1.UserStatus.ACTIVE) {
+            throw new common_1.ForbiddenException('Your account is not active');
+        }
+        if (!user.canPlaceOrders) {
+            throw new common_1.ForbiddenException({
+                message: document_eligibility_util_1.ORDER_DOCUMENT_BLOCK_MESSAGE,
+                code: 'DOCUMENT_REQUIRED',
+                documentStatus: user.documentStatus,
+            });
+        }
+    }
+    async resolveSelfRegistrationCompanyId() {
+        const fromEnv = process.env.MART_COMPANY_ID?.trim();
+        if (fromEnv)
+            return fromEnv;
+        const company = await this.prisma.company.findFirst({
+            orderBy: { createdAt: 'asc' },
+            select: { id: true },
+        });
+        if (!company) {
+            throw new common_1.BadRequestException('Registration is not configured');
+        }
+        return company.id;
+    }
+    async resolveOnboardedByForArea(areaId, referralCode) {
+        if (referralCode?.trim()) {
+            const employee = await this.prisma.user.findFirst({
+                where: {
+                    referralCode: referralCode.trim().toUpperCase(),
+                    role: client_1.UserRole.EMPLOYEE,
+                    status: client_1.UserStatus.ACTIVE,
+                },
+                select: { id: true },
+            });
+            if (employee)
+                return employee.id;
+        }
+        const area = await this.prisma.area.findUnique({
+            where: { id: areaId },
+            select: { employeeId: true },
+        });
+        return area?.employeeId ?? null;
+    }
+    async selfRegisterShopkeeper(dto, verifiedPhone) {
+        const companyId = await this.resolveSelfRegistrationCompanyId();
+        const creds = this.resolveSelfRegisterCredentials(dto, verifiedPhone);
+        const existing = await this.prisma.user.findUnique({ where: { email: creds.email } });
+        if (existing) {
+            throw new common_1.ConflictException('A user with this email already exists');
+        }
+        if (creds.phone) {
+            await this.assertPhoneAvailable(creds.phone);
+        }
+        const area = await this.prisma.area.findFirst({
+            where: { id: dto.areaId, companyId },
+        });
+        if (!area) {
+            throw new common_1.NotFoundException('Area not found');
+        }
+        const onboardedById = await this.resolveOnboardedByForArea(dto.areaId, dto.referralCode);
+        const password = await bcrypt.hash(creds.plainPassword, 10);
+        let created;
+        try {
+            created = await this.prisma.user.create({
+                data: {
+                    name: dto.name.trim(),
+                    email: creds.email,
+                    phone: creds.phone,
+                    password,
+                    role: client_1.UserRole.SHOPKEEPER,
+                    companyId,
+                    areaId: dto.areaId,
+                    onboardedById,
+                    shopName: dto.shopName.trim(),
+                    address: dto.address.trim(),
+                    state: dto.state.trim(),
+                    district: dto.district.trim(),
+                    latitude: dto.latitude ?? null,
+                    longitude: dto.longitude ?? null,
+                    status: client_1.UserStatus.ACTIVE,
+                    approvedAt: new Date(),
+                    documentUploaded: false,
+                    canPlaceOrders: false,
+                    documentStatus: 'NOT_UPLOADED',
+                },
+                select: this.userRosterSelect,
+            });
+        }
+        catch (error) {
+            this.rethrowUniqueConstraint(error);
+        }
+        if (onboardedById) {
+            void this.notifications.sendToUser(onboardedById, 'New shopkeeper registered', `${created.name} registered in ${area.name}`, { type: 'ONBOARDING', userId: created.id });
+        }
+        return {
+            ...created,
+            message: 'Registration complete. You can browse products after signing in.',
+        };
+    }
+    async selfRegisterDealer(dto, verifiedPhone) {
+        const companyId = await this.resolveSelfRegistrationCompanyId();
+        const creds = this.resolveSelfRegisterCredentials(dto, verifiedPhone);
+        const existing = await this.prisma.user.findUnique({ where: { email: creds.email } });
+        if (existing) {
+            throw new common_1.ConflictException('A user with this email already exists');
+        }
+        if (creds.phone) {
+            await this.assertPhoneAvailable(creds.phone);
+        }
+        const area = await this.prisma.area.findFirst({
+            where: { id: dto.areaId, companyId },
+        });
+        if (!area) {
+            throw new common_1.NotFoundException('Area not found');
+        }
+        const onboardedById = await this.resolveOnboardedByForArea(dto.areaId, dto.referralCode);
+        const password = await bcrypt.hash(creds.plainPassword, 10);
+        let dealer;
+        try {
+            dealer = await this.prisma.$transaction(async (tx) => {
+                const created = await tx.user.create({
+                    data: {
+                        name: dto.name.trim(),
+                        email: creds.email,
+                        phone: creds.phone,
+                        password,
+                        role: client_1.UserRole.DEALER,
+                        companyId,
+                        onboardedById,
+                        shopName: dto.shopName.trim(),
+                        address: dto.address.trim(),
+                        state: dto.state.trim(),
+                        district: dto.district.trim(),
+                        latitude: dto.latitude ?? null,
+                        longitude: dto.longitude ?? null,
+                        status: client_1.UserStatus.ACTIVE,
+                        approvedAt: new Date(),
+                        documentUploaded: false,
+                        canPlaceOrders: false,
+                        documentStatus: 'NOT_UPLOADED',
+                    },
+                    select: this.userRosterSelect,
+                });
+                await tx.area.update({
+                    where: { id: dto.areaId },
+                    data: { dealerId: created.id },
+                });
+                return created;
+            });
+        }
+        catch (error) {
+            this.rethrowUniqueConstraint(error);
+        }
+        if (onboardedById) {
+            void this.notifications.sendToUser(onboardedById, 'New dealer registered', `${dealer.name} registered in ${area.name}`, { type: 'ONBOARDING', userId: dealer.id });
+        }
+        return {
+            ...dealer,
+            message: 'Registration complete. You can sign in and manage your business.',
+        };
+    }
+    resolveSelfRegisterCredentials(dto, verifiedPhone) {
+        if (verifiedPhone) {
+            const email = dto.email?.trim().toLowerCase() ||
+                `${verifiedPhone}@phone.flashmart.app`;
+            const plainPassword = dto.password?.trim() || (0, crypto_1.randomBytes)(18).toString('base64url');
+            return { email, plainPassword, phone: verifiedPhone };
+        }
+        return {
+            email: dto.email.trim().toLowerCase(),
+            plainPassword: dto.password.trim(),
+            phone: dto.phone?.trim() || null,
+        };
+    }
+    async notifyEmployeesOfDocumentUpload(userId) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                name: true,
+                companyId: true,
+                onboardedById: true,
+                area: { select: { employeeId: true, name: true } },
+            },
+        });
+        if (!user?.companyId)
+            return;
+        const targetIds = new Set();
+        if (user.onboardedById)
+            targetIds.add(user.onboardedById);
+        if (user.area?.employeeId)
+            targetIds.add(user.area.employeeId);
+        if (targetIds.size === 0) {
+            const employees = await this.prisma.user.findMany({
+                where: {
+                    companyId: user.companyId,
+                    role: client_1.UserRole.EMPLOYEE,
+                    status: client_1.UserStatus.ACTIVE,
+                },
+                select: { id: true },
+            });
+            employees.forEach((e) => targetIds.add(e.id));
+        }
+        await this.notifications.sendToUsers([...targetIds], 'Document pending verification', `${user.name} uploaded a document for review`, { type: 'DOCUMENT', userId, status: 'PENDING_VERIFICATION' });
+    }
+    async verifyOnboardingDocument(actor, userId, documentId) {
+        if (actor.role !== client_1.UserRole.ADMIN && actor.role !== client_1.UserRole.EMPLOYEE) {
+            throw new common_1.ForbiddenException('Only staff can verify documents');
+        }
+        const doc = await this.prisma.onboardingDocument.findFirst({
+            where: { id: documentId, userId },
+            include: { user: { select: { companyId: true, name: true } } },
+        });
+        if (!doc)
+            throw new common_1.NotFoundException('Document not found');
+        if (actor.companyId && doc.user.companyId !== actor.companyId) {
+            throw new common_1.ForbiddenException('Document is outside your company');
+        }
+        const updated = await this.prisma.onboardingDocument.update({
+            where: { id: documentId },
+            data: {
+                verificationStatus: client_1.DocumentVerificationStatus.VERIFIED,
+                verifiedById: actor.userId,
+                verifiedAt: new Date(),
+                rejectionReason: null,
+            },
+        });
+        await this.syncUserDocumentEligibility(userId);
+        void this.notifications.sendToUser(userId, 'Document verified', 'Your business document has been verified.', { type: 'DOCUMENT', status: 'VERIFIED', documentId });
+        return updated;
+    }
+    async rejectOnboardingDocument(actor, userId, documentId, reason) {
+        if (actor.role !== client_1.UserRole.ADMIN && actor.role !== client_1.UserRole.EMPLOYEE) {
+            throw new common_1.ForbiddenException('Only staff can reject documents');
+        }
+        const doc = await this.prisma.onboardingDocument.findFirst({
+            where: { id: documentId, userId },
+            include: { user: { select: { companyId: true } } },
+        });
+        if (!doc)
+            throw new common_1.NotFoundException('Document not found');
+        if (actor.companyId && doc.user.companyId !== actor.companyId) {
+            throw new common_1.ForbiddenException('Document is outside your company');
+        }
+        const updated = await this.prisma.onboardingDocument.update({
+            where: { id: documentId },
+            data: {
+                verificationStatus: client_1.DocumentVerificationStatus.REJECTED,
+                verifiedById: actor.userId,
+                verifiedAt: new Date(),
+                rejectionReason: reason.trim() || 'Rejected by reviewer',
+            },
+        });
+        await this.syncUserDocumentEligibility(userId);
+        void this.notifications.sendToUser(userId, 'Document rejected', 'Your uploaded document was rejected. Please upload a valid document.', { type: 'DOCUMENT', status: 'REJECTED', documentId });
+        return updated;
+    }
+    async recordFollowUp(actor, userId) {
+        if (actor.role !== client_1.UserRole.ADMIN && actor.role !== client_1.UserRole.EMPLOYEE) {
+            throw new common_1.ForbiddenException('Only staff can record follow-ups');
+        }
+        const user = await this.findManagedUser(actor, userId);
+        return this.prisma.user.update({
+            where: { id: user.id },
+            data: { lastFollowUpAt: new Date() },
+            select: this.userRosterSelect,
+        });
+    }
+    async streamMyOnboardingDocument(actor, documentId, res) {
+        const doc = await this.prisma.onboardingDocument.findFirst({
+            where: { id: documentId, userId: actor.userId },
+        });
+        if (!doc)
+            throw new common_1.NotFoundException('Document not found');
+        const absolutePath = (0, path_1.join)(ONBOARDING_UPLOAD_DIR, doc.storageKey);
+        if (!(0, fs_1.existsSync)(absolutePath)) {
+            throw new common_1.NotFoundException('File not found on server');
+        }
+        res.setHeader('Content-Type', doc.mimeType || 'application/octet-stream');
+        res.setHeader('Content-Disposition', `inline; filename="${doc.fileName.replace(/"/g, '')}"`);
+        (0, fs_1.createReadStream)(absolutePath).pipe(res);
     }
     async streamOnboardingDocument(actor, userId, documentId, res) {
         if (actor.role !== client_1.UserRole.ADMIN && actor.role !== client_1.UserRole.EMPLOYEE) {
@@ -611,6 +1081,10 @@ let UsersService = class UsersService {
                     areaId: dto.areaId,
                     onboardedById: actor.userId,
                     onboardingNotes: dto.onboardingNotes?.trim() || null,
+                    shopName: dto.shopName?.trim() || null,
+                    address: dto.address?.trim() || null,
+                    latitude: dto.latitude ?? null,
+                    longitude: dto.longitude ?? null,
                     approvalLoginPasswordEnc: credentialEnc,
                     status,
                     approvedById: status === client_1.UserStatus.ACTIVE ? actor.userId : null,
@@ -635,6 +1109,9 @@ let UsersService = class UsersService {
             });
             emailSent = mailResult.sent;
             emailError = mailResult.sent ? null : mailResult.reason;
+        }
+        if (status === client_1.UserStatus.PENDING_APPROVAL) {
+            void this.notifyAdminsOfPendingApproval(actor.companyId, created.name, 'Shopkeeper', created.id);
         }
         const pendingMessage = 'Shopkeeper submitted for admin approval. Login details will be emailed after approval.';
         const activeMessage = emailSent
@@ -685,6 +1162,10 @@ let UsersService = class UsersService {
                         companyId: actor.companyId,
                         onboardedById: actor.userId,
                         onboardingNotes: dto.onboardingNotes?.trim() || null,
+                        shopName: dto.shopName?.trim() || null,
+                        address: dto.address?.trim() || null,
+                        latitude: dto.latitude ?? null,
+                        longitude: dto.longitude ?? null,
                         approvalLoginPasswordEnc: credentialEnc,
                         status,
                         approvedById: status === client_1.UserStatus.ACTIVE ? actor.userId : null,
@@ -716,6 +1197,9 @@ let UsersService = class UsersService {
             emailSent = mailResult.sent;
             emailError = mailResult.sent ? null : mailResult.reason;
         }
+        if (status === client_1.UserStatus.PENDING_APPROVAL) {
+            void this.notifyAdminsOfPendingApproval(actor.companyId, dealer.name, 'Dealer', dealer.id);
+        }
         const pendingMessage = 'Dealer submitted for admin approval. Login details will be emailed after approval.';
         const activeMessage = emailSent
             ? `Dealer created. Login credentials emailed to ${email}.`
@@ -735,6 +1219,7 @@ exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        email_service_1.EmailService])
+        email_service_1.EmailService,
+        notifications_service_1.NotificationsService])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

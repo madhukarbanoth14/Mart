@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateEnv = validateEnv;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
+const assert_safe_database_url_1 = require("./assert-safe-database-url");
 class EnvironmentVariables {
     DATABASE_URL;
     NODE_ENV;
@@ -22,6 +23,7 @@ class EnvironmentVariables {
     RAZORPAY_KEY_SECRET;
     RAZORPAY_WEBHOOK_SECRET;
     FCM_SERVER_KEY;
+    FIREBASE_PROJECT_ID;
     SMTP_HOST;
     SMTP_PORT;
     SMTP_SECURE;
@@ -29,6 +31,13 @@ class EnvironmentVariables {
     SMTP_PASS;
     MAIL_FROM;
     MAIL_APP_NAME;
+    TWILIO_ACCOUNT_SID;
+    TWILIO_AUTH_TOKEN;
+    TWILIO_VERIFY_SERVICE_SID;
+    TWILIO_MESSAGING_SERVICE_SID;
+    TWILIO_SMS_FROM;
+    TWILIO_SMS_OTP_MESSAGE;
+    SMS_OTP_EXPIRY_MINUTES;
 }
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
@@ -79,6 +88,11 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
+], EnvironmentVariables.prototype, "FIREBASE_PROJECT_ID", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
 ], EnvironmentVariables.prototype, "SMTP_HOST", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
@@ -110,6 +124,41 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], EnvironmentVariables.prototype, "MAIL_APP_NAME", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EnvironmentVariables.prototype, "TWILIO_ACCOUNT_SID", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EnvironmentVariables.prototype, "TWILIO_AUTH_TOKEN", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EnvironmentVariables.prototype, "TWILIO_VERIFY_SERVICE_SID", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EnvironmentVariables.prototype, "TWILIO_MESSAGING_SERVICE_SID", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EnvironmentVariables.prototype, "TWILIO_SMS_FROM", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EnvironmentVariables.prototype, "TWILIO_SMS_OTP_MESSAGE", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumberString)(),
+    __metadata("design:type", String)
+], EnvironmentVariables.prototype, "SMS_OTP_EXPIRY_MINUTES", void 0);
 function validateEnv(config) {
     const merged = { ...process.env, ...config };
     const validated = (0, class_transformer_1.plainToInstance)(EnvironmentVariables, merged, {
@@ -124,6 +173,7 @@ function validateEnv(config) {
             .join('; ');
         throw new Error(`Environment validation failed: ${messages}`);
     }
+    (0, assert_safe_database_url_1.assertSafeDatabaseUrl)(validated.DATABASE_URL, validated.NODE_ENV ?? 'development');
     return {
         ...config,
         ...validated,

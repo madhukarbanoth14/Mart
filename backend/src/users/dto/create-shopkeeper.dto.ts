@@ -1,4 +1,12 @@
-import { IsEmail, IsOptional, IsString, Matches, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsLatitude,
+  IsLongitude,
+  IsOptional,
+  IsString,
+  Matches,
+  MinLength,
+} from 'class-validator';
 
 const INDIAN_PHONE = /^[6-9]\d{9}$/;
 
@@ -29,4 +37,22 @@ export class CreateShopkeeperDto {
   @IsOptional()
   @IsString()
   onboardingNotes?: string;
+
+  /** Shop / business name shown to the assigned dealer (personal name stays private). */
+  @IsOptional()
+  @IsString()
+  shopName?: string;
+
+  /** Postal address used for delivery. */
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @IsOptional()
+  @IsLatitude()
+  latitude?: number;
+
+  @IsOptional()
+  @IsLongitude()
+  longitude?: number;
 }

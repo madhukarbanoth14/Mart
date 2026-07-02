@@ -9,18 +9,20 @@ export declare class ProductsService {
     constructor(prisma: PrismaService);
     findAll(actor: AuthUser, query?: ProductsQueryDto): Prisma.PrismaPromise<({
         brand: {
+            name: string;
             id: string;
             companyId: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            manufacturer: string | null;
             category: string | null;
+            manufacturer: string | null;
             logoUrl: string | null;
         } | null;
     } & {
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -30,7 +32,6 @@ export declare class ProductsService {
         caseQty: number | null;
         gstRate: Prisma.Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: Prisma.Decimal;
@@ -39,23 +40,24 @@ export declare class ProductsService {
         shopkeeperDiscount: Prisma.Decimal;
         bulkShippingFee: Prisma.Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     })[]>;
     findAllPaged(actor: AuthUser, query?: ProductsQueryDto): Promise<{
         items: ({
             brand: {
+                name: string;
                 id: string;
                 companyId: string;
-                name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                manufacturer: string | null;
                 category: string | null;
+                manufacturer: string | null;
                 logoUrl: string | null;
             } | null;
         } & {
+            name: string;
             id: string;
             companyId: string | null;
+            createdAt: Date;
             brandId: string | null;
             imageUrl: string | null;
             sku: string | null;
@@ -65,7 +67,6 @@ export declare class ProductsService {
             caseQty: number | null;
             gstRate: Prisma.Decimal;
             isActive: boolean;
-            name: string;
             brandType: import("@prisma/client").$Enums.BrandType;
             shelf: import("@prisma/client").$Enums.ProductShelf;
             basePrice: Prisma.Decimal;
@@ -74,7 +75,6 @@ export declare class ProductsService {
             shopkeeperDiscount: Prisma.Decimal;
             bulkShippingFee: Prisma.Decimal | null;
             bulkShippingMinQty: number;
-            createdAt: Date;
         })[];
         page: number;
         limit: number;
@@ -84,18 +84,20 @@ export declare class ProductsService {
     listShelves(actor: AuthUser): Promise<string[]>;
     findOne(productId: string, actor: AuthUser): Promise<{
         brand: {
+            name: string;
             id: string;
             companyId: string;
-            name: string;
             createdAt: Date;
             updatedAt: Date;
-            manufacturer: string | null;
             category: string | null;
+            manufacturer: string | null;
             logoUrl: string | null;
         } | null;
     } & {
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -105,7 +107,6 @@ export declare class ProductsService {
         caseQty: number | null;
         gstRate: Prisma.Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: Prisma.Decimal;
@@ -114,11 +115,12 @@ export declare class ProductsService {
         shopkeeperDiscount: Prisma.Decimal;
         bulkShippingFee: Prisma.Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     }>;
     create(actor: AuthUser, dto: CreateProductDto): Promise<{
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -128,7 +130,6 @@ export declare class ProductsService {
         caseQty: number | null;
         gstRate: Prisma.Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: Prisma.Decimal;
@@ -137,11 +138,12 @@ export declare class ProductsService {
         shopkeeperDiscount: Prisma.Decimal;
         bulkShippingFee: Prisma.Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     }>;
     update(productId: string, actor: AuthUser, dto: UpdateProductDto): Promise<{
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -151,7 +153,6 @@ export declare class ProductsService {
         caseQty: number | null;
         gstRate: Prisma.Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: Prisma.Decimal;
@@ -160,11 +161,12 @@ export declare class ProductsService {
         shopkeeperDiscount: Prisma.Decimal;
         bulkShippingFee: Prisma.Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     }>;
     remove(productId: string, actor: AuthUser): Promise<{
+        name: string;
         id: string;
         companyId: string | null;
+        createdAt: Date;
         brandId: string | null;
         imageUrl: string | null;
         sku: string | null;
@@ -174,7 +176,6 @@ export declare class ProductsService {
         caseQty: number | null;
         gstRate: Prisma.Decimal;
         isActive: boolean;
-        name: string;
         brandType: import("@prisma/client").$Enums.BrandType;
         shelf: import("@prisma/client").$Enums.ProductShelf;
         basePrice: Prisma.Decimal;
@@ -183,6 +184,5 @@ export declare class ProductsService {
         shopkeeperDiscount: Prisma.Decimal;
         bulkShippingFee: Prisma.Decimal | null;
         bulkShippingMinQty: number;
-        createdAt: Date;
     }>;
 }

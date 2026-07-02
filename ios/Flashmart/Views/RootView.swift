@@ -5,7 +5,7 @@ struct RootView: View {
     @State private var phase: AppPhase = .splash
 
     enum AppPhase {
-        case splash, onboarding, login, main
+        case splash, onboarding, login, register, main
     }
 
     var body: some View {
@@ -30,10 +30,18 @@ struct RootView: View {
             case .login:
                 LoginView(onSignedIn: {
                     withAnimation { phase = .main }
+                }, onRegister: AppConfig.useLocalDemoAuth ? nil : {
+                    withAnimation { phase = .register }
                 })
+            case .register:
+                SelfRegistrationView(
+                    onBack: { withAnimation { phase = .login } },
+                    onRegistered: { withAnimation { phase = .main } }
+                )
             case .main:
                 if let user = env.sessionStore.user {
                     RoleShellView(user: user, onLogout: {
+                        Task { await env.pushTokenRegistrar.unregister() }
                         env.authViewModel.logout()
                         env.cartStore.clear()
                         withAnimation { phase = .login }

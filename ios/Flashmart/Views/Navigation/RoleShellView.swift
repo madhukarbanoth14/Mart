@@ -21,7 +21,10 @@ struct RoleShellView: View {
                 sharedDestination(route)
             }
         }
-        .task { await env.mainViewModel.refreshForRole() }
+        .task {
+            await env.mainViewModel.refreshForRole()
+            await env.pushTokenRegistrar.registerCurrentToken()
+        }
     }
 
     @ViewBuilder
@@ -34,7 +37,7 @@ struct RoleShellView: View {
         case .admin:
             AdminTabHost(selectedTab: $selectedTab, path: $path, user: user, onLogout: onLogout)
         case .employee:
-            EmployeeTabHost(selectedTab: selectedTab, path: $path, user: user, onLogout: onLogout)
+            EmployeeTabHost(selectedTab: $selectedTab, path: $path, user: user, onLogout: onLogout)
         }
     }
 
@@ -51,7 +54,7 @@ struct RoleShellView: View {
         case .dealer:
             return [
                 FMNavItem(id: "home", icon: "house.fill", label: "Home"),
-                FMNavItem(id: "products", icon: "square.grid.2x2.fill", label: "Products"),
+                FMNavItem(id: "products", icon: "cube.box.fill", label: "SKUs"),
                 FMNavItem(id: "orders", icon: "bag.fill", label: "Orders", badge: pendingOrderBadge),
                 FMNavItem(id: "stock", icon: "shippingbox.fill", label: "Stock"),
                 FMNavItem(id: "profile", icon: "person.fill", label: "Profile"),
@@ -59,6 +62,7 @@ struct RoleShellView: View {
         case .admin:
             return [
                 FMNavItem(id: "home", icon: "house.fill", label: "Home"),
+                FMNavItem(id: "finance", icon: "indianrupeesign.circle.fill", label: "Finance"),
                 FMNavItem(id: "orders", icon: "doc.text.fill", label: "Orders"),
                 FMNavItem(id: "team", icon: "person.3.fill", label: "Team", badge: env.mainViewModel.pendingCount),
                 FMNavItem(id: "profile", icon: "person.fill", label: "Profile"),
@@ -89,10 +93,14 @@ struct RoleShellView: View {
             CartView(path: $path)
         case .checkout:
             ShopkeeperCheckoutView(path: $path)
+        case .wallet:
+            ShopkeeperWalletView(path: $path)
         case .payment(let orderId):
             PaymentView(path: $path, orderId: orderId)
         case .invoice(let orderId):
             InvoiceView(orderId: orderId)
+        case .orderConfirmation(let orderId):
+            OrderConfirmationView(path: $path, orderId: orderId)
         case .tracking(let orderId):
             TrackingView(orderId: orderId)
         case .resetPassword(let token):
@@ -107,6 +115,8 @@ struct RoleShellView: View {
             SkuManagementView(path: $path)
         case .brandsManagement:
             BrandsManagementView(path: $path)
+        case .areasManagement:
+            AdminAreasView(path: $path)
         case .profileStoreAddress:
             ProfileStoreAddressView(path: $path)
         case .profilePaymentMethods:
@@ -117,6 +127,26 @@ struct RoleShellView: View {
             ProfileNotificationsView(path: $path)
         case .profileHelp:
             ProfileHelpView(path: $path)
+        case .profileDocuments:
+            ProfileDocumentsView(path: $path)
+        case .privacyPolicy:
+            PrivacyPolicyView(path: $path)
+        case .adminReview(let userId):
+            AdminOnboardingReviewView(path: $path, userId: userId)
+        case .financeSettlement(let settlementId):
+            AdminSettlementDetailView(path: $path, settlementId: settlementId)
+        case .financeDealer(let dealerId, let dealerName):
+            AdminDealerPerformanceView(path: $path, dealerId: dealerId, dealerName: dealerName)
+        case .dealerRevenue:
+            DealerRevenueView(path: $path)
+        case .dealerShopkeepers:
+            DealerShopkeepersRevenueView()
+        case .dealerReturns:
+            DealerReturnsListView(path: $path)
+        case .dealerReturnDetail(let id):
+            DealerReturnDetailView(returnId: id)
+        case .adminRefundDetail(let id):
+            AdminRefundDetailView(refundId: id)
         }
     }
 }

@@ -10,6 +10,8 @@ final class LocalDemoStore {
     private var onboardedRows: [UserRow] = []
     private var onboardedSessions: [String: SessionUser] = [:]
     private var onboardedPasswords: [String: String] = [:]
+    private var onboardingDocumentsByUser: [String: [OnboardingDocument]] = [:]
+    private var stockQuantities: [String: Int] = [:]
 
     init() {
         resetForNewSession()
@@ -44,8 +46,106 @@ final class LocalDemoStore {
     func stock() -> [StockRow] {
         lock.lock(); defer { lock.unlock() }
         return productRows.enumerated().map { idx, p in
-            StockRow(id: "demo-stock-\(p.id)", quantity: 60 + idx * 5, product: p, dealer: Self.dealerBrief)
+            let stockId = "demo-stock-\(p.id)"
+            let qty = stockQuantities[stockId] ?? (60 + idx * 5)
+            return StockRow(id: stockId, quantity: qty, product: p, dealer: Self.dealerBrief)
         }
+    }
+
+    func updateStockQuantity(stockId: String, quantity: Int) -> StockRow {
+        lock.lock(); defer { lock.unlock() }
+        stockQuantities[stockId] = max(0, quantity)
+        let productId = stockId.replacingOccurrences(of: "demo-stock-", with: "")
+        let product = productRows.first { $0.id == productId }
+        return StockRow(id: stockId, quantity: stockQuantities[stockId] ?? quantity, product: product, dealer: Self.dealerBrief)
+    }
+
+    func upsertStock(productId: String, quantity: Int) -> StockRow {
+        updateStockQuantity(stockId: "demo-stock-\(productId)", quantity: quantity)
+    }
+
+    func createArea(name: String) -> Area {
+        lock.lock(); defer { lock.unlock() }
+        let area = Area(id: "area-\(UUID().uuidString.prefix(8))", name: name.trimmingCharacters(in: .whitespacesAndNewlines))
+        areaRows.append(area)
+        return area
+    }
+
+    func updateArea(id: String, body: UpdateAreaRequest) -> Area {
+        lock.lock(); defer { lock.unlock() }
+        guard let idx = areaRows.firstIndex(where: { $0.id == id }) else {
+            return Area(id: id, name: body.name ?? "Area")
+        }
+        let existing = areaRows[idx]
+        areaRows[idx] = Area(
+            id: existing.id,
+            name: body.name ?? existing.name,
+            dealerId: body.dealerId ?? existing.dealerId,
+            dealer: existing.dealer
+        )
+        return areaRows[idx]
+    }
+
+    func listDocuments(userId: String) -> [OnboardingDocument] {
+        lock.lock(); defer { lock.unlock() }
+        return onboardingDocumentsByUser[userId] ?? []
+    }
+
+    func uploadDocument(userId: String, documentType: String, fileURL: URL, displayName: String, mimeType: String) -> OnboardingDocument {
+        lock.lock()
+        let size = (try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.size] as? Int64) ?? 0
+        let doc = OnboardingDocument(
+            id: "doc-\(UUID().uuidString.prefix(12))",
+            label: BusinessDocumentTypes.label(for: documentType),
+            fileName: displayName,
+            documentType: documentType,
+            mimeType: mimeType,
+            fileSize: size,
+            uploadedAt: ISO8601DateFormatter().string(from: Date()),
+            verificationStatus: "PENDING_VERIFICATION"
+        )
+        var docs = onboardingDocumentsByUser[userId] ?? []
+        docs.append(doc)
+        onboardingDocumentsByUser[userId] = docs
+        if let idx = onboardedRows.firstIndex(where: { $0.id == userId }) {
+            onboardedRows[idx].onboardingDocuments = docs
+        }
+        refreshDocumentFlagsForUser(userId: userId)
+        lock.unlock()
+        return doc
+    }
+
+    func recordFollowUp(userId: String) -> UserRow {
+        lock.lock(); defer { lock.unlock() }
+        let stamp = ISO8601DateFormatter().string(from: Date())
+        if let idx = onboardedRows.firstIndex(where: { $0.id == userId }) {
+            onboardedRows[idx].lastFollowUpAt = stamp
+            return onboardedRows[idx]
+        }
+        if let idx = Self.staticUsers.firstIndex(where: { $0.id == userId }) {
+            var row = Self.staticUsers[idx]
+            row.lastFollowUpAt = stamp
+            return row
+        }
+        return UserRow(id: userId, name: "User", email: "user@demo.com", role: "SHOPKEEPER", status: "ACTIVE", lastFollowUpAt: stamp)
+    }
+
+    private func refreshDocumentFlagsForUser(userId: String) {
+        let docs = onboardingDocumentsByUser[userId] ?? []
+        let hasEligible = docs.contains {
+            $0.verificationStatus == "PENDING_VERIFICATION" || $0.verificationStatus == "VERIFIED"
+        }
+        let status: String = {
+            if docs.isEmpty { return "NOT_UPLOADED" }
+            if docs.allSatisfy({ $0.verificationStatus == "REJECTED" }) { return "REJECTED" }
+            if docs.contains(where: { $0.verificationStatus == "VERIFIED" }) { return "VERIFIED" }
+            return "PENDING_VERIFICATION"
+        }()
+        guard let email = (Self.staticUsers + onboardedRows).first(where: { $0.id == userId })?.email.lowercased(),
+              var session = onboardedSessions[email] else { return }
+        session.canPlaceOrders = hasEligible
+        session.documentStatus = status
+        onboardedSessions[email] = session
     }
 
     func users() -> [UserRow] {
@@ -77,6 +177,29 @@ final class LocalDemoStore {
     func orderById(_ orderId: String) -> Order? {
         lock.lock(); defer { lock.unlock() }
         return orders.first { $0.id == orderId }
+    }
+
+    func previewReorder(orderId: String) -> ReorderPreview {
+        let unavailable = "This product is currently unavailable and has been removed from the reorder cart."
+        lock.lock()
+        let order = orders.first { $0.id == orderId }
+        let catalog = productRows
+        lock.unlock()
+        guard let order else {
+            return ReorderPreview(items: [], warnings: ["Order not found"], skipped: [])
+        }
+        var items: [ReorderPreviewItem] = []
+        var skipped: [ReorderSkippedItem] = []
+        var warnings: [String] = []
+        for line in order.items ?? [] {
+            guard let product = catalog.first(where: { $0.id == line.productId }) else {
+                skipped.append(ReorderSkippedItem(productId: line.productId, productName: nil, reason: "deleted"))
+                warnings.append(unavailable)
+                continue
+            }
+            items.append(ReorderPreviewItem(productId: line.productId, quantity: line.quantity, product: product))
+        }
+        return ReorderPreview(items: items, warnings: Array(Set(warnings)), skipped: skipped)
     }
 
     func createOrder(actorId: String, items: [CreateOrderItem]) -> Order {
@@ -215,6 +338,35 @@ final class LocalDemoStore {
         return orders[idx]
     }
 
+    func requestReturn(orderId: String, reason: String) -> Order {
+        lock.lock(); defer { lock.unlock() }
+        guard let idx = orders.firstIndex(where: { $0.id == orderId }) else { fatalError("Order not found") }
+        orders[idx].status = "RETURN_REQUESTED"
+        orders[idx].returnReason = reason
+        orders[idx].returnRequestedAt = ISO8601DateFormatter().string(from: Date())
+        return orders[idx]
+    }
+
+    func approveReturn(orderId: String) -> Order {
+        lock.lock(); defer { lock.unlock() }
+        guard let idx = orders.firstIndex(where: { $0.id == orderId }) else { fatalError("Order not found") }
+        if orders[idx].paymentStatus?.uppercased() == "PAID" {
+            orders[idx].paymentStatus = "REFUNDED"
+            orders[idx].refundedAt = ISO8601DateFormatter().string(from: Date())
+        }
+        orders[idx].status = "RETURNED"
+        orders[idx].returnedAt = ISO8601DateFormatter().string(from: Date())
+        return orders[idx]
+    }
+
+    func rejectReturn(orderId: String, note: String?) -> Order {
+        lock.lock(); defer { lock.unlock() }
+        guard let idx = orders.firstIndex(where: { $0.id == orderId }) else { fatalError("Order not found") }
+        orders[idx].status = "DELIVERED"
+        if let note { orders[idx].returnReason = note }
+        return orders[idx]
+    }
+
     func invoiceByOrder(orderId: String) -> InvoiceDocument {
         lock.lock()
         let order = orders.first { $0.id == orderId }
@@ -266,10 +418,12 @@ final class LocalDemoStore {
 
     func attachOnboardingDocuments(userId: String, documents: [OnboardingDocument]) {
         lock.lock(); defer { lock.unlock() }
-        guard let idx = onboardedRows.firstIndex(where: { $0.id == userId }) else { return }
-        var row = onboardedRows[idx]
-        row.onboardingDocuments = documents
-        onboardedRows[idx] = row
+        guard !documents.isEmpty else { return }
+        onboardingDocumentsByUser[userId] = documents
+        if let idx = onboardedRows.firstIndex(where: { $0.id == userId }) {
+            onboardedRows[idx].onboardingDocuments = documents
+        }
+        refreshDocumentFlagsForUser(userId: userId)
     }
 
     func createDealer(name: String, email: String, phone: String?, password: String, areaId: String, onboardedByEmployeeId: String, notes: String?, actorRole: String) -> UserRow {

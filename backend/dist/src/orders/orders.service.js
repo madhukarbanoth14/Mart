@@ -11,28 +11,94 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrdersService = void 0;
 const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
 const client_1 = require("@prisma/client");
 const notifications_service_1 = require("../notifications/notifications.service");
+const finance_service_1 = require("../finance/finance.service");
+const returns_service_1 = require("../returns/returns.service");
 const invoices_service_1 = require("../invoices/invoices.service");
 const payments_service_1 = require("../payments/payments.service");
 const prisma_service_1 = require("../prisma/prisma.service");
+const users_service_1 = require("../users/users.service");
 const create_order_dto_1 = require("./dto/create-order.dto");
 const orderInclude = {
     items: { include: { product: true } },
-    shopkeeper: { select: { id: true, name: true, email: true, phone: true } },
-    dealer: { select: { id: true, name: true, email: true, phone: true } },
+    shopkeeper: {
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            shopName: true,
+            address: true,
+            latitude: true,
+            longitude: true,
+        },
+    },
+    dealer: {
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            shopName: true,
+            address: true,
+            latitude: true,
+            longitude: true,
+        },
+    },
     invoice: true,
 };
+const LOW_STOCK_THRESHOLD = 10;
+const REORDER_UNAVAILABLE_MSG = 'This product is currently unavailable and has been removed from the reorder cart.';
 let OrdersService = class OrdersService {
     prisma;
     invoicesService;
     notifications;
     paymentsService;
-    constructor(prisma, invoicesService, notifications, paymentsService) {
+    usersService;
+    config;
+    financeService;
+    returnsService;
+    constructor(prisma, invoicesService, notifications, paymentsService, usersService, config, financeService, returnsService) {
         this.prisma = prisma;
         this.invoicesService = invoicesService;
         this.notifications = notifications;
         this.paymentsService = paymentsService;
+        this.usersService = usersService;
+        this.config = config;
+        this.financeService = financeService;
+        this.returnsService = returnsService;
+    }
+    maxOrderQuantity() {
+        return this.config.get('ordering.maxOrderQuantity', 10000);
+    }
+    assertValidLineQuantities(items) {
+        const max = this.maxOrderQuantity();
+        for (const item of items) {
+            if (!Number.isInteger(item.quantity) || item.quantity < 1) {
+                throw new common_1.BadRequestException('Quantity must be a whole number of at least 1');
+            }
+            if (item.quantity > max) {
+                throw new common_1.BadRequestException(`Quantity cannot exceed ${max} per line item`);
+            }
+        }
+    }
+    async notifyLowStock(dealerId, productIds) {
+        if (productIds.length === 0) {
+            return;
+        }
+        const lowStocks = await this.prisma.stock.findMany({
+            where: {
+                dealerId,
+                productId: { in: productIds },
+                quantity: { lte: LOW_STOCK_THRESHOLD },
+            },
+            include: { product: { select: { name: true } } },
+        });
+        for (const stock of lowStocks) {
+            void this.notifications.sendToUser(dealerId, 'Low stock', `${stock.product.name} is running low (${stock.quantity} left)`, { type: 'STOCK', productId: stock.productId });
+        }
     }
     scopeWhere(actor) {
         const where = {};
@@ -49,6 +115,29 @@ let OrdersService = class OrdersService {
             ];
         }
         return where;
+    }
+    present(order, actor) {
+        const result = { ...order };
+        if (actor.role === client_1.UserRole.DEALER && result.shopkeeper) {
+            const sk = result.shopkeeper;
+            result.shopkeeper = {
+                id: sk.id,
+                shopName: sk.shopName ?? null,
+                address: sk.address ?? null,
+                latitude: sk.latitude ?? null,
+                longitude: sk.longitude ?? null,
+            };
+        }
+        else if (actor.role === client_1.UserRole.SHOPKEEPER && result.dealer) {
+            result.dealer = {
+                id: result.dealer.id,
+                name: result.dealer.name ?? null,
+            };
+        }
+        return result;
+    }
+    presentMany(orders, actor) {
+        return orders.map((order) => this.present(order, actor));
     }
     async getCompanyWarehouseUser(companyId) {
         const admin = await this.prisma.user.findFirst({
@@ -70,7 +159,7 @@ let OrdersService = class OrdersService {
                 throw new common_1.NotFoundException(`Product ${item.productId} not found`);
             }
             const availableQty = stockByProduct.get(item.productId) ?? 0;
-            if (availableQty < item.quantity) {
+            if (buyerRole === 'SHOPKEEPER' && availableQty < item.quantity) {
                 throw new common_1.BadRequestException(`Insufficient stock for ${product.name}. Requested ${item.quantity}, available ${availableQty}`);
             }
             const quantity = new client_1.Prisma.Decimal(item.quantity);
@@ -80,7 +169,6 @@ let OrdersService = class OrdersService {
             const dbDealerUnitPrice = new client_1.Prisma.Decimal(product.dealerPrice);
             const gstPct = new client_1.Prisma.Decimal(product.gstRate).div(100);
             const baseLineAmount = dbDealerUnitPrice.mul(quantity);
-            const lineGst = baseLineAmount.mul(gstPct);
             const defaultDisc = buyerRole === 'DEALER'
                 ? new client_1.Prisma.Decimal(10)
                 : new client_1.Prisma.Decimal(5);
@@ -89,6 +177,7 @@ let OrdersService = class OrdersService {
                 : (product.shopkeeperDiscount ?? defaultDisc).div(100);
             const lineDiscount = baseLineAmount.mul(lineDiscountPct);
             const taxableAmount = baseLineAmount.sub(lineDiscount);
+            const lineGst = taxableAmount.mul(gstPct);
             const finalLineAmount = taxableAmount.add(lineGst);
             totalAmount = totalAmount.add(baseLineAmount);
             gstAmount = gstAmount.add(lineGst);
@@ -117,33 +206,36 @@ let OrdersService = class OrdersService {
         const finalAmount = totalAmount.sub(discountAmount).add(gstAmount).add(bulkShippingAmount);
         return { lineItems, totalAmount, gstAmount, discountAmount, finalAmount };
     }
-    findAll(actor) {
-        return this.prisma.order.findMany({
+    async findAll(actor) {
+        const orders = await this.prisma.order.findMany({
             where: this.scopeWhere(actor),
             include: orderInclude,
             orderBy: { createdAt: 'desc' },
         });
+        return this.presentMany(orders, actor);
     }
-    findMine(actor) {
+    async findMine(actor) {
         if (actor.role !== client_1.UserRole.SHOPKEEPER) {
             throw new common_1.BadRequestException('Only shopkeepers can use this endpoint');
         }
-        return this.prisma.order.findMany({
+        const orders = await this.prisma.order.findMany({
             where: { ...this.scopeWhere(actor), shopkeeperId: actor.userId },
             include: orderInclude,
             orderBy: { createdAt: 'desc' },
         });
+        return this.presentMany(orders, actor);
     }
-    findDealer(actor) {
+    async findDealer(actor) {
         if (actor.role !== client_1.UserRole.DEALER && actor.role !== client_1.UserRole.ADMIN && actor.role !== client_1.UserRole.EMPLOYEE) {
             throw new common_1.BadRequestException('Only dealers or staff can use this endpoint');
         }
         const where = this.scopeWhere(actor);
-        return this.prisma.order.findMany({
+        const orders = await this.prisma.order.findMany({
             where,
             include: orderInclude,
             orderBy: { createdAt: 'desc' },
         });
+        return this.presentMany(orders, actor);
     }
     async mySummary(actor) {
         if (actor.role !== client_1.UserRole.SHOPKEEPER) {
@@ -205,12 +297,91 @@ let OrdersService = class OrdersService {
         if (!order) {
             throw new common_1.NotFoundException('Order not found');
         }
-        return order;
+        return this.present(order, actor);
+    }
+    async previewReorder(orderId, actor) {
+        if (actor.role !== client_1.UserRole.SHOPKEEPER) {
+            throw new common_1.ForbiddenException('Only shopkeepers can reorder');
+        }
+        const order = await this.prisma.order.findFirst({
+            where: {
+                id: orderId,
+                shopkeeperId: actor.userId,
+                kind: client_1.OrderKind.SHOPKEEPER,
+                ...(actor.companyId ? { companyId: actor.companyId } : {}),
+            },
+            include: { items: true },
+        });
+        if (!order) {
+            throw new common_1.NotFoundException('Order not found');
+        }
+        const shopkeeper = await this.prisma.user.findUnique({
+            where: { id: actor.userId },
+            include: { area: true },
+        });
+        const dealerId = shopkeeper?.area?.dealerId;
+        const productIds = [...new Set(order.items.map((line) => line.productId))];
+        const products = await this.prisma.product.findMany({
+            where: { id: { in: productIds } },
+            include: { brand: true },
+        });
+        const productsById = new Map(products.map((product) => [product.id, product]));
+        const stockByProduct = new Map();
+        if (dealerId) {
+            const stockRows = await this.prisma.stock.findMany({
+                where: { dealerId, productId: { in: productIds } },
+            });
+            for (const stock of stockRows) {
+                stockByProduct.set(stock.productId, stock.quantity);
+            }
+        }
+        const items = [];
+        const skipped = [];
+        const warnings = [];
+        for (const line of order.items) {
+            const product = productsById.get(line.productId);
+            if (!product) {
+                skipped.push({ productId: line.productId, reason: 'deleted' });
+                warnings.push(REORDER_UNAVAILABLE_MSG);
+                continue;
+            }
+            if (!product.isActive) {
+                skipped.push({
+                    productId: line.productId,
+                    productName: product.name,
+                    reason: 'inactive',
+                });
+                warnings.push(REORDER_UNAVAILABLE_MSG);
+                continue;
+            }
+            const available = stockByProduct.get(line.productId) ?? 0;
+            if (available < line.quantity) {
+                skipped.push({
+                    productId: line.productId,
+                    productName: product.name,
+                    reason: 'out_of_stock',
+                });
+                warnings.push(REORDER_UNAVAILABLE_MSG);
+                continue;
+            }
+            items.push({
+                productId: line.productId,
+                quantity: line.quantity,
+                product: product,
+            });
+        }
+        return {
+            items,
+            warnings: [...new Set(warnings)],
+            skipped,
+        };
     }
     async createOrder(dto, actor) {
         if (actor.role !== client_1.UserRole.SHOPKEEPER) {
             throw new common_1.BadRequestException('Only shopkeepers can create orders');
         }
+        await this.usersService.assertCanPlaceOrders(actor.userId);
+        this.assertValidLineQuantities(dto.items);
         const shopkeeper = await this.prisma.user.findUnique({
             where: { id: actor.userId },
             include: { area: true },
@@ -249,13 +420,15 @@ let OrdersService = class OrdersService {
             },
             include: orderInclude,
         });
-        void this.notifications.sendToUser(dealerId, 'New order', `New order from ${shopkeeper.name} — ${created.id.slice(0, 8)}`);
-        return created;
+        void this.notifications.sendToUser(dealerId, 'New order', `New order from ${shopkeeper.name} — ${created.id.slice(0, 8)}`, { type: 'ORDER', orderId: created.id });
+        return this.present(created, actor);
     }
     async createDealerRestockOrder(dto, actor) {
         if (actor.role !== client_1.UserRole.DEALER) {
             throw new common_1.BadRequestException('Only dealers can place restock orders');
         }
+        await this.usersService.assertCanPlaceOrders(actor.userId);
+        this.assertValidLineQuantities(dto.items);
         if (!actor.companyId) {
             throw new common_1.BadRequestException('Company scope is required');
         }
@@ -277,22 +450,44 @@ let OrdersService = class OrdersService {
         });
         const stockByProduct = new Map(stockRows.map((stock) => [stock.productId, stock.quantity]));
         const { lineItems, totalAmount, gstAmount, discountAmount, finalAmount } = this.buildLineItems(dto, productsById, stockByProduct, 'DEALER');
-        const created = await this.prisma.order.create({
-            data: {
-                companyId: actor.companyId,
-                shopkeeperId: actor.userId,
-                dealerId: warehouse.id,
-                kind: client_1.OrderKind.DEALER_RESTOCK,
-                totalAmount,
-                gstAmount,
-                discountAmount,
-                finalAmount,
-                status: client_1.OrderStatus.PENDING,
-                items: {
-                    create: lineItems,
+        const created = await this.prisma.$transaction(async (tx) => {
+            const order = await tx.order.create({
+                data: {
+                    companyId: actor.companyId,
+                    shopkeeperId: actor.userId,
+                    dealerId: warehouse.id,
+                    kind: client_1.OrderKind.DEALER_RESTOCK,
+                    totalAmount,
+                    gstAmount,
+                    discountAmount,
+                    finalAmount,
+                    status: client_1.OrderStatus.PENDING,
+                    items: {
+                        create: lineItems,
+                    },
                 },
-            },
-            include: orderInclude,
+                include: orderInclude,
+            });
+            for (const item of dto.items) {
+                await tx.stock.upsert({
+                    where: {
+                        dealerId_productId: {
+                            dealerId: actor.userId,
+                            productId: item.productId,
+                        },
+                    },
+                    update: {
+                        quantity: { increment: item.quantity },
+                    },
+                    create: {
+                        companyId: actor.companyId,
+                        dealerId: actor.userId,
+                        productId: item.productId,
+                        quantity: item.quantity,
+                    },
+                });
+            }
+            return order;
         });
         const admins = await this.prisma.user.findMany({
             where: {
@@ -302,9 +497,9 @@ let OrdersService = class OrdersService {
             select: { id: true },
         });
         for (const staff of admins) {
-            void this.notifications.sendToUser(staff.id, 'Dealer restock order', `${dealer.name} placed restock order ${created.id.slice(0, 8)}`);
+            void this.notifications.sendToUser(staff.id, 'Dealer restock order', `${dealer.name} placed restock order ${created.id.slice(0, 8)}`, { type: 'ORDER', orderId: created.id });
         }
-        return created;
+        return this.present(created, actor);
     }
     async createDealerRestockWithPayment(dto, actor) {
         const paymentMode = dto.paymentMode ?? create_order_dto_1.OrderPaymentMode.COD;
@@ -397,8 +592,9 @@ let OrdersService = class OrdersService {
         });
         void this.notifications.sendToUser(order.shopkeeperId, order.kind === client_1.OrderKind.DEALER_RESTOCK ? 'Restock confirmed' : 'Order confirmed', order.kind === client_1.OrderKind.DEALER_RESTOCK
             ? `Your restock order ${order.id.slice(0, 8)} was confirmed`
-            : `Dealer confirmed your order ${order.id.slice(0, 8)}`);
-        return updated;
+            : `Dealer confirmed your order ${order.id.slice(0, 8)}`, { type: 'ORDER', orderId: order.id });
+        void this.notifyLowStock(order.dealerId, order.items.map((item) => item.productId));
+        return updated ? this.present(updated, actor) : updated;
     }
     async markOutForDelivery(orderId, actor) {
         const order = await this.prisma.order.findUnique({ where: { id: orderId } });
@@ -421,8 +617,8 @@ let OrdersService = class OrdersService {
             data: { status: client_1.OrderStatus.OUT_FOR_DELIVERY },
             include: orderInclude,
         });
-        void this.notifications.sendToUser(order.shopkeeperId, 'Out for delivery', `Order ${order.id.slice(0, 8)} is on the way`);
-        return out;
+        void this.notifications.sendToUser(order.shopkeeperId, 'Out for delivery', `Order ${order.id.slice(0, 8)} is on the way`, { type: 'ORDER', orderId: order.id });
+        return this.present(out, actor);
     }
     async markDelivered(orderId, actor) {
         const order = await this.prisma.order.findUnique({
@@ -444,38 +640,21 @@ let OrdersService = class OrdersService {
             throw new common_1.BadRequestException('Only out-for-delivery orders can be marked delivered');
         }
         const done = await this.prisma.$transaction(async (tx) => {
-            if (order.kind === client_1.OrderKind.DEALER_RESTOCK) {
-                for (const item of order.items) {
-                    await tx.stock.upsert({
-                        where: {
-                            dealerId_productId: {
-                                dealerId: order.shopkeeperId,
-                                productId: item.productId,
-                            },
-                        },
-                        update: {
-                            quantity: { increment: item.quantity },
-                        },
-                        create: {
-                            companyId: order.companyId,
-                            dealerId: order.shopkeeperId,
-                            productId: item.productId,
-                            quantity: item.quantity,
-                        },
-                    });
-                }
-            }
             return tx.order.update({
                 where: { id: order.id },
                 data: { status: client_1.OrderStatus.DELIVERED },
                 include: orderInclude,
             });
         });
-        void this.notifications.sendToUser(order.shopkeeperId, 'Delivered', `Order ${order.id.slice(0, 8)} has been delivered`);
-        return done;
+        void this.notifications.sendToUser(order.shopkeeperId, 'Delivered', `Order ${order.id.slice(0, 8)} has been delivered`, { type: 'ORDER', orderId: order.id });
+        void this.financeService.recordRevenueOnDelivery(order.id);
+        return this.present(done, actor);
     }
     async cancelOrder(orderId, actor) {
-        const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+        const order = await this.prisma.order.findUnique({
+            where: { id: orderId },
+            include: { items: true },
+        });
         if (!order) {
             throw new common_1.NotFoundException('Order not found');
         }
@@ -501,14 +680,61 @@ let OrdersService = class OrdersService {
             order.status !== client_1.OrderStatus.PENDING) {
             throw new common_1.BadRequestException('Dealer can cancel restock only while pending');
         }
-        const updated = await this.prisma.order.update({
-            where: { id: order.id },
-            data: { status: client_1.OrderStatus.CANCELLED },
-            include: orderInclude,
+        const updated = await this.prisma.$transaction(async (tx) => {
+            if (order.kind === client_1.OrderKind.DEALER_RESTOCK &&
+                order.status === client_1.OrderStatus.PENDING) {
+                for (const item of order.items) {
+                    await tx.stock.updateMany({
+                        where: {
+                            dealerId: order.shopkeeperId,
+                            productId: item.productId,
+                            quantity: { gte: item.quantity },
+                        },
+                        data: {
+                            quantity: { decrement: item.quantity },
+                        },
+                    });
+                }
+            }
+            return tx.order.update({
+                where: { id: order.id },
+                data: { status: client_1.OrderStatus.CANCELLED },
+                include: orderInclude,
+            });
         });
         const peer = actor.userId === order.shopkeeperId ? order.dealerId : order.shopkeeperId;
-        void this.notifications.sendToUser(peer, 'Order cancelled', `Order ${order.id.slice(0, 8)} was cancelled`);
-        return updated;
+        void this.notifications.sendToUser(peer, 'Order cancelled', `Order ${order.id.slice(0, 8)} was cancelled`, { type: 'ORDER', orderId: order.id });
+        return this.present(updated, actor);
+    }
+    async requestReturn(orderId, dto, actor) {
+        await this.returnsService.createLegacyReturn(orderId, dto.reason.trim(), actor);
+        const order = await this.prisma.order.findUnique({
+            where: { id: orderId },
+            include: orderInclude,
+        });
+        if (!order)
+            throw new common_1.NotFoundException('Order not found');
+        return this.present(order, actor);
+    }
+    async approveReturn(orderId, actor) {
+        await this.returnsService.approveLegacyReturn(orderId, actor);
+        const order = await this.prisma.order.findUnique({
+            where: { id: orderId },
+            include: orderInclude,
+        });
+        if (!order)
+            throw new common_1.NotFoundException('Order not found');
+        return this.present(order, actor);
+    }
+    async rejectReturn(orderId, dto, actor) {
+        await this.returnsService.rejectLegacyReturn(orderId, dto.note, actor);
+        const order = await this.prisma.order.findUnique({
+            where: { id: orderId },
+            include: orderInclude,
+        });
+        if (!order)
+            throw new common_1.NotFoundException('Order not found');
+        return this.present(order, actor);
     }
     mockPaymentSuccess(orderId) {
         return {
@@ -525,6 +751,10 @@ exports.OrdersService = OrdersService = __decorate([
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         invoices_service_1.InvoicesService,
         notifications_service_1.NotificationsService,
-        payments_service_1.PaymentsService])
+        payments_service_1.PaymentsService,
+        users_service_1.UsersService,
+        config_1.ConfigService,
+        finance_service_1.FinanceService,
+        returns_service_1.ReturnsService])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map

@@ -47,6 +47,7 @@ class LocalDemoMartStore {
     fun resetForNewSession() {
         synchronized(lock) {
             orders = mutableListOf(seedPendingOrder())
+            stockQty.clear()
             brands.clear()
             brands.addAll(STATIC_BRANDS)
             products.clear()
@@ -141,7 +142,63 @@ class LocalDemoMartStore {
                 onboardedRows[idx] =
                     onboardedRows[idx].copy(onboardingDocuments = documents)
             }
+            refreshDocumentFlagsForUser(userId)
         }
+    }
+
+    fun listDocuments(userId: String): List<OnboardingDocumentDto> =
+        synchronized(lock) {
+            onboardingDocumentsByUser[userId].orEmpty().toList()
+        }
+
+    fun uploadDocument(
+        userId: String,
+        documentType: String,
+        file: java.io.File,
+        displayName: String,
+        mimeType: String?,
+    ): OnboardingDocumentDto {
+        val doc =
+            OnboardingDocumentDto(
+                id = "doc-${UUID.randomUUID()}",
+                label = com.mart.distribution.demo.data.onboarding.BusinessDocumentTypes.labelFor(documentType),
+                documentType = documentType,
+                fileName = displayName,
+                mimeType = mimeType,
+                fileSize = file.length(),
+                uploadedAt = java.time.Instant.now().toString(),
+                verificationStatus = "PENDING_VERIFICATION",
+                localPath = file.absolutePath,
+            )
+        synchronized(lock) {
+            onboardingDocumentsByUser.getOrPut(userId) { mutableListOf() }.add(doc)
+            refreshDocumentFlagsForUser(userId)
+        }
+        return doc
+    }
+
+    private fun refreshDocumentFlagsForUser(userId: String) {
+        val docs = onboardingDocumentsByUser[userId].orEmpty()
+        val hasEligible =
+            docs.any {
+                it.verificationStatus == "PENDING_VERIFICATION" || it.verificationStatus == "VERIFIED"
+            }
+        val email =
+            (STATIC_USERS + onboardedRows).find { it.id == userId }?.email?.lowercase()
+                ?: return
+        val existing = onboardedSessions[email] ?: return
+        onboardedSessions[email] =
+            existing.copy(
+                documentUploaded = docs.isNotEmpty(),
+                canPlaceOrders = hasEligible,
+                documentStatus =
+                    when {
+                        docs.isEmpty() -> "NOT_UPLOADED"
+                        docs.all { it.verificationStatus == "REJECTED" } -> "REJECTED"
+                        docs.any { it.verificationStatus == "VERIFIED" } -> "VERIFIED"
+                        else -> "PENDING_VERIFICATION"
+                    },
+            )
     }
 
     private fun enrichRow(row: UserRowDto): UserRowDto =
@@ -396,17 +453,41 @@ class LocalDemoMartStore {
         }
     }
 
+    private val stockQty = mutableMapOf<String, Int>()
+
     fun stock(): List<StockRowDto> =
         synchronized(lock) {
-            products.mapIndexed { idx, p ->
+            stockQty.mapNotNull { (productId, qty) ->
+                val p = products.firstOrNull { it.id == productId } ?: return@mapNotNull null
                 StockRowDto(
-                    id = "demo-stock-${p.id}",
-                    quantity = 60 + idx * 5,
+                    id = "demo-stock-$productId",
+                    quantity = qty,
                     product = p,
                     dealer = DEALER_BRIEF,
                 )
             }
         }
+
+    fun updateStockQuantity(stockId: String, quantity: Int): StockRowDto {
+        val productId =
+            stockId.removePrefix("demo-stock-").ifBlank {
+                throw IllegalArgumentException("Invalid stock row")
+            }
+        synchronized(lock) {
+            require(products.any { it.id == productId }) { "Product not found" }
+            stockQty[productId] = quantity.coerceAtLeast(0)
+            val p = products.first { it.id == productId }
+            return StockRowDto(
+                id = "demo-stock-$productId",
+                quantity = stockQty.getValue(productId),
+                product = p,
+                dealer = DEALER_BRIEF,
+            )
+        }
+    }
+
+    fun upsertStock(productId: String, quantity: Int): StockRowDto =
+        updateStockQuantity("demo-stock-$productId", quantity)
 
     fun users(): List<UserRowDto> =
         synchronized(lock) {
@@ -493,7 +574,8 @@ class LocalDemoMartStore {
             val lineSub = unit * line.quantity
             val lineDisc = lineSub * (discPct / 100.0)
             val taxable = lineSub - lineDisc
-            val lineGst = taxable * 0.18
+            val gstRate = (p.gstPercentage as? Number)?.toDouble() ?: 18.0
+            val lineGst = taxable * (gstRate / 100.0)
             val final = taxable + lineGst
             subtotal += lineSub
             discount += lineDisc
@@ -553,7 +635,8 @@ class LocalDemoMartStore {
             val lineSub = unit * line.quantity
             val lineDisc = lineSub * (discPct / 100.0)
             val taxable = lineSub - lineDisc
-            val lineGst = taxable * 0.05
+            val gstRate = (p.gstPercentage as? Number)?.toDouble() ?: 18.0
+            val lineGst = taxable * (gstRate / 100.0)
             val final = taxable + lineGst
             subtotal += lineSub
             discount += lineDisc
@@ -588,6 +671,12 @@ class LocalDemoMartStore {
             )
         synchronized(lock) {
             orders.add(0, order)
+            for (line in body.items) {
+                if (productById.containsKey(line.productId)) {
+                    stockQty[line.productId] =
+                        (stockQty[line.productId] ?: 0) + line.quantity
+                }
+            }
         }
         return order
     }
@@ -596,6 +685,55 @@ class LocalDemoMartStore {
         synchronized(lock) {
             orders.find { it.id == orderId }
         }
+
+    fun previewReorder(orderId: String): com.mart.distribution.demo.data.api.dto.ReorderPreviewDto {
+        val unavailable =
+            "This product is currently unavailable and has been removed from the reorder cart."
+        synchronized(lock) {
+            val order = orders.find { it.id == orderId }
+                ?: throw IllegalArgumentException("Order not found")
+            val items = mutableListOf<com.mart.distribution.demo.data.api.dto.ReorderPreviewItemDto>()
+            val skipped = mutableListOf<com.mart.distribution.demo.data.api.dto.ReorderSkippedItemDto>()
+            val warnings = mutableListOf<String>()
+            for (line in order.items.orEmpty()) {
+                val product = products().find { it.id == line.productId }
+                if (product == null) {
+                    skipped.add(
+                        com.mart.distribution.demo.data.api.dto.ReorderSkippedItemDto(
+                            productId = line.productId,
+                            reason = "deleted",
+                        ),
+                    )
+                    warnings.add(unavailable)
+                    continue
+                }
+                val available = stockQty[product.id] ?: 0
+                if (available < line.quantity) {
+                    skipped.add(
+                        com.mart.distribution.demo.data.api.dto.ReorderSkippedItemDto(
+                            productId = line.productId,
+                            productName = product.name,
+                            reason = "out_of_stock",
+                        ),
+                    )
+                    warnings.add(unavailable)
+                    continue
+                }
+                items.add(
+                    com.mart.distribution.demo.data.api.dto.ReorderPreviewItemDto(
+                        productId = line.productId,
+                        quantity = line.quantity,
+                        product = product,
+                    ),
+                )
+            }
+            return com.mart.distribution.demo.data.api.dto.ReorderPreviewDto(
+                items = items,
+                warnings = warnings.distinct(),
+                skipped = skipped,
+            )
+        }
+    }
 
     fun mockPayment(orderId: String): MockPaymentResponse {
         synchronized(lock) {
@@ -613,6 +751,12 @@ class LocalDemoMartStore {
             require(idx >= 0) { "Order not found" }
             val o = orders[idx]
             require(o.status.equals("PENDING", ignoreCase = true)) { "Only pending orders can be confirmed" }
+            if (!o.kind.equals("DEALER_RESTOCK", ignoreCase = true)) {
+                for (item in o.items.orEmpty()) {
+                    val current = stockQty.getOrPut(item.productId) { 200 }
+                    stockQty[item.productId] = (current - item.quantity).coerceAtLeast(0)
+                }
+            }
             val updated = o.copy(status = "DEALER_CONFIRMED")
             orders[idx] = updated
             return updated
@@ -655,6 +799,63 @@ class LocalDemoMartStore {
             val o = orders[idx]
             require(o.status.equals("PENDING", ignoreCase = true)) { "Only pending orders can be cancelled" }
             val updated = o.copy(status = "CANCELLED")
+            orders[idx] = updated
+            return updated
+        }
+    }
+
+    fun requestReturn(orderId: String, reason: String): OrderDto {
+        synchronized(lock) {
+            val idx = orders.indexOfFirst { it.id == orderId }
+            require(idx >= 0) { "Order not found" }
+            val o = orders[idx]
+            require(o.status.equals("DELIVERED", ignoreCase = true)) { "Only delivered orders can be returned" }
+            val updated =
+                o.copy(
+                    status = "RETURN_REQUESTED",
+                    returnReason = reason.trim(),
+                    returnRequestedAt = java.time.Instant.now().toString(),
+                )
+            orders[idx] = updated
+            return updated
+        }
+    }
+
+    fun approveReturn(orderId: String): OrderDto {
+        synchronized(lock) {
+            val idx = orders.indexOfFirst { it.id == orderId }
+            require(idx >= 0) { "Order not found" }
+            val o = orders[idx]
+            require(o.status.equals("RETURN_REQUESTED", ignoreCase = true)) { "No return request pending" }
+            val now = java.time.Instant.now().toString()
+            val updated =
+                o.copy(
+                    status = "RETURNED",
+                    returnedAt = now,
+                    paymentStatus =
+                        if (o.paymentStatus.equals("PAID", ignoreCase = true)) {
+                            "REFUNDED"
+                        } else {
+                            o.paymentStatus
+                        },
+                    refundedAt = if (o.paymentStatus.equals("PAID", ignoreCase = true)) now else o.refundedAt,
+                )
+            orders[idx] = updated
+            return updated
+        }
+    }
+
+    fun rejectReturn(orderId: String, note: String?): OrderDto {
+        synchronized(lock) {
+            val idx = orders.indexOfFirst { it.id == orderId }
+            require(idx >= 0) { "Order not found" }
+            val o = orders[idx]
+            require(o.status.equals("RETURN_REQUESTED", ignoreCase = true)) { "No return request pending" }
+            val updated =
+                o.copy(
+                    status = "DELIVERED",
+                    returnReason = note?.trim()?.takeIf { it.isNotEmpty() } ?: o.returnReason,
+                )
             orders[idx] = updated
             return updated
         }

@@ -1,0 +1,152 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Admin/AdminViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Open profile",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 63
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld pending approval%@",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "Review dealer and shopkeeper onboarding",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 80
+        }
+      },
+      {
+        "comment": "",
+        "key": "GMV · %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 101
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld orders across the network",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 107
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 113
+        }
+      },
+      {
+        "comment": "",
+        "key": "Today",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 115
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld orders",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 149
+        }
+      },
+      {
+        "comment": "",
+        "key": "Administrator",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 341
+        }
+      },
+      {
+        "comment": "",
+        "key": "Approval complete",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 476
+        }
+      },
+      {
+        "comment": "",
+        "key": "No users in this view",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 440
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 472
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 480
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 573
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld document(s) uploaded",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 583
+        }
+      },
+      {
+        "comment": "",
+        "key": "Employee created",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 688
+        }
+      },
+      {
+        "comment": "",
+        "key": "Employees onboard dealers and shopkeepers. Login credentials are emailed when SMTP is configured.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 654
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 689
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -24,12 +25,30 @@ import { CreateDealerDto } from './dto/create-dealer.dto';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { CreateShopkeeperDto } from './dto/create-shopkeeper.dto';
 import { ListUsersQueryDto } from './dto/list-users-query.dto';
+import { RegisterFcmTokenDto } from './dto/register-fcm-token.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import { UploadMyDocumentDto } from './dto/document.dto';
+import { RejectDocumentDto } from './dto/document.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post('me/fcm-token')
+  @UseGuards(JwtAuthGuard)
+  registerFcmToken(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: RegisterFcmTokenDto,
+  ) {
+    return this.usersService.registerFcmToken(user, dto.token);
+  }
+
+  @Delete('me/fcm-token')
+  @UseGuards(JwtAuthGuard)
+  clearFcmToken(@CurrentUser() user: AuthUser) {
+    return this.usersService.clearFcmToken(user);
+  }
 
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -81,7 +100,7 @@ export class UsersController {
 
   @Post(':id/onboarding-documents')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.EMPLOYEE)
+  @Roles(UserRole.ADMIN, UserRole.EMPLOYEE, UserRole.DEALER, UserRole.SHOPKEEPER)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
@@ -93,8 +112,88 @@ export class UsersController {
     @Param('id') id: string,
     @Body('label') label: string,
     @UploadedFile() file: Express.Multer.File,
+    @Body('documentType') documentType?: string,
   ) {
-    return this.usersService.uploadOnboardingDocument(user, id, label, file);
+    return this.usersService.uploadOnboardingDocument(
+      user,
+      id,
+      label,
+      file,
+      documentType as import('@prisma/client').BusinessDocumentType | undefined,
+    );
+  }
+
+  @Get('me/documents')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.DEALER, UserRole.SHOPKEEPER)
+  listMyDocuments(@CurrentUser() user: AuthUser) {
+    return this.usersService.listMyDocuments(user);
+  }
+
+  @Post('me/documents')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.DEALER, UserRole.SHOPKEEPER)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: 10 * 1024 * 1024 },
+    }),
+  )
+  uploadMyDocument(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: UploadMyDocumentDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.usersService.uploadMyDocument(user, dto.documentType, file);
+  }
+
+  @Get('me/documents/:documentId/file')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.DEALER, UserRole.SHOPKEEPER)
+  async downloadMyDocument(
+    @CurrentUser() user: AuthUser,
+    @Param('documentId') documentId: string,
+    @Res() res: Response,
+  ) {
+    await this.usersService.streamMyOnboardingDocument(user, documentId, res);
+  }
+
+  @Patch(':userId/documents/:documentId/verify')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.EMPLOYEE)
+  verifyDocument(
+    @CurrentUser() user: AuthUser,
+    @Param('userId') userId: string,
+    @Param('documentId') documentId: string,
+  ) {
+    return this.usersService.verifyOnboardingDocument(user, userId, documentId);
+  }
+
+  @Patch(':userId/documents/:documentId/reject')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.EMPLOYEE)
+  rejectDocument(
+    @CurrentUser() user: AuthUser,
+    @Param('userId') userId: string,
+    @Param('documentId') documentId: string,
+    @Body() dto: RejectDocumentDto,
+  ) {
+    return this.usersService.rejectOnboardingDocument(
+      user,
+      userId,
+      documentId,
+      dto.reason,
+    );
+  }
+
+  @Patch(':id/follow-up')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.EMPLOYEE)
+  recordFollowUp(
+    @CurrentUser() user: AuthUser,
+    @Param('id') id: string,
+  ) {
+    return this.usersService.recordFollowUp(user, id);
   }
 
   @Get(':userId/onboarding-documents/:documentId/file')

@@ -16,12 +16,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material.icons.outlined.Receipt
+import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.LocalShipping
+import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mart.distribution.demo.data.api.dto.ShopkeeperSummaryDto
+import com.mart.distribution.demo.data.api.dto.toDoubleFromApiOrNull
 import com.mart.distribution.demo.data.profile.ShopkeeperProfileStore
 import com.mart.distribution.demo.data.session.SessionUser
 import com.mart.distribution.demo.feature.home.LoadState
@@ -43,8 +50,23 @@ import com.mart.distribution.demo.ui.flashmart.FmAvatar
 import com.mart.distribution.demo.ui.flashmart.FmBadge
 import com.mart.distribution.demo.ui.flashmart.FmCard
 import com.mart.distribution.demo.ui.flashmart.FmHeroCard
+import com.mart.distribution.demo.ui.flashmart.FmHomeStat
+import com.mart.distribution.demo.ui.flashmart.FmHomeStatGrid
+import com.mart.distribution.demo.ui.flashmart.FmIconButton
+import com.mart.distribution.demo.ui.flashmart.FmOutstandingHero
+import com.mart.distribution.demo.ui.flashmart.FmPromoBanner
+import com.mart.distribution.demo.ui.flashmart.FmQuickActionGrid
 import com.mart.distribution.demo.ui.flashmart.FmSectionLabel
+import com.mart.distribution.demo.ui.theme.WholesaleDealerBlue
+import com.mart.distribution.demo.ui.theme.WholesaleDealerBlueTint
+import com.mart.distribution.demo.ui.theme.WholesaleGold
+import com.mart.distribution.demo.ui.theme.WholesaleGoldTint
+import com.mart.distribution.demo.ui.theme.WholesaleGoldInk
+import com.mart.distribution.demo.ui.theme.WholesaleSurface3
+import com.mart.distribution.demo.ui.util.formatDecimal
 import com.mart.distribution.demo.ui.theme.WholesaleBg
+import com.mart.distribution.demo.ui.theme.WholesaleBlue
+import com.mart.distribution.demo.ui.theme.WholesaleBlueTint
 import com.mart.distribution.demo.ui.theme.WholesaleBorder
 import com.mart.distribution.demo.ui.theme.WholesaleMuted
 import com.mart.distribution.demo.ui.theme.WholesaleSurface2
@@ -68,13 +90,46 @@ fun ShopkeeperFlashmartHome(
     onOpenCatalog: () -> Unit,
     onOpenOrders: () -> Unit,
     onOpenOrder: (String) -> Unit,
+    onOpenInvoice: (String) -> Unit,
+    onOpenTrack: (String) -> Unit,
+    onOpenProfile: () -> Unit = {},
+    onOpenWallet: () -> Unit = {},
+    onOpenSupport: () -> Unit = {},
 ) {
     val orders = when (val o = ui.orders) { is LoadState.Ok -> o.data; else -> emptyList() }
     val inProgress =
         summary?.openOrders ?: orders.count {
             !it.status.equals("DELIVERED", true) && !it.status.equals("CANCELLED", true)
         }
+    val pendingCount = orders.count { it.status.equals("PENDING", true) }
+    val deliveredCount = orders.count { it.status.equals("DELIVERED", true) }
+    val invoiceCount = summary?.invoicesReady ?: orders.count { it.paymentStatus.equals("PAID", true) }
+    val monthSpend =
+        remember(orders) {
+            val cal = Calendar.getInstance()
+            val month = cal.get(Calendar.MONTH)
+            val year = cal.get(Calendar.YEAR)
+            orders
+                .filter { o ->
+                    val created = o.createdAt?.take(10) ?: return@filter false
+                    val parts = created.split("-")
+                    if (parts.size < 2) return@filter false
+                    parts[0].toIntOrNull() == year && parts[1].toIntOrNull()?.minus(1) == month
+                }
+                .sumOf { (it.finalAmount.toDoubleFromApiOrNull() ?: it.totalAmount.toDoubleFromApiOrNull() ?: 0.0) }
+        }
+    val outstanding =
+        remember(orders) {
+            orders
+                .filter {
+                    !it.paymentStatus.equals("PAID", true) &&
+                        !it.status.equals("CANCELLED", true)
+                }
+                .sumOf { (it.finalAmount.toDoubleFromApiOrNull() ?: it.totalAmount.toDoubleFromApiOrNull() ?: 0.0) }
+        }
+    val outstandingLabel = if (outstanding > 0) formatDecimal(outstanding) else "₹0"
     val recent = orders.take(4)
+    val latestOrder = orders.firstOrNull()
     val firstName = user.name.split(" ").firstOrNull() ?: user.name
 
     LazyColumn(
@@ -90,34 +145,82 @@ fun ShopkeeperFlashmartHome(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         "${greeting()}, $firstName",
-                        fontSize = 12.sp,
+                        fontSize = 13.5.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = com.mart.distribution.demo.ui.theme.WholesaleBlue,
+                        color = WholesaleMuted,
                     )
                     Text(user.name, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = WholesaleText)
                 }
-                FmAvatar(user.name, size = 42.dp)
+                FmIconButton(
+                    icon = Icons.Outlined.Notifications,
+                    onClick = onOpenProfile,
+                    badge = if (pendingCount > 0) pendingCount else null,
+                )
+                Box(modifier = Modifier.clickable(onClick = onOpenProfile)) {
+                    FmAvatar(user.name, size = 42.dp)
+                }
             }
         }
 
         item {
-            FmHeroCard(
-                totalOrders = orders.size,
-                inProgress = inProgress,
-                onNewOrder = onOpenCatalog,
+            FmOutstandingHero(
+                outstandingLabel = outstandingLabel,
+                onPayNow = onOpenWallet,
+                onViewLedger = onOpenWallet,
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
 
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                QuickAction("Browse", Icons.Outlined.LocalShipping, onOpenCatalog, Modifier.weight(1f))
-                QuickAction("Invoices", Icons.Outlined.Receipt, onOpenOrders, Modifier.weight(1f))
-                QuickAction("Track", Icons.Outlined.LocalShipping, onOpenOrders, Modifier.weight(1f))
-            }
+            FmHomeStatGrid(
+                stats =
+                    listOf(
+                        FmHomeStat(Icons.Outlined.Schedule, "Pending", "$pendingCount", WholesaleGoldTint, WholesaleGoldInk),
+                        FmHomeStat(Icons.Outlined.CheckCircle, "Delivered", "$deliveredCount", WholesaleBlueTint, WholesaleBlue),
+                        FmHomeStat(Icons.Outlined.Receipt, "Invoices", "$invoiceCount", WholesaleDealerBlueTint, WholesaleDealerBlue),
+                        FmHomeStat(
+                            Icons.Outlined.Payments,
+                            "This month",
+                            formatDecimal(monthSpend),
+                            WholesaleSurface3,
+                            WholesaleText,
+                        ),
+                    ),
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
+
+        item {
+            FmQuickActionGrid(
+                actions =
+                    listOf(
+                        Icons.Outlined.GridView to "Browse",
+                        Icons.Outlined.ShoppingBag to "My orders",
+                        Icons.Outlined.Receipt to "Invoices",
+                        Icons.Outlined.Phone to "Support",
+                    ),
+                onAction = { index ->
+                    when (index) {
+                        0 -> onOpenCatalog()
+                        1 -> onOpenOrders()
+                        2 -> latestOrder?.let { onOpenInvoice(it.id) } ?: onOpenOrders()
+                        else -> onOpenSupport()
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
+
+        item {
+            FmPromoBanner(
+                title = "Extra 8% off staples",
+                subtitle = "On orders above ₹5,000",
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
+
+        item {
+            Spacer(Modifier.height(4.dp))
         }
 
         if (recent.isNotEmpty()) {
@@ -239,11 +342,22 @@ fun ShopkeeperProfileTab(
     onOpenPaymentMethods: () -> Unit,
     onOpenGstDetails: () -> Unit,
     onOpenNotifications: () -> Unit,
+    onOpenDocuments: () -> Unit,
     onOpenHelp: () -> Unit,
+    onOpenPrivacyPolicy: () -> Unit = {},
 ) {
     val orders = when (val o = ui.orders) { is LoadState.Ok -> o.data; else -> emptyList() }
     val delivered = orders.count { it.status.equals("DELIVERED", true) }
     val active = orders.count { !it.status.equals("DELIVERED", true) && !it.status.equals("CANCELLED", true) }
+    val assignedDealer =
+        user.assignedDealer
+            ?: orders.firstOrNull()?.dealer?.let { dealer ->
+                com.mart.distribution.demo.data.api.dto.UserBriefDto(
+                    id = dealer.id,
+                    name = dealer.name,
+                    email = dealer.email,
+                )
+            }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(WholesaleBg).padding(horizontal = 16.dp),
@@ -269,8 +383,27 @@ fun ShopkeeperProfileTab(
                 StatTile("Active", "$active", Modifier.weight(1f))
             }
         }
+        assignedDealer?.let { dealer ->
+            item {
+                FmCard {
+                    Text("Assigned dealer", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = WholesaleMuted)
+                    Spacer(Modifier.height(8.dp))
+                    // Privacy: shopkeepers see only the dealer name, not contact details.
+                    Text(dealer.name ?: "Dealer", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = WholesaleText)
+                    user.areaName?.let {
+                        Text("Area: $it", fontSize = 12.sp, color = WholesaleMuted, modifier = Modifier.padding(top = 6.dp))
+                    }
+                }
+            }
+        }
         item {
             FmCard(padding = androidx.compose.foundation.layout.PaddingValues(6.dp)) {
+                ProfileRow(
+                    Icons.Outlined.Description,
+                    "Documents",
+                    user.documentStatus.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() },
+                    onClick = onOpenDocuments,
+                )
                 ProfileRow(
                     Icons.Outlined.LocationOn,
                     "Store address",
@@ -308,6 +441,9 @@ fun ShopkeeperProfileTab(
             FmCard(onClick = onLogout) {
                 Text("Sign out", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = com.mart.distribution.demo.ui.theme.WholesaleRed)
             }
+        }
+        item {
+            com.mart.distribution.demo.ui.components.MartAppFooter(onPrivacyPolicy = onOpenPrivacyPolicy)
         }
         item { Spacer(Modifier.height(16.dp)) }
     }

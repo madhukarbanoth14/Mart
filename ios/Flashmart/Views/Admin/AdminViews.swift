@@ -34,6 +34,7 @@ struct AdminTabHost: View {
     var body: some View {
         switch selectedTab {
         case "orders": AdminOrdersView(path: $path)
+        case "finance": AdminFinanceView(path: $path)
         case "team": AdminTeamView(path: $path)
         case "profile": AdminProfileView(user: user, onLogout: onLogout)
         default: AdminHomeView(selectedTab: $selectedTab, path: $path, user: user, onLogout: onLogout)
@@ -91,32 +92,78 @@ struct AdminHomeView: View {
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: FMTheme.heroRadius, style: .continuous)
                         .fill(LinearGradient(colors: [FMTheme.inkSurface, FMTheme.inkSurface2], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    Circle()
+                        .fill(.white.opacity(0.05))
+                        .frame(width: 130)
+                        .offset(x: 230, y: -20)
+
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Overview")
+                        Text("GMV · \(gmvMonthLabel)")
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.white.opacity(0.8))
                         Text(FMTheme.inr(revenue))
                             .font(.system(size: 30, weight: .bold, design: .monospaced))
                             .foregroundStyle(.white)
-                        Text("\(orderCount) orders · \(userCount) network users")
+                        Text("\(orderCount) orders across the network")
                             .font(.system(size: 12))
                             .foregroundStyle(.white.opacity(0.7))
+                        FMMiniBarChart(data: gmvChartData, barColor: FMTheme.brand, height: 52)
+                            .padding(.top, 8)
+                        HStack {
+                            Text("Start").font(.system(size: 10)).foregroundStyle(.white.opacity(0.45))
+                            Spacer()
+                            Text("Today").font(.system(size: 10)).foregroundStyle(.white.opacity(0.45))
+                        }
                     }
                     .padding(20)
                 }
 
-                HStack(spacing: 11) {
-                    FMStatTile(label: "Orders", value: "\(orderCount)", icon: "bag", accent: FMTheme.brand, tint: FMTheme.brandTint)
-                    FMStatTile(label: "SKUs", value: "\(skuCount)", icon: "cube.box", accent: FMTheme.pos, tint: FMTheme.posTint)
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 11) {
+                    adminHomeStat(icon: "person.2", label: "Dealers", value: "\(dealerCount)", bg: FMTheme.brandTint, fg: FMTheme.brand)
+                    adminHomeStat(icon: "storefront", label: "Shopkeepers", value: "\(shopkeeperCount)", bg: FMTheme.posTint, fg: FMTheme.pos)
+                    adminHomeStat(icon: "clock", label: "Pending KYC", value: "\(pendingKycCount)", bg: FMTheme.goldTint, fg: FMTheme.goldInk)
+                    adminHomeStat(icon: "cube.box", label: "SKU approvals", value: "\(pendingCount)", bg: FMTheme.neg.opacity(0.12), fg: FMTheme.neg)
                 }
 
-                HStack(spacing: 11) {
-                    FMStatTile(label: "Dealers", value: "\(dealerCount)", icon: "shippingbox", accent: FMTheme.warn, tint: FMTheme.warnTint)
-                    FMStatTile(label: "Shopkeepers", value: "\(shopkeeperCount)", icon: "storefront", accent: FMTheme.brand, tint: FMTheme.brandTint)
+                if !areaPerformance.isEmpty {
+                    FMSectionLabel(title: "Area performance")
+                    FMCard(padding: 6) {
+                        ForEach(Array(areaPerformance.enumerated()), id: \.offset) { index, row in
+                            VStack(alignment: .leading, spacing: 7) {
+                                HStack {
+                                    Text(row.name).font(.system(size: 14, weight: .bold))
+                                    Spacer()
+                                    Text(FMTheme.inr(row.revenue))
+                                        .font(.system(size: 13.5, weight: .bold, design: .monospaced))
+                                }
+                                HStack(spacing: 10) {
+                                    GeometryReader { geo in
+                                        ZStack(alignment: .leading) {
+                                            Capsule().fill(FMTheme.surface3)
+                                            Capsule()
+                                                .fill(FMTheme.brand)
+                                                .frame(width: geo.size.width * row.progress)
+                                        }
+                                    }
+                                    .frame(height: 5)
+                                    Text("\(row.orders) orders")
+                                        .font(.system(size: 11.5, weight: .semibold))
+                                        .foregroundStyle(FMTheme.ink3)
+                                        .frame(minWidth: 56, alignment: .trailing)
+                                }
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 12)
+                            if index < areaPerformance.count - 1 {
+                                Divider()
+                            }
+                        }
+                    }
                 }
 
                 HStack(spacing: 10) {
                     adminQuickTile(icon: "doc.text.fill", label: "Orders") { selectedTab = "orders" }
+                    adminQuickTile(icon: "indianrupeesign.circle.fill", label: "Finance") { selectedTab = "finance" }
                     adminQuickTile(icon: "cube.box", label: "SKUs") { path.append(AppRoute.skuManagement) }
                     adminQuickTile(icon: "person.3.fill", label: "Team") { selectedTab = "team" }
                 }
@@ -140,12 +187,87 @@ struct AdminHomeView: View {
                         path.append(AppRoute.brandsManagement)
                     }
                 }
+
+                FMButton(title: "Manage areas", variant: .outline, icon: "map") {
+                    path.append(AppRoute.areasManagement)
+                }
             }
             .padding(.horizontal, 16)
         }
         .task {
             await env.mainViewModel.loadProducts()
             await env.mainViewModel.loadPendingCount()
+            await env.mainViewModel.loadAreas()
+        }
+    }
+
+    private struct AreaPerfRow {
+        let name: String
+        let revenue: Double
+        let orders: Int
+        let progress: CGFloat
+    }
+
+    private var gmvMonthLabel: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM yyyy"
+        return formatter.string(from: Date())
+    }
+
+    private var gmvChartData: [CGFloat] {
+        guard case .ok(let list) = env.mainViewModel.orders, !list.isEmpty else {
+            return [31, 28, 45, 38, 52, 49, 61, 55, 68, 72, 58, 78]
+        }
+        let grouped = Dictionary(grouping: list) { ($0.createdAt ?? "").prefix(10) }
+        let values = grouped.values.map { orders in
+            CGFloat(orders.reduce(0) { $0 + ($1.finalAmount?.doubleValue ?? 0) })
+        }
+        if values.count >= 12 { return Array(values.suffix(12)) }
+        let pad = values.last ?? 1
+        return values + Array(repeating: pad, count: 12 - values.count)
+    }
+
+    private var pendingKycCount: Int {
+        guard case .ok(let list) = env.mainViewModel.users else { return 0 }
+        return list.filter {
+            ($0.documentStatus?.uppercased().contains("PENDING") == true) ||
+                ($0.documentStatus?.uppercased().contains("NOT_UPLOADED") == true)
+        }.count
+    }
+
+    private var areaPerformance: [AreaPerfRow] {
+        guard case .ok(let areas) = env.mainViewModel.areas else { return [] }
+        guard case .ok(let users) = env.mainViewModel.users else { return [] }
+        guard case .ok(let orders) = env.mainViewModel.orders else { return [] }
+        let rows = areas.prefix(4).map { area -> AreaPerfRow in
+            let areaUserIds = Set(users.filter { $0.area?.id == area.id }.map(\.id))
+            let areaOrders = orders.filter { order in
+                if let sid = order.shopkeeperId, areaUserIds.contains(sid) { return true }
+                if let did = order.dealerId, areaUserIds.contains(did) { return true }
+                return false
+            }
+            let rev = areaOrders.reduce(0) { $0 + ($1.finalAmount?.doubleValue ?? 0) }
+            return AreaPerfRow(name: area.name, revenue: rev, orders: areaOrders.count, progress: 0)
+        }.sorted { $0.revenue > $1.revenue }
+        let maxRev = max(rows.map(\.revenue).max() ?? 1, 1)
+        return rows.map { AreaPerfRow(name: $0.name, revenue: $0.revenue, orders: $0.orders, progress: CGFloat($0.revenue / maxRev)) }
+    }
+
+    private func adminHomeStat(icon: String, label: String, value: String, bg: Color, fg: Color) -> some View {
+        FMCard(padding: 15) {
+            Image(systemName: icon)
+                .font(.system(size: 17))
+                .foregroundStyle(fg)
+                .frame(width: 36, height: 36)
+                .background(bg)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            Text(value)
+                .font(.system(size: 22, weight: .bold, design: .monospaced))
+                .foregroundStyle(FMTheme.ink)
+                .padding(.top, 10)
+            Text(label)
+                .font(.system(size: 12.5, weight: .semibold))
+                .foregroundStyle(FMTheme.ink3)
         }
     }
 
@@ -457,6 +579,11 @@ struct AdminTeamView: View {
                     if let phone = user.phone, !phone.isEmpty {
                         Text(phone).font(.system(size: 12)).foregroundStyle(FMTheme.ink3)
                     }
+                    if let docs = user.onboardingDocuments, !docs.isEmpty {
+                        Text("\(docs.count) document(s) uploaded")
+                            .font(.system(size: 11))
+                            .foregroundStyle(FMTheme.brand)
+                    }
                 }
                 Spacer()
                 FMBadge(status: user.status)
@@ -468,6 +595,10 @@ struct AdminTeamView: View {
     @ViewBuilder
     private func userActions(_ user: UserRow) -> some View {
         if user.status == "PENDING_APPROVAL" && user.role != "EMPLOYEE" {
+            FMButton(title: "Review details", variant: .soft, fullWidth: true) {
+                path.append(AppRoute.adminReview(user.id))
+            }
+            .padding(.top, 12)
             HStack(spacing: 10) {
                 FMButton(title: "Approve", variant: .pos, fullWidth: true) {
                     confirmAction = .approve(user)
@@ -476,7 +607,6 @@ struct AdminTeamView: View {
                     confirmAction = .reject(user)
                 }
             }
-            .padding(.top, 12)
         } else if user.status == "ACTIVE" && (user.role == "DEALER" || user.role == "SHOPKEEPER") {
             FMButton(title: "Deactivate", variant: .outline, fullWidth: true) {
                 confirmAction = .deactivate(user)

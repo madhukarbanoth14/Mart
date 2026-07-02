@@ -19,6 +19,8 @@ const current_user_decorator_1 = require("../auth/decorators/current-user.decora
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_decorator_1 = require("../roles/decorators/roles.decorator");
 const roles_guard_1 = require("../roles/guards/roles.guard");
+const upsert_stock_dto_1 = require("./dto/upsert-stock.dto");
+const update_stock_dto_1 = require("./dto/update-stock.dto");
 const stock_service_1 = require("./stock.service");
 let StockController = class StockController {
     stockService;
@@ -27,6 +29,15 @@ let StockController = class StockController {
     }
     findAll(user) {
         return this.stockService.findAll(user);
+    }
+    available(user) {
+        return this.stockService.availableForShopkeeper(user);
+    }
+    updateQuantity(id, dto, user) {
+        return this.stockService.updateQuantity(id, user, dto.quantity);
+    }
+    upsert(dto, user) {
+        return this.stockService.upsertForDealer(user, dto);
     }
 };
 exports.StockController = StockController;
@@ -39,6 +50,36 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], StockController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('available'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.SHOPKEEPER),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], StockController.prototype, "available", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.ADMIN, client_1.UserRole.EMPLOYEE, client_1.UserRole.DEALER),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_stock_dto_1.UpdateStockDto, Object]),
+    __metadata("design:returntype", void 0)
+], StockController.prototype, "updateQuantity", null);
+__decorate([
+    (0, common_1.Post)('upsert'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.DEALER),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [upsert_stock_dto_1.UpsertStockDto, Object]),
+    __metadata("design:returntype", void 0)
+], StockController.prototype, "upsert", null);
 exports.StockController = StockController = __decorate([
     (0, common_1.Controller)('stock'),
     __metadata("design:paramtypes", [stock_service_1.StockService])

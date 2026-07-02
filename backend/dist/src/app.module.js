@@ -29,6 +29,9 @@ const brands_module_1 = require("./brands/brands.module");
 const payments_module_1 = require("./payments/payments.module");
 const notifications_module_1 = require("./notifications/notifications.module");
 const email_module_1 = require("./email/email.module");
+const app_config_module_1 = require("./config/app-config.module");
+const finance_module_1 = require("./finance/finance.module");
+const returns_module_1 = require("./returns/returns.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -42,6 +45,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             prisma_module_1.PrismaModule,
             email_module_1.EmailModule,
+            app_config_module_1.AppConfigModule,
             health_module_1.HealthModule,
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
@@ -55,6 +59,8 @@ exports.AppModule = AppModule = __decorate([
             brands_module_1.BrandsModule,
             payments_module_1.PaymentsModule,
             notifications_module_1.NotificationsModule,
+            finance_module_1.FinanceModule,
+            returns_module_1.ReturnsModule,
         ],
     })
 ], AppModule);

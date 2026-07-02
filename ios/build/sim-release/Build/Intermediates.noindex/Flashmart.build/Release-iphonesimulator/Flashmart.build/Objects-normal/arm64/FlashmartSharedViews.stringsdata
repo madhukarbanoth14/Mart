@@ -1,0 +1,24 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shared/FlashmartSharedViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 115
+        }
+      },
+      {
+        "comment": "",
+        "key": "Verification status",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 120
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,144 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shopkeeper/ShopkeeperViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Outstanding balance",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 72
+        }
+      },
+      {
+        "comment": "",
+        "key": "Pay now",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 80
+        }
+      },
+      {
+        "comment": "",
+        "key": "View ledger",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "THIS WEEK",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 162
+        }
+      },
+      {
+        "comment": "",
+        "key": "Extra 8% off staples",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 165
+        }
+      },
+      {
+        "comment": "",
+        "key": "On orders above ₹5,000",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 168
+        }
+      },
+      {
+        "comment": "",
+        "key": "Loading orders…",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 191
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search products or brands",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 280
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%% off",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 384
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reorder",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 497
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 501
+        }
+      },
+      {
+        "comment": "",
+        "key": "No orders yet",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 544
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %lld items",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 571
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld× %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 585
+        }
+      },
+      {
+        "comment": "",
+        "key": "No orders yet",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 663
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %lld items",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 691
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 718
+        }
+      }
+    ]
+  },
+  "version": 1
+}

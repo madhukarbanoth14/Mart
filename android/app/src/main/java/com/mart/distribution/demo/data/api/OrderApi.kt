@@ -8,6 +8,7 @@ import com.mart.distribution.demo.data.api.dto.CreateRazorpayOrderResponse
 import com.mart.distribution.demo.data.api.dto.DealerSummaryDto
 import com.mart.distribution.demo.data.api.dto.MockPaymentResponse
 import com.mart.distribution.demo.data.api.dto.OrderDto
+import com.mart.distribution.demo.data.api.dto.ReorderPreviewDto
 import com.mart.distribution.demo.data.api.dto.ShopkeeperSummaryDto
 import com.mart.distribution.demo.data.api.dto.VerifyRazorpayPaymentRequest
 import com.mart.distribution.demo.data.api.dto.VerifyRazorpayPaymentResponse
@@ -58,6 +59,11 @@ interface OrderApi {
         @Path("id") id: String,
     ): OrderDto
 
+    @GET("orders/{id}/reorder-preview")
+    suspend fun reorderPreview(
+        @Path("id") id: String,
+    ): ReorderPreviewDto
+
     @PATCH("orders/{id}/confirm")
     suspend fun confirmOrder(
         @Path("id") id: String,
@@ -76,6 +82,23 @@ interface OrderApi {
   @PATCH("orders/{id}/cancel")
   suspend fun cancelOrder(
       @Path("id") id: String,
+  ): OrderDto
+
+  @PATCH("orders/{id}/return-request")
+  suspend fun requestOrderReturn(
+      @Path("id") id: String,
+      @Body body: com.mart.distribution.demo.data.api.dto.OrderReturnRequest,
+  ): OrderDto
+
+  @PATCH("orders/{id}/return/approve")
+  suspend fun approveOrderReturn(
+      @Path("id") id: String,
+  ): OrderDto
+
+  @PATCH("orders/{id}/return/reject")
+  suspend fun rejectOrderReturn(
+      @Path("id") id: String,
+      @Body body: com.mart.distribution.demo.data.api.dto.OrderReturnRejectRequest,
   ): OrderDto
 
     @POST("orders/{id}/payment/mock")

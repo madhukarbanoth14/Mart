@@ -1,0 +1,195 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  min-height: 100vh;
+  font-family: "Schibsted Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0b6332;
+  color: #fff;
+}
+
+.fm-noscript {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  font: 13px/1.45 -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #3d4452;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 10000;
+}
+
+#__bundler_thumbnail {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(1200px 700px at 50% 0%, #15924b 0%, #0b6332 55%, #072818 100%);
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.fm-splash-glow {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(227, 160, 8, 0.18) 0%, transparent 68%);
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.fm-splash-card {
+  position: relative;
+  width: min(420px, 92vw);
+  padding: 36px 32px 30px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+}
+
+.fm-splash-mark {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 18px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #15924b, #0f7d3f);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.fm-splash-mark svg { display: block; }
+
+.fm-splash-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.fm-splash-sub {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.fm-splash-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.fm-splash-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.fm-splash-tag.gold {
+  background: rgba(227, 160, 8, 0.2);
+  color: #f8d57a;
+}
+
+.fm-splash-phones {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.fm-phone {
+  width: 92px;
+  height: 168px;
+  border-radius: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+  position: relative;
+  overflow: hidden;
+}
+
+.fm-phone::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.fm-phone-bolt {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+}
+
+#__bundler_loading {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  min-width: 280px;
+  max-width: min(92vw, 420px);
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.96);
+  color: #3d4452;
+  padding: 12px 16px 14px;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.fm-load-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.fm-load-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #131722;
+}
+
+.fm-load-bar {
+  margin-top: 10px;
+  height: 4px;
+  border-radius: 99px;
+  background: #e4e7ec;
+  overflow: hidden;
+}
+
+.fm-load-bar > span {
+  display: block;
+  height: 100%;
+  width: 35%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #15924b, #e3a008);
+  animation: fmLoadPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes fmLoadPulse {
+  0% { transform: translateX(-120%); width: 40%; }
+  100% { transform: translateX(320%); width: 40%; }
+}

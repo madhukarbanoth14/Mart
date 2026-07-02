@@ -48,6 +48,9 @@ final class MartAPIClient {
         path.hasPrefix("auth/login")
             || path.hasPrefix("auth/forgot-password")
             || path.hasPrefix("auth/reset-password")
+            || path.hasPrefix("auth/otp/")
+            || path.hasPrefix("auth/register/")
+            || path.hasPrefix("auth/registration/")
     }
 
     private func friendlyAuthFailureMessage(_ raw: String?) -> String {
@@ -100,9 +103,114 @@ final class MartAPIClient {
 
     func me() async throws -> AuthMe {
         if useLocalDemo, let user = sessionStore.user {
-            return AuthMe(userId: user.id, email: user.email, role: user.role, companyId: user.companyId)
+            return AuthMe(
+                userId: user.id,
+                email: user.email,
+                role: user.role,
+                companyId: user.companyId,
+                name: user.name,
+                canPlaceOrders: user.canPlaceOrders,
+                documentStatus: user.documentStatus,
+                area: user.areaName.map { UserAreaBrief(id: nil, name: $0) },
+                assignedDealer: user.assignedDealer
+            )
         }
         return try await get("auth/me")
+    }
+
+    func myDocuments() async throws -> [OnboardingDocument] {
+        if useLocalDemo, let userId = sessionStore.user?.id {
+            return localDemoStore.listDocuments(userId: userId)
+        }
+        return try await get("users/me/documents")
+    }
+
+    func uploadMyDocument(
+        documentType: String,
+        fileURL: URL,
+        fileName: String,
+        mimeType: String
+    ) async throws -> OnboardingDocument {
+        if useLocalDemo, let userId = sessionStore.user?.id {
+            return localDemoStore.uploadDocument(
+                userId: userId,
+                documentType: documentType,
+                fileURL: fileURL,
+                displayName: fileName,
+                mimeType: mimeType
+            )
+        }
+
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var req = URLRequest(url: baseURL().appendingPathComponent("users/me/documents"))
+        req.httpMethod = "POST"
+        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        if let token = sessionStore.token {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        let fileData = try Data(contentsOf: fileURL)
+        var body = Data()
+        body.appendFormField(name: "documentType", value: documentType, boundary: boundary)
+        body.appendFileField(
+            name: "file",
+            fileName: fileName,
+            mimeType: mimeType,
+            fileData: fileData,
+            boundary: boundary
+        )
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        req.httpBody = body
+
+        let (data, response) = try await session.data(for: req)
+        guard let http = response as? HTTPURLResponse else {
+            throw MartAPIError.http(0, "Invalid response")
+        }
+        guard (200...299).contains(http.statusCode) else {
+            throw MartAPIError.http(http.statusCode, apiErrorMessage(from: data) ?? "Upload failed")
+        }
+        return try decoder.decode(OnboardingDocument.self, from: data)
+    }
+
+    func sendOtp(phone: String) async throws -> SendOtpResponse {
+        try await post("auth/otp/send", body: SendOtpRequest(phone: phone))
+    }
+
+    func verifyOtp(phone: String, code: String) async throws -> VerifyOtpResponse {
+        try await post("auth/otp/verify", body: VerifyOtpRequest(phone: phone, code: code))
+    }
+
+    func registrationGeo() async throws -> RegistrationGeoResponse {
+        try await get("auth/registration/geo")
+    }
+
+    func registrationAreas(state: String?, district: String?) async throws -> [RegistrationArea] {
+        var query: [String: String] = [:]
+        if let state, !state.isEmpty { query["state"] = state }
+        if let district, !district.isEmpty { query["district"] = district }
+        return try await get("auth/registration/areas", query: query)
+    }
+
+    func registerShopkeeper(_ body: SelfRegisterRequest) async throws -> LoginResponse {
+        try await post("auth/register/shopkeeper", body: body)
+    }
+
+    func registerDealer(_ body: SelfRegisterRequest) async throws -> LoginResponse {
+        try await post("auth/register/dealer", body: body)
+    }
+
+    func verifyDocument(userId: String, documentId: String) async throws -> OnboardingDocument {
+        try await patch("users/\(userId)/documents/\(documentId)/verify")
+    }
+
+    func rejectDocument(userId: String, documentId: String, reason: String?) async throws -> OnboardingDocument {
+        try await patch("users/\(userId)/documents/\(documentId)/reject", body: UpdateUserStatusRequest(reason: reason))
+    }
+
+    func recordFollowUp(userId: String) async throws -> UserRow {
+        if useLocalDemo { return localDemoStore.recordFollowUp(userId: userId) }
+        return try await patch("users/\(userId)/follow-up")
     }
 
     func forgotPassword(email: String) async throws -> ForgotPasswordResponse {
@@ -189,6 +297,24 @@ final class MartAPIClient {
             return o
         }
         return try await get("orders/\(id)")
+    }
+
+    func reorderPreview(_ orderId: String) async throws -> ReorderPreview {
+        if useLocalDemo {
+            return localDemoStore.previewReorder(orderId: orderId)
+        }
+        return try await get("orders/\(orderId)/reorder-preview")
+    }
+
+    func orderingConfig() async throws -> OrderingConfig {
+        if useLocalDemo {
+            return OrderingConfig(
+                minOrderQuantity: 1,
+                maxOrderQuantity: 10000,
+                quickQuantityChips: [10, 25, 50, 100, 250, 500, 1000]
+            )
+        }
+        return try await get("config/ordering")
     }
 
     func shopkeeperSummary() async throws -> ShopkeeperSummary {
@@ -300,6 +426,72 @@ final class MartAPIClient {
         return try await patch("orders/\(orderId)/cancel")
     }
 
+    func requestOrderReturn(orderId: String, reason: String) async throws -> Order {
+        if useLocalDemo { return localDemoStore.requestReturn(orderId: orderId, reason: reason) }
+        return try await patch("orders/\(orderId)/return-request", body: OrderReturnRequest(reason: reason))
+    }
+
+    func approveOrderReturn(orderId: String) async throws -> Order {
+        if useLocalDemo { return localDemoStore.approveReturn(orderId: orderId) }
+        return try await patch("orders/\(orderId)/return/approve")
+    }
+
+    func rejectOrderReturn(orderId: String, note: String?) async throws -> Order {
+        if useLocalDemo { return localDemoStore.rejectReturn(orderId: orderId, note: note) }
+        return try await patch("orders/\(orderId)/return/reject", body: OrderReturnRejectRequest(note: note))
+    }
+
+    struct RegisterFcmTokenRequest: Codable { let token: String }
+
+    func registerFcmToken(_ token: String) async throws {
+        let _: EmptyResponse = try await post("users/me/fcm-token", body: RegisterFcmTokenRequest(token: token))
+    }
+
+    func unregisterFcmToken() async throws {
+        try await deleteRequest("users/me/fcm-token")
+    }
+
+    func openOnboardingDocument(userId: String, document: OnboardingDocument) async throws -> URL {
+        if let local = OnboardingDocumentStorage.localFile(userId: userId, document: document) {
+            return local
+        }
+        if useLocalDemo {
+            throw MartAPIError.http(404, "Document file not found in demo store")
+        }
+        return try await downloadFile(
+            path: "users/\(userId)/onboarding-documents/\(document.id)/file",
+            suggestedName: document.fileName
+        )
+    }
+
+    private func downloadFile(path: String, suggestedName: String, query: [String: String] = [:]) async throws -> URL {
+        var components = URLComponents(url: baseURL().appendingPathComponent(path), resolvingAgainstBaseURL: false)!
+        if !query.isEmpty {
+            components.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
+        }
+        guard let url = components.url else { throw MartAPIError.http(0, "Invalid URL") }
+        var req = URLRequest(url: url)
+        req.httpMethod = "GET"
+        if let token = sessionStore.token {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        let (data, response) = try await session.data(for: req)
+        guard let http = response as? HTTPURLResponse else {
+            throw MartAPIError.http(0, "Invalid response")
+        }
+        guard (200 ... 299).contains(http.statusCode) else {
+            throw MartAPIError.http(http.statusCode, apiErrorMessage(from: data) ?? "Download failed")
+        }
+        let safeName = suggestedName.replacingOccurrences(
+            of: #"[^\w.\-]+"#,
+            with: "_",
+            options: .regularExpression
+        )
+        let dest = FileManager.default.temporaryDirectory.appendingPathComponent(safeName)
+        try data.write(to: dest)
+        return dest
+    }
+
     // MARK: - Invoice
 
     func invoiceByOrder(_ orderId: String) async throws -> InvoiceDocument {
@@ -312,6 +504,16 @@ final class MartAPIClient {
     func stock() async throws -> [StockRow] {
         if useLocalDemo { return localDemoStore.stock() }
         return try await get("stock")
+    }
+
+    func updateStock(_ id: String, quantity: Int) async throws -> StockRow {
+        if useLocalDemo { return localDemoStore.updateStockQuantity(stockId: id, quantity: quantity) }
+        return try await patch("stock/\(id)", body: UpdateStockRequest(quantity: quantity))
+    }
+
+    func upsertStock(productId: String, quantity: Int) async throws -> StockRow {
+        if useLocalDemo { return localDemoStore.upsertStock(productId: productId, quantity: quantity) }
+        return try await post("stock/upsert", body: UpsertStockRequest(productId: productId, quantity: quantity))
     }
 
     // MARK: - Users & areas
@@ -338,6 +540,16 @@ final class MartAPIClient {
     func areas() async throws -> [Area] {
         if useLocalDemo { return localDemoStore.areas() }
         return try await get("areas")
+    }
+
+    func createArea(name: String) async throws -> Area {
+        if useLocalDemo { return localDemoStore.createArea(name: name) }
+        return try await post("areas", body: CreateAreaRequest(name: name))
+    }
+
+    func updateArea(_ id: String, body: UpdateAreaRequest) async throws -> Area {
+        if useLocalDemo { return localDemoStore.updateArea(id: id, body: body) }
+        return try await patch("areas/\(id)", body: body)
     }
 
     func createShopkeeper(_ body: CreateShopkeeperRequest) async throws -> UserRow {
@@ -510,6 +722,146 @@ final class MartAPIClient {
             return
         }
         try await deleteRequest("brands/\(id)")
+    }
+
+    // MARK: - Finance (admin)
+
+    func financeOverview(period: String? = nil, startDate: String? = nil, endDate: String? = nil) async throws -> FinanceOverview {
+        var query: [String: String] = [:]
+        if let period { query["period"] = period }
+        if let startDate { query["startDate"] = startDate }
+        if let endDate { query["endDate"] = endDate }
+        return try await get("finance/dashboard/overview", query: query)
+    }
+
+    func investorDashboard() async throws -> InvestorDashboard {
+        try await get("finance/dashboard/investor")
+    }
+
+    func commissionRules() async throws -> [CommissionRule] {
+        try await get("finance/commission-rules")
+    }
+
+    func upsertCommissionRule(_ body: UpsertCommissionRuleRequest) async throws -> CommissionRule {
+        try await post("finance/commission-rules", body: body)
+    }
+
+    func settlements(period: String? = nil, dealerId: String? = nil, status: String? = nil) async throws -> [DealerSettlement] {
+        var query: [String: String] = [:]
+        if let period { query["period"] = period }
+        if let dealerId { query["dealerId"] = dealerId }
+        if let status { query["status"] = status }
+        return try await get("finance/settlements", query: query)
+    }
+
+    func generateSettlement(_ body: GenerateSettlementRequest) async throws -> DealerSettlement {
+        try await post("finance/settlements/generate", body: body)
+    }
+
+    func settlementDetail(_ id: String) async throws -> DealerSettlement {
+        try await get("finance/settlements/\(id)")
+    }
+
+    func recordSettlementPayment(_ id: String, body: RecordSettlementPaymentRequest) async throws -> DealerSettlement {
+        try await post("finance/settlements/\(id)/payments", body: body)
+    }
+
+    func backfillRevenues() async throws -> BackfillRevenuesResponse {
+        try await post("finance/backfill-revenues")
+    }
+
+    func financeAudit() async throws -> [FinanceAuditLog] {
+        try await get("finance/audit")
+    }
+
+    func dealerPerformance(_ dealerId: String, period: String? = nil) async throws -> DealerPerformance {
+        var query: [String: String] = [:]
+        if let period { query["period"] = period }
+        return try await get("finance/dealers/\(dealerId)/performance", query: query)
+    }
+
+    func downloadFinanceReport(type: String, format: String, period: String? = nil) async throws -> URL {
+        var query: [String: String] = ["format": format]
+        if let period { query["period"] = period }
+        let ext = format == "xlsx" ? "xlsx" : "csv"
+        return try await downloadFile(
+            path: "finance/reports/\(type)",
+            suggestedName: "\(type)-report.\(ext)",
+            query: query
+        )
+    }
+
+    // MARK: - Returns & refunds
+
+    func createReturn(orderId: String, body: CreateReturnRequest) async throws -> ReturnRequest {
+        try await post("returns/orders/\(orderId)", body: body)
+    }
+
+    func listReturns(status: String? = nil) async throws -> [ReturnRequest] {
+        var query: [String: String] = [:]
+        if let status { query["status"] = status }
+        return try await get("returns", query: query)
+    }
+
+    func getReturn(_ id: String) async throws -> ReturnRequest {
+        try await get("returns/\(id)")
+    }
+
+    func approveReturnRequest(_ id: String, remarks: String? = nil) async throws -> ReturnRequest {
+        try await patch("returns/\(id)/approve", body: ReturnActionRequest(remarks: remarks))
+    }
+
+    func rejectReturnRequest(_ id: String, remarks: String?) async throws -> ReturnRequest {
+        try await patch("returns/\(id)/reject", body: ReturnActionRequest(remarks: remarks))
+    }
+
+    func raiseRefundRequest(_ returnId: String, remarks: String? = nil) async throws -> RefundRequest {
+        try await post("returns/\(returnId)/refund-request", body: ReturnActionRequest(remarks: remarks))
+    }
+
+    func listRefunds(status: String? = nil) async throws -> [RefundRequest] {
+        var query: [String: String] = [:]
+        if let status { query["status"] = status }
+        return try await get("refunds", query: query)
+    }
+
+    func getRefund(_ id: String) async throws -> RefundRequest {
+        try await get("refunds/\(id)")
+    }
+
+    func approveRefundRequest(_ id: String, remarks: String? = nil) async throws -> RefundRequest {
+        try await patch("refunds/\(id)/approve", body: ReturnActionRequest(remarks: remarks))
+    }
+
+    func rejectRefundRequest(_ id: String, remarks: String?) async throws -> RefundRequest {
+        try await patch("refunds/\(id)/reject", body: ReturnActionRequest(remarks: remarks))
+    }
+
+    func processRefundRequest(_ id: String, body: ProcessRefundRequest) async throws -> RefundRequest {
+        try await post("refunds/\(id)/process", body: body)
+    }
+
+    func dealerRevenueDashboard(period: String? = nil) async throws -> DealerRevenueDashboard {
+        var query: [String: String] = [:]
+        if let period { query["period"] = period }
+        return try await get("finance/dealer/dashboard", query: query)
+    }
+
+    func dealerShopkeeperRevenue(shopkeeper: String? = nil, area: String? = nil) async throws -> [DealerShopkeeperRow] {
+        var query: [String: String] = [:]
+        if let shopkeeper { query["shopkeeper"] = shopkeeper }
+        if let area { query["area"] = area }
+        return try await get("finance/dealer/shopkeepers", query: query)
+    }
+
+    func downloadDealerReport(type: String, format: String, period: String? = nil) async throws -> URL {
+        var query: [String: String] = ["format": format]
+        if let period { query["period"] = period }
+        return try await downloadFile(
+            path: "finance/dealer/reports/\(type)",
+            suggestedName: "\(type)-report.\(format == "xlsx" ? "xlsx" : "csv")",
+            query: query
+        )
     }
 
     // MARK: - HTTP helpers

@@ -15,34 +15,18 @@ data class PendingOnboardingDocument(
     val localPath: String,
     val mimeType: String?,
     val fileSize: Long,
+    val documentType: String? = null,
 )
 
 object OnboardingDocumentStorage {
-    fun dealerDocumentSlots(): List<OnboardingDocumentSlot> =
-        withDocumentPolicy(
-            listOf(
-                OnboardingDocumentSlot("ID proof (Aadhaar / PAN)", required = true),
-                OnboardingDocumentSlot("GST certificate", required = true),
-                OnboardingDocumentSlot("Business registration / trade license", required = true),
-                OnboardingDocumentSlot("Bank proof / cancelled cheque", required = false),
-            ),
-        )
-
-    fun shopkeeperDocumentSlots(): List<OnboardingDocumentSlot> =
-        withDocumentPolicy(
-            listOf(
-                OnboardingDocumentSlot("ID proof (Aadhaar / PAN)", required = true),
-                OnboardingDocumentSlot("Shop license / rent agreement", required = true),
-                OnboardingDocumentSlot("GST certificate", required = false),
-            ),
-        )
-
-    private fun withDocumentPolicy(slots: List<OnboardingDocumentSlot>): List<OnboardingDocumentSlot> =
-        if (BuildConfig.REQUIRE_ONBOARDING_DOCUMENTS) {
-            slots
-        } else {
-            slots.map { slot -> slot.copy(required = false) }
+    fun standardDocumentSlots(): List<OnboardingDocumentSlot> =
+        BusinessDocumentTypes.all.map { slot ->
+            OnboardingDocumentSlot(slot.label, required = false, documentType = slot.type)
         }
+
+    fun dealerDocumentSlots(): List<OnboardingDocumentSlot> = standardDocumentSlots()
+
+    fun shopkeeperDocumentSlots(): List<OnboardingDocumentSlot> = standardDocumentSlots()
 
     fun stageDocument(
         context: Context,
@@ -114,4 +98,5 @@ object OnboardingDocumentStorage {
 data class OnboardingDocumentSlot(
     val label: String,
     val required: Boolean,
+    val documentType: String? = null,
 )

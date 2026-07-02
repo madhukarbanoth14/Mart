@@ -3,8 +3,10 @@ package com.mart.distribution.demo.ui.screens
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -26,9 +28,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mart.distribution.demo.AppContainer
+import com.mart.distribution.demo.ui.flashmart.FmLogoMark
 import com.mart.distribution.demo.ui.theme.WholesaleBlue
-import com.mart.distribution.demo.ui.theme.WholesaleInkSurface
-import com.mart.distribution.demo.ui.theme.WholesaleInkSurface2
+import com.mart.distribution.demo.ui.theme.WholesaleBlueDark
+import com.mart.distribution.demo.ui.theme.WholesaleBlueDeep
+import com.mart.distribution.demo.ui.theme.WholesaleGold
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 
@@ -37,6 +41,7 @@ fun SplashRoute(
     container: AppContainer,
     onContinueLoggedIn: () -> Unit,
     onContinueGuest: () -> Unit,
+    onContinueOnboarding: () -> Unit = onContinueGuest,
 ) {
     val alpha by animateFloatAsState(1f, tween(600), label = "splashA")
 
@@ -45,45 +50,84 @@ fun SplashRoute(
         container.networkConfigRepository.hydrate()
         container.sessionManager.hydrate()
         val user = container.sessionManager.sessionUserFlow.first()
-        if (user != null) onContinueLoggedIn() else onContinueGuest()
+        when {
+            user != null -> onContinueLoggedIn()
+            !container.onboardingPreferences.hasCompleted() -> onContinueOnboarding()
+            else -> onContinueGuest()
+        }
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Brush.linearGradient(listOf(WholesaleInkSurface, WholesaleInkSurface2))),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Brush.linearGradient(listOf(WholesaleBlueDark, WholesaleBlue, WholesaleBlueDeep))),
         contentAlignment = Alignment.Center,
     ) {
+        Box(
+            modifier =
+                Modifier
+                    .size(360.dp)
+                    .alpha(alpha)
+                    .background(
+                        Brush.radialGradient(
+                            listOf(Color.White.copy(alpha = 0.18f), Color.Transparent),
+                        ),
+                    ),
+        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.alpha(alpha).padding(32.dp),
         ) {
-            Box(
-                modifier = Modifier.size(72.dp).clip(RoundedCornerShape(22.dp))
-                    .background(WholesaleBlue),
-                contentAlignment = Alignment.Center,
-            ) { Text("⚡", fontSize = 36.sp) }
-            Spacer(Modifier.height(20.dp))
+            FmLogoMark(size = 104.dp)
+            Spacer(Modifier.height(24.dp))
+            Row {
+                Text(
+                    "Flash",
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                    letterSpacing = (-1).sp,
+                )
+                Text(
+                    "Mart",
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = WholesaleGold,
+                    letterSpacing = (-1).sp,
+                )
+            }
+            Spacer(Modifier.height(6.dp))
             Text(
-                "Flashmart",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                letterSpacing = (-0.6).sp,
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                "Distribution OS",
-                fontSize = 14.sp,
-                color = Color.White.copy(alpha = 0.5f),
-                fontWeight = FontWeight.Medium,
+                "Fast Delivery · Trusted Quality",
+                fontSize = 14.5.sp,
+                color = Color.White.copy(alpha = 0.82f),
+                fontWeight = FontWeight.SemiBold,
             )
             Spacer(Modifier.height(48.dp))
             CircularProgressIndicator(
-                color = WholesaleBlue,
-                strokeWidth = 2.5.dp,
-                modifier = Modifier.size(36.dp),
+                color = Color.White,
+                strokeWidth = 3.dp,
+                modifier = Modifier.size(28.dp),
             )
+            Spacer(Modifier.height(18.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                listOf("QUALITY", "SPEED", "TRUST").forEachIndexed { index, label ->
+                    if (index > 0) {
+                        Text("·", fontSize = 11.5.sp, color = Color.White.copy(alpha = 0.5f))
+                    }
+                    Text(
+                        label,
+                        fontSize = 11.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White.copy(alpha = 0.65f),
+                        letterSpacing = 1.sp,
+                    )
+                }
+            }
         }
     }
 }

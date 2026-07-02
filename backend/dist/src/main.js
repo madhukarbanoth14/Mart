@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
+const fs_1 = require("fs");
+const path_1 = require("path");
 const app_module_1 = require("./app.module");
 process.on('warning', (warning) => {
     const msg = warning?.message ?? '';
@@ -13,6 +15,10 @@ process.on('warning', (warning) => {
 });
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const publicDir = (0, path_1.join)(process.cwd(), 'public');
+    if ((0, fs_1.existsSync)(publicDir)) {
+        app.useStaticAssets(publicDir, { index: false });
+    }
     const corsOrigins = (process.env.CORS_ORIGINS ?? '')
         .split(',')
         .map((o) => o.trim())

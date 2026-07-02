@@ -9,6 +9,8 @@ import com.mart.distribution.demo.data.cart.CartRepository
 import com.mart.distribution.demo.data.demo.DemoFlowRepository
 import com.mart.distribution.demo.data.demo.LocalDemoMartStore
 import com.mart.distribution.demo.data.network.NetworkConfigRepository
+import com.mart.distribution.demo.data.onboarding.OnboardingPreferences
+import com.mart.distribution.demo.data.push.PushTokenRegistrar
 import com.mart.distribution.demo.data.session.SessionManager
 import com.mart.distribution.demo.data.session.SessionRepository
 import com.mart.distribution.demo.BuildConfig
@@ -30,6 +32,8 @@ class AppContainer(context: Context) {
     val sessionRepository = SessionRepository(applicationContext, gson)
 
     val networkConfigRepository = NetworkConfigRepository(applicationContext)
+
+    val onboardingPreferences = OnboardingPreferences(applicationContext)
 
     val cartRepository = CartRepository()
 
@@ -76,4 +80,5 @@ class AppContainer(context: Context) {
 
     val sessionManager = SessionManager(sessionRepository, martApi)
     val brandsRepository = BrandsRepository(martApi, sessionRepository, localDemoMartStore)
+    val pushTokenRegistrar = PushTokenRegistrar(martApi, sessionRepository)
 }

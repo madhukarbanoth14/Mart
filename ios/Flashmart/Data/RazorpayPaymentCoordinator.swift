@@ -48,16 +48,7 @@ final class RazorpayPaymentCoordinator: NSObject {
     private func openCheckout(_ config: PendingRazorpayCheckout) {
         #if canImport(Razorpay)
         checkout = RazorpayCheckout.initWithKey(config.keyId, andDelegateWithData: self)
-        let options: [String: Any] = [
-            "amount": config.amountPaise,
-            "currency": config.currency,
-            "order_id": config.gatewayOrderId,
-            "name": "Flashmart",
-            "description": "Order payment",
-            "prefill": ["email": config.userEmail],
-            "notes": ["appOrderId": config.appOrderId],
-            "theme": ["color": "#2F48D4"],
-        ]
+        let options = RazorpayCheckoutOptions.buildOptions(config: config)
         guard let controller = topViewController() else {
             lastResult = RazorpayPaymentResult(
                 success: false,

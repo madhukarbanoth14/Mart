@@ -7,58 +7,76 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A1B2C3D4E5F6789012345679 /* ProfileViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6789012345678 /* ProfileViews.swift */; };
-		B2C3D4E5F678901234567892 /* ShopkeeperProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F678901234567891 /* ShopkeeperProfileStore.swift */; };
 		019E1E0FD98BF558B283D89B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6696374085164E62845677C8 /* OnboardingView.swift */; };
+		028EEBB69AD19EBA0B1E9FE9 /* PushTokenRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74098AAFC38E428E8363C867 /* PushTokenRegistrar.swift */; };
 		0835D36263DDFC5FDD6A5967 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE557B008E0C9F5E3C5EC67 /* SessionStore.swift */; };
 		0DB60BA019248486700BB935 /* AdminManagementViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB98C066208A234AF83B4E7 /* AdminManagementViews.swift */; };
 		1D1E17D22617C9EB60DE9AF6 /* FlashmartTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE880E0924BF60AF2FE2A68 /* FlashmartTheme.swift */; };
 		1FCCD090631321821A436CF0 /* RazorpayPaymentCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59D976ED6473D17FE9E6AE5 /* RazorpayPaymentCoordinator.swift */; };
 		1FFBC5CDB44B70F29289B581 /* LocalDemoAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006C0A95D18A4E7235A145BE /* LocalDemoAuth.swift */; };
+		256D622D09BD87787D6D8E84 /* OnboardingDocumentsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2BDB59AAA968756D597940D /* OnboardingDocumentsSection.swift */; };
 		2CF9C95B3222E7E2E53190E6 /* ShopkeeperViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAEFE9FD92D42ECBE0F7FD08 /* ShopkeeperViews.swift */; };
 		3723D8B46AE83ADE60938A99 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3024A911515FB909869532 /* LoginView.swift */; };
 		3DACB5600969564DCAAFBACC /* EmployeeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8922025174DF473053CCA38D /* EmployeeViews.swift */; };
 		3F7A64CF1355279C2A8EA9FF /* ProductPricing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C9A28E6301F613654A273D /* ProductPricing.swift */; };
+		41D1BE246793274A99B98129 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51804428E445EB227D3A985A /* AppDelegate.swift */; };
+		45038E6E3771E94670BC75A6 /* AdminFinanceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39D430A42280EE3F7A9FB685 /* AdminFinanceViews.swift */; };
+		4CE65CEF17EFC3C0CB909B92 /* ProfileDocumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC918BEB7A9280BBCD71757B /* ProfileDocumentsView.swift */; };
 		4D5B708B460E2384230FC748 /* LocalDemoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F66BD5BC63982F83E7A21B0C /* LocalDemoStore.swift */; };
 		5B4DA4CC6714A64901CF774A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153FB1E4E66ED8BB8ACBF34E /* AuthViewModel.swift */; };
+		5DD451D2FC1801CC3D7B643E /* ProfileViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D6ACAB3ACEC413D481508B /* ProfileViews.swift */; };
 		64A5B8B13DD9E1A18A6D4CB0 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E73E3EE3EA773252560935 /* AppEnvironment.swift */; };
 		65658037A9E88F1222D88B1A /* FlashmartApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90217B592F52E40A609531E3 /* FlashmartApp.swift */; };
 		65EFD14EC2D3335D8E781090 /* MartAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E557C111F6918FD00971C64B /* MartAPIClient.swift */; };
+		67BE146BE0704FB8F0EF6F75 /* Pods_Flashmart.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A93A34F09476EE40C041CFB5 /* Pods_Flashmart.framework */; };
+		6FF7807940FCEFA0582D5136 /* ShopkeeperProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40069FDC2881595334721B5 /* ShopkeeperProfileStore.swift */; };
 		7493567B7A5650962545EAFB /* DealerViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16F40AA507055EAF259170A /* DealerViews.swift */; };
 		86918AE47F74603EBDE92DB0 /* RoleShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D508390C0779058F24BBBD0 /* RoleShellView.swift */; };
 		87192C6408DAE66A43F15862 /* OnboardingPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378FA3409A6C709D09B9F755 /* OnboardingPreferences.swift */; };
 		8F6441FBA1EF6C040B9396E2 /* AdminViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D11DCAC5AFD880573D00BF /* AdminViews.swift */; };
 		9D6A76C646F3831794EEE7DD /* SharedViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C44A0A34F5BDFBD27EFE0C7 /* SharedViews.swift */; };
-		C1D2E3F478901234567890B /* OnboardingDocumentStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F478901234567890A /* OnboardingDocumentStorage.swift */; };
-		C1D2E3F478901234567890D /* OnboardingDocumentsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F478901234567890C /* OnboardingDocumentsSection.swift */; };
+		A249641B5A346EC2104E6481 /* AdminOnboardingReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA1326355DBEC380A6A6B044 /* AdminOnboardingReviewView.swift */; };
 		A55E2608B25764A933687C29 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B55DB69DE7A9D849EAC2F7 /* MainViewModel.swift */; };
+		A9F6CE0E7D3081832BEED626 /* OnboardingDocumentStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272EC9AFFE63912DAEEFD06E /* OnboardingDocumentStorage.swift */; };
 		B137B8590AB756FDFA8FF05B /* ShopkeeperCheckoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC82785E6CA7998C89FC2A4 /* ShopkeeperCheckoutView.swift */; };
 		B250268A867D038CA6941ABC /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946A9890C1074684212C11B0 /* RootView.swift */; };
 		BAC9D8D4825BA03A409BC1D4 /* ResetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2CAEA770D700B3FC42D0AB8 /* ResetPasswordView.swift */; };
 		BD18830BBA1E4480C02B4313 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E3C88646644EF6321F74D5 /* Models.swift */; };
+		BD88ABBD50B082D82FF22266 /* ReturnsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A0F799C22159C0D066C5D7 /* ReturnsViewModel.swift */; };
+		C69EF469C3CD351B7C6D256E /* FlashmartSharedViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BD23933A16F4DF75175B3B1 /* FlashmartSharedViews.swift */; };
 		C7DDCE2134EAC3782B9BDD65 /* CartStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F6B20A859D19C17E81C04A7 /* CartStore.swift */; };
+		CCE5684993CDA043AF6F966B /* InvoicePdfExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CFAB3F2684B43D090B4A07 /* InvoicePdfExporter.swift */; };
+		CE77FB57F2B7588860356E1A /* FinanceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307D9F1B0AA0020D26D6E591 /* FinanceViewModel.swift */; };
+		D67A812467AF116C0A9FBA4A /* DealerReturnsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1517F16777CD20CDA36AB02D /* DealerReturnsViews.swift */; };
+		D858E3FD2E0199DE6B9B3B9C /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC49B7A69F5A0EF0174BDBF3 /* ShareSheet.swift */; };
 		DA70B49418A039E9BBA3952D /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3AC6AC42DAF6608A22CC44 /* AppConfig.swift */; };
 		E35B15D620D171CBAB342E23 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D066A052D0AF24C7021B3946 /* SplashView.swift */; };
-		E80E96361DB58898C4E30569 /* Pods_Flashmart.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF9324FE2D9B606305EABF3E /* Pods_Flashmart.framework */; };
+		ED4674AEEB8137C6D35BC1E9 /* RazorpayCheckoutOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D67C62ECC363BDB715468EF /* RazorpayCheckoutOptions.swift */; };
 		EE40DC0C949C9800149F6FCC /* FlashmartComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68A5429E9008291A0711A9A /* FlashmartComponents.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		006C0A95D18A4E7235A145BE /* LocalDemoAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDemoAuth.swift; sourceTree = "<group>"; };
 		0A34866D9C19619AEEEBE090 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		0BD23933A16F4DF75175B3B1 /* FlashmartSharedViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashmartSharedViews.swift; sourceTree = "<group>"; };
 		13D11DCAC5AFD880573D00BF /* AdminViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminViews.swift; sourceTree = "<group>"; };
+		1517F16777CD20CDA36AB02D /* DealerReturnsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DealerReturnsViews.swift; sourceTree = "<group>"; };
 		153FB1E4E66ED8BB8ACBF34E /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		1BB98C066208A234AF83B4E7 /* AdminManagementViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminManagementViews.swift; sourceTree = "<group>"; };
 		1E3024A911515FB909869532 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		1EE880E0924BF60AF2FE2A68 /* FlashmartTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashmartTheme.swift; sourceTree = "<group>"; };
-		1FC5E0A3AB72C46B79A47701 /* Pods-Flashmart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Flashmart.debug.xcconfig"; path = "Target Support Files/Pods-Flashmart/Pods-Flashmart.debug.xcconfig"; sourceTree = "<group>"; };
+		272EC9AFFE63912DAEEFD06E /* OnboardingDocumentStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDocumentStorage.swift; sourceTree = "<group>"; };
 		28B55DB69DE7A9D849EAC2F7 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		307D9F1B0AA0020D26D6E591 /* FinanceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceViewModel.swift; sourceTree = "<group>"; };
 		378FA3409A6C709D09B9F755 /* OnboardingPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPreferences.swift; sourceTree = "<group>"; };
+		39D430A42280EE3F7A9FB685 /* AdminFinanceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminFinanceViews.swift; sourceTree = "<group>"; };
 		4D508390C0779058F24BBBD0 /* RoleShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleShellView.swift; sourceTree = "<group>"; };
+		51804428E445EB227D3A985A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5512530D6E3F5DAAEA5668B0 /* Config.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.Release.xcconfig; sourceTree = "<group>"; };
 		55C9A28E6301F613654A273D /* ProductPricing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductPricing.swift; sourceTree = "<group>"; };
 		6696374085164E62845677C8 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
-		7BD9AE34177829A9FBB4F97E /* Pods-Flashmart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Flashmart.release.xcconfig"; path = "Target Support Files/Pods-Flashmart/Pods-Flashmart.release.xcconfig"; sourceTree = "<group>"; };
+		74098AAFC38E428E8363C867 /* PushTokenRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenRegistrar.swift; sourceTree = "<group>"; };
+		7E5C8C5C71B09E15DC41027B /* Pods-Flashmart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Flashmart.debug.xcconfig"; path = "Target Support Files/Pods-Flashmart/Pods-Flashmart.debug.xcconfig"; sourceTree = "<group>"; };
 		7F6B20A859D19C17E81C04A7 /* CartStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartStore.swift; sourceTree = "<group>"; };
 		8922025174DF473053CCA38D /* EmployeeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeViews.swift; sourceTree = "<group>"; };
 		89E73E3EE3EA773252560935 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
@@ -66,18 +84,24 @@
 		946A9890C1074684212C11B0 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		94D8E2B84EBDE7F02738BCA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9C44A0A34F5BDFBD27EFE0C7 /* SharedViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedViews.swift; sourceTree = "<group>"; };
-		C1D2E3F478901234567890A /* OnboardingDocumentStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDocumentStorage.swift; sourceTree = "<group>"; };
-		C1D2E3F478901234567890C /* OnboardingDocumentsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDocumentsSection.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F6789012345678 /* ProfileViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViews.swift; sourceTree = "<group>"; };
+		9D67C62ECC363BDB715468EF /* RazorpayCheckoutOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RazorpayCheckoutOptions.swift; sourceTree = "<group>"; };
+		A4CFAB3F2684B43D090B4A07 /* InvoicePdfExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoicePdfExporter.swift; sourceTree = "<group>"; };
 		A68A5429E9008291A0711A9A /* FlashmartComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashmartComponents.swift; sourceTree = "<group>"; };
-		B2C3D4E5F678901234567891 /* ShopkeeperProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopkeeperProfileStore.swift; sourceTree = "<group>"; };
+		A93A34F09476EE40C041CFB5 /* Pods_Flashmart.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Flashmart.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC49B7A69F5A0EF0174BDBF3 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		B2CAEA770D700B3FC42D0AB8 /* ResetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordView.swift; sourceTree = "<group>"; };
 		B59D976ED6473D17FE9E6AE5 /* RazorpayPaymentCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RazorpayPaymentCoordinator.swift; sourceTree = "<group>"; };
+		BA1326355DBEC380A6A6B044 /* AdminOnboardingReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminOnboardingReviewView.swift; sourceTree = "<group>"; };
+		C2BDB59AAA968756D597940D /* OnboardingDocumentsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingDocumentsSection.swift; sourceTree = "<group>"; };
+		C2D6ACAB3ACEC413D481508B /* ProfileViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViews.swift; sourceTree = "<group>"; };
 		C6E5260F75E5E9A079C5D1FB /* Flashmart.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Flashmart.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC918BEB7A9280BBCD71757B /* ProfileDocumentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDocumentsView.swift; sourceTree = "<group>"; };
 		D066A052D0AF24C7021B3946 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		D40069FDC2881595334721B5 /* ShopkeeperProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopkeeperProfileStore.swift; sourceTree = "<group>"; };
+		D7A0F799C22159C0D066C5D7 /* ReturnsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReturnsViewModel.swift; sourceTree = "<group>"; };
 		DC3AC6AC42DAF6608A22CC44 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		DC5E39F571897B4DD725FFDE /* Pods-Flashmart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Flashmart.release.xcconfig"; path = "Target Support Files/Pods-Flashmart/Pods-Flashmart.release.xcconfig"; sourceTree = "<group>"; };
 		DDE557B008E0C9F5E3C5EC67 /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
-		DF9324FE2D9B606305EABF3E /* Pods_Flashmart.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Flashmart.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16F40AA507055EAF259170A /* DealerViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DealerViews.swift; sourceTree = "<group>"; };
 		E557C111F6918FD00971C64B /* MartAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MartAPIClient.swift; sourceTree = "<group>"; };
 		E8E3C88646644EF6321F74D5 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -87,17 +111,24 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		4291ACEDD88B5789FD1B8188 /* Frameworks */ = {
+		2130FC6EFE458749391ECDE9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E80E96361DB58898C4E30569 /* Pods_Flashmart.framework in Frameworks */,
+				67BE146BE0704FB8F0EF6F75 /* Pods_Flashmart.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06389C36FC7F9C2E23D2A8F5 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		1C047ABD0E4CB143D64684A6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -128,19 +159,10 @@
 		23DDDF83DBB4B5B1EAFC4EBC /* Dealer */ = {
 			isa = PBXGroup;
 			children = (
+				1517F16777CD20CDA36AB02D /* DealerReturnsViews.swift */,
 				E16F40AA507055EAF259170A /* DealerViews.swift */,
 			);
 			path = Dealer;
-			sourceTree = "<group>";
-		};
-		26FDB09E50FC64AF1FD6C47F /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				1FC5E0A3AB72C46B79A47701 /* Pods-Flashmart.debug.xcconfig */,
-				7BD9AE34177829A9FBB4F97E /* Pods-Flashmart.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		28950542C22D70A539650CB3 = {
@@ -149,15 +171,17 @@
 				48C7B7B0A09EA04D11E3AEFD /* Flashmart */,
 				2205EE02497D787BD126EA77 /* ios */,
 				1C047ABD0E4CB143D64684A6 /* Products */,
-				26FDB09E50FC64AF1FD6C47F /* Pods */,
-				714F3AD7FCF5CAF5DACF2793 /* Frameworks */,
+				A84F328AE5326EE413FF8760 /* Pods */,
+				57E3464265BA3EA764D35AD8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
 		2AB5CDD5235548BBA0EE91DD /* Admin */ = {
 			isa = PBXGroup;
 			children = (
+				39D430A42280EE3F7A9FB685 /* AdminFinanceViews.swift */,
 				1BB98C066208A234AF83B4E7 /* AdminManagementViews.swift */,
+				BA1326355DBEC380A6A6B044 /* AdminOnboardingReviewView.swift */,
 				13D11DCAC5AFD880573D00BF /* AdminViews.swift */,
 			);
 			path = Admin;
@@ -185,11 +209,21 @@
 			path = Flashmart;
 			sourceTree = "<group>";
 		};
+		57E3464265BA3EA764D35AD8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A93A34F09476EE40C041CFB5 /* Pods_Flashmart.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		686C3839998646501324DD12 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				153FB1E4E66ED8BB8ACBF34E /* AuthViewModel.swift */,
+				307D9F1B0AA0020D26D6E591 /* FinanceViewModel.swift */,
 				28B55DB69DE7A9D849EAC2F7 /* MainViewModel.swift */,
+				D7A0F799C22159C0D066C5D7 /* ReturnsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -203,25 +237,19 @@
 				23DDDF83DBB4B5B1EAFC4EBC /* Dealer */,
 				7AC36D9D187519E1AB7D65FD /* Employee */,
 				2D53099BD2259CA8B3F2BA77 /* Navigation */,
-				C3D4E5F678901234567890A /* Profile */,
+				06389C36FC7F9C2E23D2A8F5 /* Onboarding */,
+				D93E6F881585A4BDA7C0DE4C /* Profile */,
 				8479D0E16C9B54CA089BE989 /* Shared */,
 				C7A5641ED05BB60266047B29 /* Shopkeeper */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		714F3AD7FCF5CAF5DACF2793 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				DF9324FE2D9B606305EABF3E /* Pods_Flashmart.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		72310C39CBF6456871542AE0 /* App */ = {
 			isa = PBXGroup;
 			children = (
 				DC3AC6AC42DAF6608A22CC44 /* AppConfig.swift */,
+				51804428E445EB227D3A985A /* AppDelegate.swift */,
 				89E73E3EE3EA773252560935 /* AppEnvironment.swift */,
 			);
 			path = App;
@@ -238,36 +266,44 @@
 		8479D0E16C9B54CA089BE989 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				C1D2E3F478901234567890C /* OnboardingDocumentsSection.swift */,
+				0BD23933A16F4DF75175B3B1 /* FlashmartSharedViews.swift */,
+				C2BDB59AAA968756D597940D /* OnboardingDocumentsSection.swift */,
+				CC918BEB7A9280BBCD71757B /* ProfileDocumentsView.swift */,
 				9C44A0A34F5BDFBD27EFE0C7 /* SharedViews.swift */,
+				AC49B7A69F5A0EF0174BDBF3 /* ShareSheet.swift */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		A84F328AE5326EE413FF8760 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7E5C8C5C71B09E15DC41027B /* Pods-Flashmart.debug.xcconfig */,
+				DC5E39F571897B4DD725FFDE /* Pods-Flashmart.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		B6CE72DFEA705091F31ED521 /* Data */ = {
 			isa = PBXGroup;
 			children = (
 				7F6B20A859D19C17E81C04A7 /* CartStore.swift */,
+				A4CFAB3F2684B43D090B4A07 /* InvoicePdfExporter.swift */,
 				006C0A95D18A4E7235A145BE /* LocalDemoAuth.swift */,
 				F66BD5BC63982F83E7A21B0C /* LocalDemoStore.swift */,
 				E557C111F6918FD00971C64B /* MartAPIClient.swift */,
 				E8E3C88646644EF6321F74D5 /* Models.swift */,
-				C1D2E3F478901234567890A /* OnboardingDocumentStorage.swift */,
+				272EC9AFFE63912DAEEFD06E /* OnboardingDocumentStorage.swift */,
 				378FA3409A6C709D09B9F755 /* OnboardingPreferences.swift */,
 				55C9A28E6301F613654A273D /* ProductPricing.swift */,
-				B2C3D4E5F678901234567891 /* ShopkeeperProfileStore.swift */,
+				74098AAFC38E428E8363C867 /* PushTokenRegistrar.swift */,
+				9D67C62ECC363BDB715468EF /* RazorpayCheckoutOptions.swift */,
 				B59D976ED6473D17FE9E6AE5 /* RazorpayPaymentCoordinator.swift */,
 				DDE557B008E0C9F5E3C5EC67 /* SessionStore.swift */,
+				D40069FDC2881595334721B5 /* ShopkeeperProfileStore.swift */,
 			);
 			path = Data;
-			sourceTree = "<group>";
-		};
-		C3D4E5F678901234567890A /* Profile */ = {
-			isa = PBXGroup;
-			children = (
-				A1B2C3D4E5F6789012345678 /* ProfileViews.swift */,
-			);
-			path = Profile;
 			sourceTree = "<group>";
 		};
 		C7A5641ED05BB60266047B29 /* Shopkeeper */ = {
@@ -290,6 +326,14 @@
 			path = Auth;
 			sourceTree = "<group>";
 		};
+		D93E6F881585A4BDA7C0DE4C /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				C2D6ACAB3ACEC413D481508B /* ProfileViews.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -297,10 +341,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6415B2CB1D124DCF26F5CAF1 /* Build configuration list for PBXNativeTarget "Flashmart" */;
 			buildPhases = (
-				0D48D85783A28E7D5351A3AB /* [CP] Check Pods Manifest.lock */,
+				00DF09EB1AD1C78BAEC40D5F /* [CP] Check Pods Manifest.lock */,
 				12F304B11276D5401CD39259 /* Sources */,
-				4291ACEDD88B5789FD1B8188 /* Frameworks */,
-				6861571C948AEC5167513402 /* [CP] Embed Pods Frameworks */,
+				2130FC6EFE458749391ECDE9 /* Frameworks */,
+				4278847A993226239CCCD021 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -321,7 +365,7 @@
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					75A388DAD479565B6055F52C = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = G2R57LAB44;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -346,7 +390,7 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0D48D85783A28E7D5351A3AB /* [CP] Check Pods Manifest.lock */ = {
+		00DF09EB1AD1C78BAEC40D5F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -368,7 +412,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6861571C948AEC5167513402 /* [CP] Embed Pods Frameworks */ = {
+		4278847A993226239CCCD021 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -392,37 +436,49 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45038E6E3771E94670BC75A6 /* AdminFinanceViews.swift in Sources */,
 				0DB60BA019248486700BB935 /* AdminManagementViews.swift in Sources */,
+				A249641B5A346EC2104E6481 /* AdminOnboardingReviewView.swift in Sources */,
 				8F6441FBA1EF6C040B9396E2 /* AdminViews.swift in Sources */,
 				DA70B49418A039E9BBA3952D /* AppConfig.swift in Sources */,
+				41D1BE246793274A99B98129 /* AppDelegate.swift in Sources */,
 				64A5B8B13DD9E1A18A6D4CB0 /* AppEnvironment.swift in Sources */,
 				5B4DA4CC6714A64901CF774A /* AuthViewModel.swift in Sources */,
 				C7DDCE2134EAC3782B9BDD65 /* CartStore.swift in Sources */,
+				D67A812467AF116C0A9FBA4A /* DealerReturnsViews.swift in Sources */,
 				7493567B7A5650962545EAFB /* DealerViews.swift in Sources */,
 				3DACB5600969564DCAAFBACC /* EmployeeViews.swift in Sources */,
+				CE77FB57F2B7588860356E1A /* FinanceViewModel.swift in Sources */,
 				65658037A9E88F1222D88B1A /* FlashmartApp.swift in Sources */,
 				EE40DC0C949C9800149F6FCC /* FlashmartComponents.swift in Sources */,
+				C69EF469C3CD351B7C6D256E /* FlashmartSharedViews.swift in Sources */,
 				1D1E17D22617C9EB60DE9AF6 /* FlashmartTheme.swift in Sources */,
+				CCE5684993CDA043AF6F966B /* InvoicePdfExporter.swift in Sources */,
 				1FFBC5CDB44B70F29289B581 /* LocalDemoAuth.swift in Sources */,
 				4D5B708B460E2384230FC748 /* LocalDemoStore.swift in Sources */,
 				3723D8B46AE83ADE60938A99 /* LoginView.swift in Sources */,
 				A55E2608B25764A933687C29 /* MainViewModel.swift in Sources */,
 				65EFD14EC2D3335D8E781090 /* MartAPIClient.swift in Sources */,
 				BD18830BBA1E4480C02B4313 /* Models.swift in Sources */,
+				A9F6CE0E7D3081832BEED626 /* OnboardingDocumentStorage.swift in Sources */,
+				256D622D09BD87787D6D8E84 /* OnboardingDocumentsSection.swift in Sources */,
 				87192C6408DAE66A43F15862 /* OnboardingPreferences.swift in Sources */,
-				C1D2E3F478901234567890B /* OnboardingDocumentStorage.swift in Sources */,
-				C1D2E3F478901234567890D /* OnboardingDocumentsSection.swift in Sources */,
-				A1B2C3D4E5F6789012345679 /* ProfileViews.swift in Sources */,
 				019E1E0FD98BF558B283D89B /* OnboardingView.swift in Sources */,
 				3F7A64CF1355279C2A8EA9FF /* ProductPricing.swift in Sources */,
+				4CE65CEF17EFC3C0CB909B92 /* ProfileDocumentsView.swift in Sources */,
+				5DD451D2FC1801CC3D7B643E /* ProfileViews.swift in Sources */,
+				028EEBB69AD19EBA0B1E9FE9 /* PushTokenRegistrar.swift in Sources */,
+				ED4674AEEB8137C6D35BC1E9 /* RazorpayCheckoutOptions.swift in Sources */,
 				1FCCD090631321821A436CF0 /* RazorpayPaymentCoordinator.swift in Sources */,
 				BAC9D8D4825BA03A409BC1D4 /* ResetPasswordView.swift in Sources */,
+				BD88ABBD50B082D82FF22266 /* ReturnsViewModel.swift in Sources */,
 				86918AE47F74603EBDE92DB0 /* RoleShellView.swift in Sources */,
 				B250268A867D038CA6941ABC /* RootView.swift in Sources */,
 				0835D36263DDFC5FDD6A5967 /* SessionStore.swift in Sources */,
+				D858E3FD2E0199DE6B9B3B9C /* ShareSheet.swift in Sources */,
 				9D6A76C646F3831794EEE7DD /* SharedViews.swift in Sources */,
 				B137B8590AB756FDFA8FF05B /* ShopkeeperCheckoutView.swift in Sources */,
-				B2C3D4E5F678901234567892 /* ShopkeeperProfileStore.swift in Sources */,
+				6FF7807940FCEFA0582D5136 /* ShopkeeperProfileStore.swift in Sources */,
 				2CF9C95B3222E7E2E53190E6 /* ShopkeeperViews.swift in Sources */,
 				E35B15D620D171CBAB342E23 /* SplashView.swift in Sources */,
 			);
@@ -469,7 +525,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = G2R57LAB44;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -580,7 +636,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = G2R57LAB44;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

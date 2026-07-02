@@ -40,8 +40,8 @@ import com.mart.distribution.demo.ui.flashmart.FmButton
 import com.mart.distribution.demo.ui.flashmart.FmButtonVariant
 import com.mart.distribution.demo.ui.flashmart.FmCard
 import com.mart.distribution.demo.ui.flashmart.FmMoneyRow
+import com.mart.distribution.demo.ui.flashmart.FmQuantityInput
 import com.mart.distribution.demo.ui.flashmart.FmSectionLabel
-import com.mart.distribution.demo.ui.flashmart.FmStepper
 import com.mart.distribution.demo.ui.theme.WholesaleBg
 import com.mart.distribution.demo.ui.theme.WholesaleBlue
 import com.mart.distribution.demo.ui.theme.WholesaleGreen
@@ -65,6 +65,7 @@ private sealed interface ProductDetailLoadState {
 fun ProductDetailScreen(
     productId: String,
     navController: NavController,
+    maxOrderQuantity: Int = 10000,
     onAddToCart: (ProductDto, Int) -> Unit,
 ) {
     val container = LocalAppContainer.current
@@ -237,7 +238,12 @@ fun ProductDetailScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
-                                    FmStepper(value = qty, onChange = { qty = it.coerceAtLeast(1) }, min = 1)
+                                    FmQuantityInput(
+                                        value = qty,
+                                        onValueChange = { qty = it.coerceAtLeast(1) },
+                                        min = 1,
+                                        max = maxOrderQuantity,
+                                    )
                                     androidx.compose.material3.Text(
                                         formatDecimal(lineTotal),
                                         fontSize = 18.sp,

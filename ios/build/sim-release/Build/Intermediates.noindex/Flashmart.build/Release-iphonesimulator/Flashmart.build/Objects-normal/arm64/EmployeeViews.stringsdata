@@ -1,0 +1,80 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Employee/EmployeeViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "This month's onboarding",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 180
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%% of 120 monthly target",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "Employee: %@ · Orders: %lld · Registered: %@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 342
+        }
+      },
+      {
+        "comment": "",
+        "key": "Last follow-up: %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 346
+        }
+      },
+      {
+        "comment": "",
+        "key": "Set a sign-in password below. After admin approval, login details will be emailed to the shopkeeper.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 425
+        }
+      },
+      {
+        "comment": "",
+        "key": "Set a sign-in password below. After admin approval, login details will be emailed to the dealer.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 506
+        }
+      },
+      {
+        "comment": "",
+        "key": "Loading areas…",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 569
+        }
+      },
+      {
+        "comment": "",
+        "key": "No areas available. Ask admin to create territories first.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 578
+        }
+      },
+      {
+        "comment": "",
+        "key": "Dealer · %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 605
+        }
+      }
+    ]
+  },
+  "version": 1
+}

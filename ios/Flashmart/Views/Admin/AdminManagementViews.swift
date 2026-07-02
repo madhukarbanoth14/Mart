@@ -112,6 +112,7 @@ private struct SkuProductForm: View {
 struct SkuManagementView: View {
     @Environment(AppEnvironment.self) private var env
     @Binding var path: NavigationPath
+    var embeddedInTab: Bool = false
     @State private var form = SkuFormState()
     @State private var editingProduct: Product?
     @State private var editForm = SkuFormState()
@@ -126,7 +127,11 @@ struct SkuManagementView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                FMTopBar(title: "SKU management", subtitle: "Create, edit & delete products", onBack: { path.removeLast() })
+                if embeddedInTab {
+                    FMTopBar(title: "SKU management", subtitle: "Products · pricing · discounts")
+                } else {
+                    FMTopBar(title: "SKU management", subtitle: "Create, edit & delete products", onBack: { path.removeLast() })
+                }
 
                 FMCard {
                     Text("Pricing, GST, and discount settings are applied server-side in order calculations.")
@@ -419,5 +424,78 @@ struct BrandsManagementView: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Areas management
+
+struct AdminAreasView: View {
+    @Environment(AppEnvironment.self) private var env
+    @Binding var path: NavigationPath
+    @State private var newAreaName = ""
+    @State private var saving = false
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                FMTopBar(title: "Manage areas", subtitle: "Territories for dealers & shopkeepers", onBack: { path.removeLast() })
+
+                FMCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Add area").font(.system(size: 15, weight: .bold))
+                        FMTextField(label: "Area name", text: $newAreaName, icon: "mappin.circle", placeholder: "North Zone")
+                        FMButton(title: saving ? "Saving…" : "Add area", enabled: !saving && newAreaName.trimmingCharacters(in: .whitespaces).count >= 2) {
+                            Task {
+                                saving = true
+                                if await env.mainViewModel.createArea(name: newAreaName) {
+                                    newAreaName = ""
+                                }
+                                saving = false
+                            }
+                        }
+                    }
+                }
+
+                if let err = env.mainViewModel.placeOrderError {
+                    FMErrorBanner(text: err)
+                }
+
+                FMSectionLabel(title: "Existing areas")
+                switch env.mainViewModel.areas {
+                case .loading:
+                    FMLoadingState(message: "Loading areas…")
+                case .err(let msg):
+                    FMErrorBanner(text: msg)
+                case .ok(let list):
+                    if list.isEmpty {
+                        FMEmptyState(
+                            icon: "map",
+                            title: "No areas configured",
+                            message: "Add your first territory above. Employees will assign dealers and shopkeepers to these areas."
+                        )
+                    } else {
+                        ForEach(list) { area in
+                            FMCard {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(area.name).font(.system(size: 15, weight: .semibold))
+                                        Text(area.dealer?.name ?? "No dealer assigned")
+                                            .font(.system(size: 12))
+                                            .foregroundStyle(FMTheme.ink3)
+                                    }
+                                    Spacer()
+                                }
+                            }
+                        }
+                    }
+                case .idle:
+                    EmptyView()
+                }
+            }
+            .padding(16)
+        }
+        .background(FMTheme.bg)
+        .navigationBarHidden(true)
+        .task { await env.mainViewModel.loadAreas() }
     }
 }

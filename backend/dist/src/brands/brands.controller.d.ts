@@ -6,47 +6,47 @@ export declare class BrandsController {
     private readonly brandsService;
     constructor(brandsService: BrandsService);
     findAll(): import("@prisma/client").Prisma.PrismaPromise<{
-        id: string;
         name: string;
+        id: string;
         manufacturer: string | null;
         logoUrl: string | null;
     }[]>;
     findOne(id: string): Promise<{
+        name: string;
         id: string;
         companyId: string;
-        name: string;
-        manufacturer: string | null;
         category: string | null;
+        manufacturer: string | null;
         logoUrl: string | null;
     }>;
     create(user: AuthUser, dto: CreateBrandDto): Promise<{
+        name: string;
         id: string;
         companyId: string;
-        name: string;
         createdAt: Date;
         updatedAt: Date;
-        manufacturer: string | null;
         category: string | null;
+        manufacturer: string | null;
         logoUrl: string | null;
     }>;
     update(id: string, user: AuthUser, dto: UpdateBrandDto): Promise<{
+        name: string;
         id: string;
         companyId: string;
-        name: string;
         createdAt: Date;
         updatedAt: Date;
-        manufacturer: string | null;
         category: string | null;
+        manufacturer: string | null;
         logoUrl: string | null;
     }>;
     remove(id: string, user: AuthUser): Promise<{
+        name: string;
         id: string;
         companyId: string;
-        name: string;
         createdAt: Date;
         updatedAt: Date;
-        manufacturer: string | null;
         category: string | null;
+        manufacturer: string | null;
         logoUrl: string | null;
     }>;
 }

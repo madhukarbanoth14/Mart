@@ -13,6 +13,9 @@ const notifications_module_1 = require("../notifications/notifications.module");
 const order_items_module_1 = require("../order-items/order-items.module");
 const payments_module_1 = require("../payments/payments.module");
 const roles_module_1 = require("../roles/roles.module");
+const users_module_1 = require("../users/users.module");
+const finance_module_1 = require("../finance/finance.module");
+const returns_module_1 = require("../returns/returns.module");
 const orders_controller_1 = require("./orders.controller");
 const orders_service_1 = require("./orders.service");
 let OrdersModule = class OrdersModule {
@@ -26,6 +29,9 @@ exports.OrdersModule = OrdersModule = __decorate([
             notifications_module_1.NotificationsModule,
             payments_module_1.PaymentsModule,
             roles_module_1.RolesModule,
+            users_module_1.UsersModule,
+            finance_module_1.FinanceModule,
+            returns_module_1.ReturnsModule,
         ],
         controllers: [orders_controller_1.OrdersController],
         providers: [orders_service_1.OrdersService],

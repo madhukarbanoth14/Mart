@@ -4,6 +4,8 @@ use_frameworks!
 target 'Flashmart' do
   # Razorpay Standard Checkout — required for live Razorpay payments on iOS
   pod 'razorpay-pod', '~> 1.4.5'
+  # Push notifications via FCM (add GoogleService-Info.plist from Firebase console)
+  pod 'Firebase/Messaging', '~> 11.0'
 end
 
 post_install do |installer|

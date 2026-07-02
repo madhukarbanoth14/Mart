@@ -15,6 +15,7 @@ export declare class PaymentsService {
     assertRazorpayKeysPresent(): void;
     private getRazorpayClient;
     private loadOrderForActor;
+    private dealerCanAccessOrder;
     createRazorpayOrder(dto: CreateRazorpayOrderDto, actor: AuthUser): Promise<{
         orderId: string;
         amountPaise: number;
@@ -46,4 +47,26 @@ export declare class PaymentsService {
         ignored?: undefined;
         reason?: undefined;
     }>;
+    refundOrderPayment(orderId: string, actor: AuthUser, amountInr?: number, options?: {
+        skipOrderUpdate?: boolean;
+    }): Promise<{
+        orderId: string;
+        paymentStatus: "PAID";
+        refundedAt: Date;
+        refund: {
+            id: string;
+            gatewayRefundId: string | null;
+            status: "REFUNDED";
+        };
+    } | {
+        orderId: string;
+        paymentStatus: "REFUNDED";
+        refundedAt: Date;
+        refund: {
+            id: string;
+            gatewayRefundId: string | null;
+            status: "REFUNDED";
+        };
+    }>;
+    private decimal;
 }

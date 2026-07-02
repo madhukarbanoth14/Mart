@@ -1,0 +1,24 @@
+# Local TEST database only — separate from production Cloud SQL (`mart`).
+#
+# Usage:
+#   npm run db:up:test
+#   npm run db:setup:test
+#
+# DATABASE_URL:
+#   postgresql://postgres:postgres@localhost:5436/mart_test?schema=public
+services:
+  db:
+    environment:
+      POSTGRES_DB: mart_test
+    ports:
+      - "5436:5432"
+    volumes:
+      - mart_test_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d mart_test']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mart_test_pg_data:

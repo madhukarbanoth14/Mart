@@ -1,5 +1,8 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { existsSync } from 'fs';
+import { join } from 'path';
 import { AppModule } from './app.module';
 
 process.on('warning', (warning) => {
@@ -18,7 +21,12 @@ process.on('warning', (warning) => {
 });
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  const publicDir = join(process.cwd(), 'public');
+  if (existsSync(publicDir)) {
+    app.useStaticAssets(publicDir, { index: false });
+  }
 
   // Allow browser clients (e.g. the Flashmart web UI served on another port)
   // to call the API. CORS_ORIGINS is a comma-separated allow-list; when unset

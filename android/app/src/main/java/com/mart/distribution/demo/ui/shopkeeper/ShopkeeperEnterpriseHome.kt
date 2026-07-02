@@ -62,6 +62,10 @@ import com.mart.distribution.demo.ui.theme.WholesaleBlueDark
 import com.mart.distribution.demo.ui.theme.WholesaleBlueDeep
 import com.mart.distribution.demo.ui.theme.WholesaleBlueTint
 import com.mart.distribution.demo.ui.theme.WholesaleBorder
+import com.mart.distribution.demo.ui.theme.WholesaleBrandGlow
+import com.mart.distribution.demo.ui.theme.WholesaleBrandNavy
+import com.mart.distribution.demo.ui.theme.WholesaleShadow
+import com.mart.distribution.demo.ui.theme.WholesaleShadowSoft
 import com.mart.distribution.demo.ui.theme.WholesaleGreen
 import com.mart.distribution.demo.ui.theme.WholesaleGreenTint
 import com.mart.distribution.demo.ui.theme.WholesaleMuted
@@ -71,6 +75,7 @@ import com.mart.distribution.demo.ui.theme.WholesaleSurface2
 import com.mart.distribution.demo.ui.theme.WholesaleSurface3
 import com.mart.distribution.demo.ui.theme.WholesaleText
 import com.mart.distribution.demo.ui.theme.WholesaleRed
+import com.mart.distribution.demo.ui.util.pressScale
 import com.mart.distribution.demo.ui.wholesale.WholesaleProductCard
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -163,18 +168,26 @@ fun ShopkeeperEnterpriseHome(
 
         // ── 2. Flashmart hero card ─────────────────────────────────────────
         item {
+            val heroShape = RoundedCornerShape(24.dp)
             Box(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 14.dp)
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(22.dp))
-                    .background(Brush.linearGradient(listOf(WholesaleBlue, WholesaleBlueDeep)))
+                    .shadow(18.dp, heroShape, ambientColor = WholesaleBrandGlow, spotColor = WholesaleBrandGlow)
+                    .clip(heroShape)
+                    .background(Brush.linearGradient(listOf(WholesaleBlue, WholesaleBlueDeep, WholesaleBrandNavy)))
+                    .border(1.dp, Color.White.copy(alpha = 0.10f), heroShape)
                     .padding(20.dp),
             ) {
                 Box(
                     modifier = Modifier.align(Alignment.TopEnd)
-                        .size(160.dp).clip(RoundedCornerShape(80.dp))
+                        .size(170.dp).clip(RoundedCornerShape(85.dp))
                         .background(Color.White.copy(alpha = 0.07f)),
+                )
+                Box(
+                    modifier = Modifier.align(Alignment.BottomStart)
+                        .size(120.dp).clip(RoundedCornerShape(60.dp))
+                        .background(Color.White.copy(alpha = 0.05f)),
                 )
                 Column {
                     Text("Ready to restock?", fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
@@ -220,11 +233,11 @@ fun ShopkeeperEnterpriseHome(
                        Triple("🚚", "Track", onOpenOrders)).forEach { (emoji, label, action) ->
                     Column(
                         modifier = Modifier.weight(1f)
-                            .shadow(1.dp, RoundedCornerShape(16.dp))
-                            .clip(RoundedCornerShape(16.dp))
+                            .shadow(8.dp, RoundedCornerShape(18.dp), ambientColor = WholesaleShadowSoft, spotColor = WholesaleShadowSoft)
+                            .clip(RoundedCornerShape(18.dp))
                             .background(Color.White)
-                            .border(1.dp, WholesaleBorder, RoundedCornerShape(16.dp))
-                            .clickable(onClick = action)
+                            .border(1.dp, WholesaleBorder, RoundedCornerShape(18.dp))
+                            .pressScale(onClick = action)
                             .padding(vertical = 14.dp, horizontal = 8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -259,9 +272,9 @@ fun ShopkeeperEnterpriseHome(
             item {
                 Column(
                     modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)
-                        .shadow(2.dp, RoundedCornerShape(16.dp))
-                        .clip(RoundedCornerShape(16.dp)).background(Color.White)
-                        .border(1.dp, WholesaleBorder, RoundedCornerShape(16.dp)),
+                        .shadow(10.dp, RoundedCornerShape(18.dp), ambientColor = WholesaleShadow, spotColor = WholesaleShadow)
+                        .clip(RoundedCornerShape(18.dp)).background(Color.White)
+                        .border(1.dp, WholesaleBorder, RoundedCornerShape(18.dp)),
                 ) {
                     recentOrders.forEachIndexed { i, o ->
                         Row(
@@ -321,10 +334,10 @@ fun ShopkeeperEnterpriseHome(
                         row.forEach { shelfId ->
                             Column(
                                 modifier = Modifier.weight(1f)
-                                    .shadow(1.dp, RoundedCornerShape(14.dp))
-                                    .clip(RoundedCornerShape(14.dp)).background(Color.White)
-                                    .border(1.dp, WholesaleBorder, RoundedCornerShape(14.dp))
-                                    .clickable(onClick = onOpenCatalog)
+                                    .shadow(6.dp, RoundedCornerShape(16.dp), ambientColor = WholesaleShadowSoft, spotColor = WholesaleShadowSoft)
+                                    .clip(RoundedCornerShape(16.dp)).background(Color.White)
+                                    .border(1.dp, WholesaleBorder, RoundedCornerShape(16.dp))
+                                    .pressScale(onClick = onOpenCatalog)
                                     .padding(vertical = 12.dp, horizontal = 4.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
@@ -375,9 +388,9 @@ fun ShopkeeperEnterpriseHome(
             Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                        .shadow(1.dp, RoundedCornerShape(13.dp))
-                        .clip(RoundedCornerShape(13.dp)).background(Color.White)
-                        .border(1.dp, WholesaleBorder, RoundedCornerShape(13.dp))
+                        .shadow(6.dp, RoundedCornerShape(14.dp), ambientColor = WholesaleShadowSoft, spotColor = WholesaleShadowSoft)
+                        .clip(RoundedCornerShape(14.dp)).background(Color.White)
+                        .border(1.dp, WholesaleBorder, RoundedCornerShape(14.dp))
                         .padding(horizontal = 14.dp, vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

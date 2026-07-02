@@ -1,7 +1,14 @@
 package com.mart.distribution.demo.ui.employee
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.outlined.Assignment
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +44,13 @@ import com.mart.distribution.demo.feature.home.MainUiState
 import com.mart.distribution.demo.ui.flashmart.FmAvatar
 import com.mart.distribution.demo.ui.flashmart.FmBadge
 import com.mart.distribution.demo.ui.flashmart.FmCard
+import com.mart.distribution.demo.ui.flashmart.FmIconButton
 import com.mart.distribution.demo.ui.flashmart.FmSectionLabel
+import com.mart.distribution.demo.ui.flashmart.FmSegmentedControl
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import com.mart.distribution.demo.ui.theme.WholesaleBg
 import com.mart.distribution.demo.ui.theme.WholesaleBlue
 import com.mart.distribution.demo.ui.theme.WholesaleBlueTint
@@ -65,6 +78,7 @@ fun EmployeeFlashmartHome(
     val shopCount = mine.count { it.role.equals("SHOPKEEPER", true) }
     val target = 120
     val progress = ((shopCount.toFloat() / target) * 100).toInt().coerceIn(0, 100)
+    val tasks = remember(mine) { employeeTasks(mine) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(WholesaleBg),
@@ -73,14 +87,19 @@ fun EmployeeFlashmartHome(
     ) {
         item {
             Row(
-                modifier = Modifier.fillMaxWidth().background(Color.White).padding(vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column {
-                    Text("Field executive", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = EmpOrange)
-                    Text("${user.name.split(" ").firstOrNull()}'s desk", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = WholesaleText)
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Field executive", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = EmpOrange)
+                    Text("${user.name.split(" ").firstOrNull()}'s desk", fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, color = WholesaleText, letterSpacing = (-0.5).sp)
                 }
+                FmIconButton(
+                    icon = Icons.Outlined.Notifications,
+                    onClick = onOpenNetwork,
+                    badge = tasks.size.takeIf { it > 0 },
+                )
                 FmAvatar(user.name, size = 42.dp, tint = EmpOrange)
             }
         }
@@ -125,6 +144,57 @@ fun EmployeeFlashmartHome(
                         )
                     }
                     Text("$progress% of $target monthly target", fontSize = 11.sp, color = Color.White.copy(0.85f), modifier = Modifier.padding(top = 7.dp))
+                }
+            }
+        }
+
+        if (tasks.isNotEmpty()) {
+            item {
+                FmSectionLabel(
+                    title = "Today's tasks · ${tasks.size}",
+                    action = "All tasks",
+                    onAction = onOpenNetwork,
+                )
+            }
+            item {
+                FmCard(padding = androidx.compose.foundation.layout.PaddingValues(4.dp)) {
+                    tasks.take(4).forEachIndexed { i, task ->
+                        Row(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable(onClick = onOpenNetwork)
+                                    .padding(horizontal = 12.dp, vertical = 13.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .size(40.dp)
+                                        .clip(RoundedCornerShape(11.dp))
+                                        .background(task.tint.copy(0.12f)),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(task.icon, null, tint = task.tint, modifier = Modifier.size(19.dp))
+                            }
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    task.title,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = WholesaleText,
+                                    maxLines = 1,
+                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                                )
+                                Text(task.subtitle, fontSize = 12.sp, color = WholesaleMuted)
+                            }
+                            Text("›", fontSize = 18.sp, color = WholesaleMuted)
+                        }
+                        if (i < tasks.take(4).lastIndex) {
+                            Box(Modifier.fillMaxWidth().height(1.dp).background(WholesaleBorder))
+                        }
+                    }
                 }
             }
         }
@@ -231,11 +301,64 @@ fun EmployeeNetworkTab(
     employeeId: String,
     ui: MainUiState,
 ) {
+    var segment by rememberSaveable { mutableStateOf("Dealers") }
+    var chip by rememberSaveable { mutableStateOf("All areas") }
     val rows = employeeOnboarded(ui, employeeId)
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().background(WholesaleBg).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
+    val filtered =
+        remember(rows, segment, chip) {
+            val roleFiltered =
+                when (segment) {
+                    "Dealers" -> rows.filter { it.role.equals("DEALER", true) }
+                    else -> rows.filter { it.role.equals("SHOPKEEPER", true) }
+                }
+            when (chip) {
+                "Doc pending" ->
+                    roleFiltered.filter {
+                        it.documentStatus.contains("PENDING", true) ||
+                            it.documentStatus.contains("NOT_UPLOADED", true)
+                    }
+                "Follow-up due" -> roleFiltered.filter { it.lastFollowUpAt.isNullOrBlank() }
+                else -> roleFiltered
+            }
+        }
+    val chips = listOf("All areas", "Doc pending", "Active", "Follow-up due")
+
+    Column(modifier = Modifier.fillMaxSize().background(WholesaleBg)) {
+        FmSegmentedControl(
+            options = listOf("Dealers", "Shopkeepers"),
+            selected = segment,
+            onSelect = { segment = it },
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            chips.forEach { label ->
+                val selected = chip == label
+                Text(
+                    label,
+                    fontSize = 12.sp,
+                    fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
+                    color = if (selected) WholesaleText else WholesaleMuted,
+                    modifier =
+                        Modifier
+                            .clip(RoundedCornerShape(99.dp))
+                            .background(if (selected) WholesaleGreenTint else Color.White)
+                            .clickable { chip = label }
+                            .padding(horizontal = 14.dp, vertical = 8.dp),
+                )
+            }
+        }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 24.dp),
+        ) {
         item {
             Text(
                 "${rows.count { it.role.equals("DEALER", true) }} dealers · ${rows.count { it.role.equals("SHOPKEEPER", true) }} shopkeepers",
@@ -244,26 +367,81 @@ fun EmployeeNetworkTab(
                 modifier = Modifier.padding(bottom = 8.dp),
             )
         }
-        if (rows.isEmpty()) {
+        if (filtered.isEmpty()) {
             item {
-                Text("You have not onboarded any partners yet.", color = WholesaleMuted, fontSize = 14.sp)
+                Text("No partners match this filter.", color = WholesaleMuted, fontSize = 14.sp)
             }
         } else {
-            items(rows, key = { it.id }) { row ->
+            items(filtered, key = { it.id }) { row ->
                 FmCard {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        FmAvatar(row.name, size = 40.dp, tint = EmpOrange)
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(row.name, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = WholesaleText)
-                            Text(row.email, fontSize = 12.sp, color = WholesaleMuted)
-                            Text(row.role.replace('_', ' '), fontSize = 11.sp, color = WholesaleBlue, fontWeight = FontWeight.SemiBold)
+                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            FmAvatar(row.name, size = 40.dp, tint = EmpOrange)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(row.name, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = WholesaleText)
+                                Text(row.phone ?: row.email, fontSize = 12.sp, color = WholesaleMuted)
+                                Text(row.area?.name ?: "—", fontSize = 11.sp, color = WholesaleBlue)
+                            }
+                            FmBadge(row.documentStatus.replace('_', ' '))
                         }
-                        FmBadge(row.status.ifBlank { "ACTIVE" })
+                        Text(
+                            "Employee: ${row.onboardedBy?.name ?: "—"} · Orders: ${row.totalOrders} · Registered: ${row.createdAt?.take(10) ?: "—"}",
+                            fontSize = 11.sp,
+                            color = WholesaleMuted,
+                        )
+                        Text(
+                            "Last follow-up: ${row.lastFollowUpAt?.take(10) ?: "Not recorded"}",
+                            fontSize = 11.sp,
+                            color = WholesaleMuted,
+                        )
                     }
                 }
             }
         }
+        }
     }
+}
+
+private data class EmployeeTask(
+    val title: String,
+    val subtitle: String,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val tint: Color,
+)
+
+private fun employeeTasks(mine: List<UserRowDto>): List<EmployeeTask> {
+    val docPending =
+        mine.filter {
+            it.documentStatus.contains("PENDING", true) ||
+                it.documentStatus.contains("NOT_UPLOADED", true) ||
+                !it.documentUploaded
+        }.map { row ->
+            EmployeeTask(
+                title = "Verify docs · ${row.name}",
+                subtitle = "Document ${row.documentStatus.replace('_', ' ').lowercase()}",
+                icon = Icons.Outlined.Description,
+                tint = WholesaleRed,
+            )
+        }
+    val followUp =
+        mine.filter { it.lastFollowUpAt.isNullOrBlank() }.map { row ->
+            EmployeeTask(
+                title = "Follow-up · ${row.name}",
+                subtitle = "No follow-up recorded yet",
+                icon = Icons.Outlined.Phone,
+                tint = EmpOrange,
+            )
+        }
+    val recent =
+        mine.take(2).map { row ->
+            EmployeeTask(
+                title = "Onboard · ${row.name}",
+                subtitle = "${row.role.lowercase().replaceFirstChar { it.uppercase() }} · ${row.area?.name ?: "Area TBD"}",
+                icon = Icons.Outlined.Assignment,
+                tint = WholesaleBlue,
+            )
+        }
+    return (docPending + followUp + recent).distinctBy { it.title }.take(6)
 }
 
 @Composable
@@ -271,6 +449,7 @@ fun EmployeeProfileTab(
     user: SessionUser,
     ui: MainUiState,
     onLogout: () -> Unit,
+    onOpenPrivacyPolicy: () -> Unit = {},
 ) {
     val mine = employeeOnboarded(ui, user.id)
     LazyColumn(
@@ -307,6 +486,9 @@ fun EmployeeProfileTab(
             FmCard(onClick = onLogout) {
                 Text("Sign out", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = WholesaleRed)
             }
+        }
+        item {
+            com.mart.distribution.demo.ui.components.MartAppFooter(onPrivacyPolicy = onOpenPrivacyPolicy)
         }
     }
 }

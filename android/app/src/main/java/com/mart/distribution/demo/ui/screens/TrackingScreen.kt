@@ -1,7 +1,6 @@
 package com.mart.distribution.demo.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,17 +12,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,7 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,15 +39,27 @@ import androidx.navigation.NavHostController
 import com.mart.distribution.demo.AppContainer
 import com.mart.distribution.demo.BuildConfig
 import com.mart.distribution.demo.data.api.dto.OrderDto
-import com.mart.distribution.demo.ui.components.GradientGoldButton
+import com.mart.distribution.demo.ui.flashmart.FmAppHeader
+import com.mart.distribution.demo.ui.flashmart.FmButton
+import com.mart.distribution.demo.ui.flashmart.FmButtonVariant
+import com.mart.distribution.demo.ui.flashmart.FmCard
+import com.mart.distribution.demo.ui.flashmart.FmErrorBanner
+import com.mart.distribution.demo.ui.flashmart.FmLoadingState
+import com.mart.distribution.demo.ui.flashmart.FmSectionLabel
+import com.mart.distribution.demo.ui.navigation.NavBackHandler
+import com.mart.distribution.demo.ui.navigation.safePopBack
+import com.mart.distribution.demo.ui.theme.FmSpacing
 import com.mart.distribution.demo.ui.theme.WholesaleBg
+import com.mart.distribution.demo.ui.flashmart.FmAvatar
 import com.mart.distribution.demo.ui.theme.WholesaleBlue
-import com.mart.distribution.demo.ui.theme.WholesaleBlueTint
-import com.mart.distribution.demo.ui.theme.WholesaleBorder
+import com.mart.distribution.demo.ui.theme.WholesaleBlueDeep
+import com.mart.distribution.demo.ui.theme.WholesaleBrandNavy
+import com.mart.distribution.demo.ui.theme.WholesaleDealerBlue
 import com.mart.distribution.demo.ui.theme.WholesaleGreen
 import com.mart.distribution.demo.ui.theme.WholesaleGreenTint
 import com.mart.distribution.demo.ui.theme.WholesaleMuted
 import com.mart.distribution.demo.ui.theme.WholesaleText
+import com.mart.distribution.demo.util.ApiErrorMessages
 
 private data class TrackStep(
     val title: String,
@@ -61,20 +69,23 @@ private data class TrackStep(
     val simulated: Boolean = false,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackingScreen(
     orderId: String,
     navController: NavHostController,
     container: AppContainer,
 ) {
+    val goBack = { navController.safePopBack() }
+    NavBackHandler(goBack)
     var order by remember { mutableStateOf<OrderDto?>(null) }
     var loadErr by remember { mutableStateOf<String?>(null) }
+    var loading by remember { mutableStateOf(true) }
     val mockPaid by container.demoFlowRepository.mockPaidOrderIds.collectAsStateWithLifecycle()
     val demoDelivered by container.demoFlowRepository.demoDeliveredOrderIds.collectAsStateWithLifecycle()
 
     LaunchedEffect(orderId, mockPaid) {
         loadErr = null
+        loading = true
         try {
             order =
                 if (container.sessionRepository.isLocalDemoMode()) {
@@ -84,140 +95,249 @@ fun TrackingScreen(
                 }
             if (order == null) loadErr = "Order not found"
         } catch (e: Exception) {
-            loadErr = e.message ?: "Failed to load"
+            loadErr =
+                ApiErrorMessages.fromThrowable(
+                    e,
+                    fallback = "Could not load tracking",
+                    notFoundFallback = "Order not found.",
+                )
+        } finally {
+            loading = false
         }
     }
 
-    val steps = remember(order, mockPaid, demoDelivered) {
-        val o = order ?: return@remember emptyList()
-        val paid = mockPaid.contains(orderId) || o.paymentStatus.equals("PAID", true)
-        val accepted = o.status.equals("ACCEPTED", true) || o.status.equals("DELIVERED", true) || o.status.equals("DEALER_CONFIRMED", true)
-        val deliveredApi = o.status.equals("DELIVERED", true)
-        val deliveredDemo = demoDelivered.contains(orderId)
-        val outForDelivery = o.status.equals("OUT_FOR_DELIVERY", true)
-        listOf(
-            TrackStep("Order placed", "Created on the server", done = true),
-            TrackStep("Payment", if (paid) "Card payment successful" else "Pending payment",
-                done = paid, active = !paid),
-            TrackStep("Dealer confirmed", "Stock reserved · invoice generated",
-                done = accepted, active = !accepted && paid),
-            TrackStep("Out for delivery", "On the way to your store",
-                done = outForDelivery || deliveredApi || deliveredDemo,
-                active = accepted && !outForDelivery && !deliveredApi),
-            TrackStep("Delivered", when {
-                deliveredApi -> "Received at store"
-                BuildConfig.DEMO_MODE -> "Tap below to simulate"
-                else -> "Pending"
-            }, done = deliveredApi || deliveredDemo,
-                active = outForDelivery && !deliveredApi && !deliveredDemo,
-                simulated = BuildConfig.DEMO_MODE && !deliveredApi && deliveredDemo),
-        )
-    }
-
-    Scaffold(
-        containerColor = WholesaleBg,
-        topBar = {
-            TopAppBar(
-                title = { Text("Track order", fontWeight = FontWeight.Bold, color = WholesaleText) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Back", tint = WholesaleMuted)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
+    val steps =
+        remember(order, mockPaid, demoDelivered, orderId) {
+            val o = order ?: return@remember emptyList()
+            val status = o.status.orEmpty()
+            val paymentStatus = o.paymentStatus.orEmpty()
+            val paid = mockPaid.contains(orderId) || paymentStatus.equals("PAID", true)
+            val accepted =
+                status.equals("ACCEPTED", true) ||
+                    status.equals("DELIVERED", true) ||
+                    status.equals("DEALER_CONFIRMED", true)
+            val deliveredApi = status.equals("DELIVERED", true)
+            val deliveredDemo = demoDelivered.contains(orderId)
+            val outForDelivery = status.equals("OUT_FOR_DELIVERY", true)
+            listOf(
+                TrackStep("Order placed", "Created on the server", done = true),
+                TrackStep(
+                    "Payment",
+                    if (paid) "Payment successful" else "Pending payment",
+                    done = paid,
+                    active = !paid,
+                ),
+                TrackStep(
+                    "Dealer confirmed",
+                    "Stock reserved · invoice generated",
+                    done = accepted,
+                    active = !accepted && paid,
+                ),
+                TrackStep(
+                    "Out for delivery",
+                    "On the way to your store",
+                    done = outForDelivery || deliveredApi || deliveredDemo,
+                    active = accepted && !outForDelivery && !deliveredApi,
+                ),
+                TrackStep(
+                    "Delivered",
+                    when {
+                        deliveredApi -> "Received at store"
+                        BuildConfig.DEMO_MODE -> "Tap below to simulate"
+                        else -> "Pending"
+                    },
+                    done = deliveredApi || deliveredDemo,
+                    active = outForDelivery && !deliveredApi && !deliveredDemo,
+                    simulated = BuildConfig.DEMO_MODE && !deliveredApi && deliveredDemo,
+                ),
             )
-        },
-    ) { padding ->
+        }
+
+    Scaffold(containerColor = WholesaleBg, topBar = {}) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxSize().padding(padding),
         ) {
-            // Status hero card
-            order?.let { o ->
-                val delivered = o.status.equals("DELIVERED", true) || demoDelivered.contains(orderId)
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(if (delivered) WholesaleGreenTint else WholesaleBlueTint)
-                        .padding(18.dp),
-                ) {
-                    Column {
-                        Text(if (delivered) "Completed" else "Estimated delivery",
-                            fontSize = 12.sp, fontWeight = FontWeight.SemiBold,
-                            color = if (delivered) WholesaleGreen else WholesaleBlue)
-                        Text(if (delivered) "Order delivered ✓" else "Today, by 6:00 PM",
-                            fontSize = 20.sp, fontWeight = FontWeight.Bold,
-                            color = if (delivered) WholesaleGreen else WholesaleBlue,
-                            modifier = Modifier.padding(top = 4.dp))
-                        Text("Order ${o.id.takeLast(8)}", fontSize = 12.sp,
-                            color = if (delivered) WholesaleGreen.copy(0.8f) else WholesaleBlue.copy(0.8f),
-                            modifier = Modifier.padding(top = 2.dp))
+            FmAppHeader(
+                title = "Track order",
+                subtitle = "Order #${orderId.takeLast(8).uppercase()}",
+                onBack = goBack,
+            )
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = FmSpacing.listH)
+                        .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(FmSpacing.itemGap),
+            ) {
+                when {
+                    loading -> FmLoadingState(message = "Loading tracking…")
+                    loadErr != null -> FmErrorBanner(message = loadErr!!)
+                    else -> {
+                        order?.let { o ->
+                            val status = o.status.orEmpty()
+                            val delivered = status.equals("DELIVERED", true) || demoDelivered.contains(orderId)
+                            val outForDelivery = status.equals("OUT_FOR_DELIVERY", true)
+                            val etaTitle = when {
+                                delivered -> "Delivered"
+                                outForDelivery -> "Today, by 6:00 PM"
+                                else -> "Tomorrow, by 6:00 PM"
+                            }
+                            val etaSub = when {
+                                delivered -> "Received at your store"
+                                outForDelivery -> "Out for delivery"
+                                else -> "Estimated delivery"
+                            }
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(24.dp))
+                                        .background(
+                                            Brush.linearGradient(
+                                                listOf(WholesaleGreen, WholesaleBlueDeep, WholesaleBrandNavy),
+                                            ),
+                                        )
+                                        .padding(20.dp),
+                            ) {
+                                Column {
+                                    Text(etaSub, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold, color = Color.White.copy(0.85f))
+                                    Text(etaTitle, fontSize = 23.sp, fontWeight = FontWeight.ExtraBold, color = Color.White, modifier = Modifier.padding(top = 4.dp))
+                                    Text(
+                                        "Order ${o.id.takeLast(8).uppercase()}",
+                                        fontSize = 13.sp,
+                                        color = Color.White.copy(0.9f),
+                                        modifier = Modifier.padding(top = 8.dp),
+                                    )
+                                }
+                            }
+
+                            o.dealer?.name?.let { dealerName ->
+                                FmCard(padding = androidx.compose.foundation.layout.PaddingValues(14.dp)) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(13.dp),
+                                    ) {
+                                        FmAvatar(dealerName, size = 42.dp, tint = WholesaleDealerBlue)
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(dealerName, fontSize = 14.5.sp, fontWeight = FontWeight.Bold, color = WholesaleText)
+                                            Text("Your dealer", fontSize = 12.5.sp, color = WholesaleMuted)
+                                        }
+                                        Box(
+                                            modifier =
+                                                Modifier
+                                                    .size(42.dp)
+                                                    .clip(RoundedCornerShape(12.dp))
+                                                    .background(WholesaleGreen.copy(0.12f)),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            androidx.compose.material3.Icon(
+                                                Icons.Outlined.Phone,
+                                                contentDescription = "Call dealer",
+                                                tint = WholesaleGreen,
+                                                modifier = Modifier.size(20.dp),
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        FmCard(modifier = Modifier.fillMaxWidth()) {
+                            FmSectionLabel(title = "Order journey")
+                            steps.forEachIndexed { i, step ->
+                                TrackTimelineRow(step = step, isLast = i == steps.lastIndex)
+                            }
+                        }
+
+                        val ord = order
+                        val ordStatus = ord?.status.orEmpty()
+                        val canSimulate =
+                            ord != null &&
+                                (
+                                    ordStatus.equals("DEALER_CONFIRMED", true) ||
+                                        ordStatus.equals("OUT_FOR_DELIVERY", true) ||
+                                        ordStatus.equals("ACCEPTED", true)
+                                    ) &&
+                                !ordStatus.equals("DELIVERED", true) &&
+                                !demoDelivered.contains(orderId)
+                        if (canSimulate && BuildConfig.DEMO_MODE) {
+                            FmButton(
+                                text = "Simulate delivery complete",
+                                onClick = { container.demoFlowRepository.markDemoDelivered(orderId) },
+                                variant = FmButtonVariant.Outline,
+                            )
+                        }
                     }
                 }
-            }
-
-            loadErr?.let { Text(it, color = WholesaleText.copy(alpha = 0.7f)) }
-
-            // Timeline card
-            val shape = RoundedCornerShape(16.dp)
-            Column(
-                modifier = Modifier.fillMaxWidth().shadow(2.dp, shape).clip(shape)
-                    .background(Color.White).border(1.dp, WholesaleBorder, shape).padding(18.dp),
-            ) {
-                Text("Order journey", fontSize = 14.sp, fontWeight = FontWeight.Bold,
-                    color = WholesaleText, modifier = Modifier.padding(bottom = 14.dp))
-                steps.forEachIndexed { i, step ->
-                    TrackTimelineRow(step = step, isLast = i == steps.lastIndex)
-                }
-            }
-
-            val ord = order
-            val canSimulate =
-                ord != null &&
-                    (
-                        ord.status.equals("DEALER_CONFIRMED", true) ||
-                            ord.status.equals("OUT_FOR_DELIVERY", true) ||
-                            ord.status.equals("ACCEPTED", true)
-                        ) &&
-                    !ord.status.equals("DELIVERED", true) &&
-                    !demoDelivered.contains(orderId)
-            if (canSimulate && BuildConfig.DEMO_MODE) {
-                GradientGoldButton("Simulate delivery complete",
-                    onClick = { container.demoFlowRepository.markDemoDelivered(orderId) })
+                Spacer(Modifier.height(24.dp))
             }
         }
     }
 }
 
 @Composable
-private fun TrackTimelineRow(step: TrackStep, isLast: Boolean) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+private fun TrackTimelineRow(
+    step: TrackStep,
+    isLast: Boolean,
+) {
+    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(
-                modifier = Modifier.size(28.dp).clip(CircleShape)
-                    .background(when { step.done -> WholesaleGreen; step.active -> WholesaleBlue; else -> Color(0xFFE4E7EC) }),
+                modifier =
+                    Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(
+                            when {
+                                step.done -> WholesaleGreen
+                                step.active -> WholesaleBlue
+                                else -> Color(0xFFE4E7EC)
+                            },
+                        ),
                 contentAlignment = Alignment.Center,
             ) {
-                if (step.done) Text("✓", fontSize = 13.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                else if (step.active) Box(Modifier.size(8.dp).clip(CircleShape).background(Color.White))
-                else Box(Modifier.size(8.dp).clip(CircleShape).background(WholesaleMuted.copy(0.4f)))
+                when {
+                    step.done ->
+                        Text("✓", fontSize = 13.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                    step.active ->
+                        Box(Modifier.size(8.dp).clip(CircleShape).background(Color.White))
+                    else ->
+                        Box(Modifier.size(8.dp).clip(CircleShape).background(WholesaleMuted.copy(0.4f)))
+                }
             }
             if (!isLast) {
-                Box(Modifier.width(2.dp).height(36.dp)
-                    .background(if (step.done) WholesaleGreen.copy(0.35f) else Color(0xFFE4E7EC)))
+                Box(
+                    Modifier
+                        .width(2.dp)
+                        .height(36.dp)
+                        .background(if (step.done) WholesaleGreen.copy(0.35f) else Color(0xFFE4E7EC)),
+                )
             }
         }
         Spacer(Modifier.width(14.dp))
         Column(modifier = Modifier.weight(1f).padding(bottom = if (isLast) 0.dp else 8.dp, top = 3.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(step.title, fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
-                    color = if (step.done || step.active) WholesaleText else WholesaleMuted)
-                if (step.simulated) Text("Simulated", fontSize = 10.sp, color = WholesaleBlue,
-                    fontWeight = FontWeight.SemiBold)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text(
+                    step.title,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (step.done || step.active) WholesaleText else WholesaleMuted,
+                )
+                if (step.simulated) {
+                    Text("Simulated", fontSize = 10.sp, color = WholesaleBlue, fontWeight = FontWeight.SemiBold)
+                }
             }
-            Text(step.subtitle, fontSize = 12.sp,
-                color = if (step.active) WholesaleBlue else WholesaleMuted, lineHeight = 16.sp,
-                modifier = Modifier.padding(top = 2.dp))
+            Text(
+                step.subtitle,
+                fontSize = 12.sp,
+                color = if (step.active) WholesaleBlue else WholesaleMuted,
+                lineHeight = 16.sp,
+                modifier = Modifier.padding(top = 2.dp),
+            )
         }
     }
 }

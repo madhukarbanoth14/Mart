@@ -1,0 +1,128 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Dealer/DealerViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Open profile",
+        "location": {
+          "startingColumn": 45,
+          "startingLine": 45
+        }
+      },
+      {
+        "comment": "",
+        "key": "Manage SKUs",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 58
+        }
+      },
+      {
+        "comment": "",
+        "key": "Products, pricing & discounts",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 60
+        }
+      },
+      {
+        "comment": "",
+        "key": "Today's revenue",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 147
+        }
+      },
+      {
+        "comment": "",
+        "key": "Paid orders · Central Zone",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 153
+        }
+      },
+      {
+        "comment": "",
+        "key": "No stock yet",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 255
+        }
+      },
+      {
+        "comment": "",
+        "key": "Browse products and place a restock order. Stock appears here after admin confirms delivery.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 257
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 299
+        }
+      },
+      {
+        "comment": "",
+        "key": "Low stock",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 295
+        }
+      },
+      {
+        "comment": "",
+        "key": "In stock",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 295
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit stock",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 326
+        }
+      },
+      {
+        "comment": "",
+        "key": "Update quantity",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 315
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 330
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · Dealer",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 353
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld× %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 460
+        }
+      }
+    ]
+  },
+  "version": 1
+}

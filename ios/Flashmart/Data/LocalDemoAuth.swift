@@ -12,12 +12,14 @@ enum LocalDemoAuth {
         ("Shopkeeper", "shop2@martdemo.com", "9000000005"),
     ]
 
+    private static let demoDealer = UserBrief(id: "demo-user-dealer", name: "City Dealer", email: "dealer@martdemo.com")
+
     private static let usersByEmail: [String: SessionUser] = [
         "admin@martdemo.com": SessionUser(id: "demo-user-admin", name: "Super Admin", email: "admin@martdemo.com", role: "ADMIN"),
         "employee@martdemo.com": SessionUser(id: "demo-user-employee", name: "Field Employee", email: "employee@martdemo.com", role: "EMPLOYEE"),
-        "dealer@martdemo.com": SessionUser(id: "demo-user-dealer", name: "City Dealer", email: "dealer@martdemo.com", role: "DEALER"),
-        "shop1@martdemo.com": SessionUser(id: "demo-user-shop1", name: "Shopkeeper One", email: "shop1@martdemo.com", role: "SHOPKEEPER"),
-        "shop2@martdemo.com": SessionUser(id: "demo-user-shop2", name: "Shopkeeper Two", email: "shop2@martdemo.com", role: "SHOPKEEPER"),
+        "dealer@martdemo.com": SessionUser(id: "demo-user-dealer", name: "City Dealer", email: "dealer@martdemo.com", role: "DEALER", areaName: "Central Zone"),
+        "shop1@martdemo.com": SessionUser(id: "demo-user-shop1", name: "Shopkeeper One", email: "shop1@martdemo.com", role: "SHOPKEEPER", areaName: "Central Zone", assignedDealer: demoDealer),
+        "shop2@martdemo.com": SessionUser(id: "demo-user-shop2", name: "Shopkeeper Two", email: "shop2@martdemo.com", role: "SHOPKEEPER", areaName: "North Zone", assignedDealer: demoDealer),
     ]
 
     private static let usersByPhone: [String: SessionUser] = [

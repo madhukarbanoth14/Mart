@@ -1,12 +1,23 @@
 import SwiftUI
 
+/// Flashmart design tokens — aligned with Mart/Flashmart 2/app/theme.css
 enum FMTheme {
-    // Brand
-    static let brand = Color(hex: 0x2F48D4)
-    static let brand600 = Color(hex: 0x2839B8)
-    static let brand700 = Color(hex: 0x1F2C93)
-    static let brandTint = Color(hex: 0xEEF0FD)
-    static let brandInk = Color(hex: 0x1A2470)
+    // Brand (FlashMart emerald green)
+    static let brand = Color(hex: 0x15924B)
+    static let brand600 = Color(hex: 0x0F7D3F)
+    static let brand700 = Color(hex: 0x0B6332)
+    static let brandTint = Color(hex: 0xE6F4EC)
+    static let brandInk = Color(hex: 0x0A4F29)
+
+    // Gold accent
+    static let gold = Color(hex: 0xE3A008)
+    static let gold600 = Color(hex: 0xC6890A)
+    static let goldTint = Color(hex: 0xFBF0D6)
+    static let goldInk = Color(hex: 0x7A5400)
+
+    // Dealer / info blue
+    static let dealerBlue = Color(hex: 0x2746C9)
+    static let dealerBlueTint = Color(hex: 0xE8ECFB)
 
     // Surfaces
     static let bg = Color(hex: 0xEEF0F4)
@@ -23,15 +34,15 @@ enum FMTheme {
     static let line2 = Color(hex: 0xD4D8E0)
 
     // Semantic
-    static let pos = Color(hex: 0x0E9E6E)
-    static let posTint = Color(hex: 0xE4F6EF)
+    static let pos = Color(hex: 0x15924B)
+    static let posTint = Color(hex: 0xE6F4EC)
     static let warn = Color(hex: 0xC97A16)
     static let warnTint = Color(hex: 0xFBF0DF)
     static let neg = Color(hex: 0xD6453F)
     static let negTint = Color(hex: 0xFBE9E8)
 
-    static let inkSurface = Color(hex: 0x11152A)
-    static let inkSurface2 = Color(hex: 0x1B2140)
+    static let inkSurface = Color(hex: 0x0C1F17)
+    static let inkSurface2 = Color(hex: 0x123A26)
 
     static let heroGradient = LinearGradient(
         colors: [brand, brand700],
@@ -40,7 +51,7 @@ enum FMTheme {
     )
 
     static let dealerHeroGradient = LinearGradient(
-        colors: [pos, Color(hex: 0x086B4B)],
+        colors: [dealerBlue, dealerBlueTint.opacity(0.9)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
@@ -52,7 +63,7 @@ enum FMTheme {
     )
 
     static let splashGradient = LinearGradient(
-        colors: [brand, brand700, Color(hex: 0x141A4D)],
+        colors: [brand, brand700, Color(hex: 0x084A27)],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )

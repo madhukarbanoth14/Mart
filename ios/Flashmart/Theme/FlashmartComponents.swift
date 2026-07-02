@@ -113,6 +113,8 @@ struct FMBadge: View {
         case "OUT_FOR_DELIVERY", "OUT": FMTheme.warnTint
         case "DELIVERED", "PAID", "ACTIVE": FMTheme.posTint
         case "UNPAID", "REJECTED", "DEACTIVATED", "CANCELLED": FMTheme.negTint
+        case "RETURN_REQUESTED": FMTheme.warnTint
+        case "RETURNED", "REFUNDED": FMTheme.brandTint
         default: FMTheme.surface3
         }
     }
@@ -123,6 +125,8 @@ struct FMBadge: View {
         case "DEALER_CONFIRMED", "ACCEPTED": FMTheme.brandInk
         case "DELIVERED", "PAID", "ACTIVE": FMTheme.pos
         case "UNPAID", "REJECTED", "DEACTIVATED", "CANCELLED": FMTheme.neg
+        case "RETURN_REQUESTED": FMTheme.warn
+        case "RETURNED", "REFUNDED": FMTheme.brandInk
         default: FMTheme.ink2
         }
     }
@@ -138,6 +142,9 @@ struct FMBadge: View {
         case "UNPAID": "Unpaid"
         case "ACTIVE": "Active"
         case "CANCELLED": "Cancelled"
+        case "RETURN_REQUESTED": "Return requested"
+        case "RETURNED": "Returned"
+        case "REFUNDED": "Refunded"
         default: status.replacingOccurrences(of: "_", with: " ").capitalized
         }
     }
@@ -288,6 +295,174 @@ struct FMStepper: View {
                 .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
         }
         .disabled(!enabled)
+    }
+}
+
+// MARK: - Quantity selector (bulk orders)
+
+enum FMQuantityDefaults {
+    static let minQuantity = 1
+    static let maxQuantity = 10000
+    static let quickChips = [10, 25, 50, 100, 250, 500, 1000]
+}
+
+func fmCoerceWholeQuantity(_ raw: String, min minQty: Int = FMQuantityDefaults.minQuantity, max maxQty: Int = FMQuantityDefaults.maxQuantity) -> Int? {
+    let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    if trimmed.isEmpty { return nil }
+    if trimmed.contains(".") || trimmed.contains(",") { return nil }
+    guard let value = Int(trimmed), value >= minQty else { return nil }
+    return Swift.min(value, maxQty)
+}
+
+struct FMQuantityInput: View {
+    let value: Int
+    let onChange: (Int) -> Void
+    var min: Int = FMQuantityDefaults.minQuantity
+    var max: Int = FMQuantityDefaults.maxQuantity
+    var compact: Bool = false
+
+    @State private var text: String = ""
+    @State private var error: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 8) {
+                qtyButton("minus", enabled: value > min) { onChange(Swift.max(min, value - 1)) }
+                TextField("", text: $text)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.center)
+                    .font(.system(size: compact ? 14 : 16, weight: .bold, design: .monospaced))
+                    .frame(minWidth: compact ? 44 : 56, maxWidth: 72)
+                    .padding(.vertical, 8)
+                    .background(FMTheme.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(FMTheme.line))
+                    .onChange(of: text) { _, newValue in
+                        let filtered = newValue.filter(\.isNumber)
+                        if filtered != newValue { text = filtered }
+                        error = nil
+                    }
+                    .onSubmit { commit() }
+                qtyButton("plus", enabled: value < max) { onChange(Swift.min(max, value + 1)) }
+            }
+            if let error {
+                Text(error).font(.system(size: 11)).foregroundStyle(FMTheme.neg)
+            }
+        }
+        .onAppear { text = "\(value)" }
+        .onChange(of: value) { _, newValue in
+            if text != "\(newValue)" { text = "\(newValue)" }
+        }
+    }
+
+    private func commit() {
+        guard let parsed = fmCoerceWholeQuantity(text, min: min, max: max) else {
+            error = "Enter a whole number between \(min) and \(max)"
+            text = "\(value)"
+            return
+        }
+        error = nil
+        text = "\(parsed)"
+        if parsed != value { onChange(parsed) }
+    }
+
+    private func qtyButton(_ icon: String, enabled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(enabled ? FMTheme.ink : FMTheme.ink4)
+                .frame(width: 32, height: 32)
+                .background(enabled ? FMTheme.surface2 : FMTheme.surface3)
+                .clipShape(RoundedRectangle(cornerRadius: 9))
+        }
+        .disabled(!enabled)
+    }
+}
+
+struct FMQuantityPickerSheet: View {
+    let productName: String
+    var initialQuantity: Int = 1
+    var min: Int = FMQuantityDefaults.minQuantity
+    var max: Int = FMQuantityDefaults.maxQuantity
+    var quickChips: [Int] = FMQuantityDefaults.quickChips
+    let onConfirm: (Int) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var quantityText = "1"
+    @State private var error: String?
+
+    private var maxQuantity: Int { max }
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(productName)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(FMTheme.ink2)
+                    .lineLimit(2)
+
+                TextField("Quantity", text: $quantityText)
+                    .keyboardType(.numberPad)
+                    .font(.system(size: 22, weight: .bold, design: .monospaced))
+                    .padding(14)
+                    .background(FMTheme.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(FMTheme.line))
+                    .onChange(of: quantityText) { _, newValue in
+                        quantityText = newValue.filter(\.isNumber)
+                        error = nil
+                    }
+
+                Text("Quick select")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(FMTheme.ink4)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: 8)], spacing: 8) {
+                    ForEach(quickChips, id: \.self) { chip in
+                        let selected = quantityText == "\(chip)"
+                        Button {
+                            quantityText = "\(Swift.min(chip, maxQuantity))"
+                            error = nil
+                        } label: {
+                            Text("\(chip)")
+                                .font(.system(size: 14, weight: .semibold))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(selected ? FMTheme.brand : FMTheme.surface3)
+                                .foregroundStyle(selected ? .white : FMTheme.ink2)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                if let error {
+                    Text(error).font(.system(size: 12)).foregroundStyle(FMTheme.neg)
+                }
+
+                Spacer()
+            }
+            .padding(20)
+            .navigationTitle("Enter quantity")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add to cart") {
+                        guard let qty = fmCoerceWholeQuantity(quantityText, min: min, max: maxQuantity) else {
+                            error = "Enter a whole number between \(min) and \(maxQuantity)"
+                            return
+                        }
+                        onConfirm(qty)
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
+                }
+            }
+        }
+        .onAppear { quantityText = "\(Swift.min(Swift.max(initialQuantity, min), maxQuantity))" }
     }
 }
 
@@ -462,38 +637,60 @@ struct FMBottomNav: View {
     @Binding var selection: String
 
     var body: some View {
-        HStack {
-            ForEach(items) { item in
-                Button {
-                    selection = item.id
-                } label: {
-                    VStack(spacing: 4) {
-                        ZStack(alignment: .topTrailing) {
-                            Image(systemName: item.icon)
-                                .font(.system(size: 22, weight: selection == item.id ? .semibold : .regular))
-                            if let badge = item.badge, badge > 0 {
-                                Circle()
-                                    .fill(FMTheme.neg)
-                                    .frame(width: 8, height: 8)
-                                    .offset(x: 4, y: -2)
+        VStack(spacing: 0) {
+            LinearGradient(
+                colors: [FMTheme.bg.opacity(0), FMTheme.surface.opacity(0.72), FMTheme.surface],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 12)
+
+            HStack(spacing: 0) {
+                ForEach(items) { item in
+                    let selected = selection == item.id
+                    Button {
+                        selection = item.id
+                    } label: {
+                        VStack(spacing: 3) {
+                            ZStack(alignment: .topTrailing) {
+                                Image(systemName: item.icon)
+                                    .font(.system(size: 23, weight: selected ? .semibold : .regular))
+                                if let badge = item.badge, badge > 0 {
+                                    Text("\(badge)")
+                                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 4)
+                                        .frame(minWidth: 16, minHeight: 16)
+                                        .background(FMTheme.neg)
+                                        .clipShape(Capsule())
+                                        .overlay(Capsule().stroke(FMTheme.surface, lineWidth: 2))
+                                        .offset(x: 8, y: -6)
+                                }
                             }
+                            Text(item.label)
+                                .font(.system(size: 11, weight: selected ? .bold : .semibold))
+                                .tracking(-0.1)
                         }
-                        Text(item.label)
-                            .font(.system(size: 10.5, weight: .medium))
+                        .foregroundStyle(selected ? FMTheme.brand : FMTheme.ink4)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
                     }
-                    .foregroundStyle(selection == item.id ? FMTheme.brand : FMTheme.ink4)
-                    .frame(maxWidth: .infinity)
+                    .buttonStyle(.plain)
                 }
             }
+            .padding(.horizontal, 6)
+            .frame(height: 62)
+            .background(FMTheme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(FMTheme.line, lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.10), radius: 16, y: 8)
+            .padding(.horizontal, 14)
+            .padding(.bottom, 26)
         }
-        .padding(.top, 10)
-        .padding(.bottom, 28)
-        .background(
-            FMTheme.surface
-                .shadow(color: .black.opacity(0.06), radius: 12, y: -4)
-                .ignoresSafeArea(edges: .bottom)
-        )
-        .overlay(alignment: .top) { Divider() }
+        .background(Color.clear)
     }
 }
 
@@ -534,6 +731,27 @@ struct FMStatTile: View {
     }
 }
 
+// MARK: - Mini bar chart
+
+struct FMMiniBarChart: View {
+    let data: [CGFloat]
+    var barColor: Color = FMTheme.brand
+    var height: CGFloat = 52
+
+    var body: some View {
+        let maxVal = max(data.max() ?? 1, 1)
+        HStack(alignment: .bottom, spacing: 4) {
+            ForEach(Array(data.enumerated()), id: \.offset) { index, value in
+                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    .fill(index == data.count - 1 ? barColor : barColor.opacity(0.35))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: max(height * (value / maxVal), height * 0.08))
+            }
+        }
+        .frame(height: height)
+    }
+}
+
 // MARK: - Text field
 
 struct FMTextField: View {
@@ -556,18 +774,27 @@ struct FMTextField: View {
                     .font(.system(size: 16))
                     .foregroundStyle(FMTheme.ink4)
                 if secure {
-                    SecureField(placeholder, text: binding)
+                    SecureField(
+                        "",
+                        text: binding,
+                        prompt: Text(placeholder).foregroundStyle(FMTheme.ink4)
+                    )
                         .keyboardType(effectiveKeyboard)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(false)
                 } else {
-                    TextField(placeholder, text: binding)
+                    TextField(
+                        "",
+                        text: binding,
+                        prompt: Text(placeholder).foregroundStyle(FMTheme.ink4)
+                    )
                         .keyboardType(effectiveKeyboard)
                         .textInputAutocapitalization(textAutocapitalization)
                         .autocorrectionDisabled(false)
                 }
             }
             .font(.system(size: 15))
+            .foregroundStyle(FMTheme.ink)
             .padding(.horizontal, 14)
             .frame(height: 50)
             .background(FMTheme.surface)
@@ -731,5 +958,290 @@ struct FMScreen<Content: View>: View {
                 .padding(.bottom, showNav ? 100 : 24)
         }
         .background(FMTheme.bg)
+    }
+}
+
+// MARK: - Spacing
+
+enum FMSpacing {
+    static let screenH: CGFloat = 16
+    static let itemGap: CGFloat = 14
+    static let fieldGap: CGFloat = 12
+}
+
+// MARK: - Banners
+
+struct FMInfoBanner: View {
+    let text: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "info.circle.fill")
+                .font(.system(size: 16))
+                .foregroundStyle(FMTheme.brand)
+            Text(text)
+                .font(.system(size: 13))
+                .foregroundStyle(FMTheme.ink2)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(FMTheme.brandTint)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(FMTheme.brand.opacity(0.2)))
+    }
+}
+
+struct FMErrorBanner: View {
+    let text: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 16))
+                .foregroundStyle(FMTheme.neg)
+            Text(text)
+                .font(.system(size: 13))
+                .foregroundStyle(FMTheme.neg)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(FMTheme.negTint)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
+
+// MARK: - Empty / loading
+
+struct FMEmptyState: View {
+    var icon: String = "tray"
+    let title: String
+    var message: String? = nil
+    var actionTitle: String? = nil
+    var onAction: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 36))
+                .foregroundStyle(FMTheme.ink4)
+            Text(title)
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(FMTheme.ink)
+            if let message {
+                Text(message)
+                    .font(.system(size: 13))
+                    .foregroundStyle(FMTheme.ink3)
+                    .multilineTextAlignment(.center)
+            }
+            if let actionTitle, let onAction {
+                FMButton(title: actionTitle, variant: .soft, fullWidth: false, action: onAction)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 28)
+    }
+}
+
+struct FMEmptyStateHero: View {
+    let icon: String
+    let title: String
+    let message: String
+    var actionTitle: String? = nil
+    var onAction: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack(alignment: .bottomTrailing) {
+                Image(systemName: icon)
+                    .font(.system(size: 46))
+                    .foregroundStyle(FMTheme.brand)
+                    .frame(width: 110, height: 110)
+                    .background(FMTheme.brandTint)
+                    .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+                Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 42, height: 42)
+                    .background(FMTheme.pos)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(FMTheme.bg, lineWidth: 3))
+                    .offset(x: 8, y: 8)
+            }
+            Text(title)
+                .font(.system(size: 19, weight: .heavy))
+                .foregroundStyle(FMTheme.ink)
+                .padding(.top, 16)
+            Text(message)
+                .font(.system(size: 14.5))
+                .foregroundStyle(FMTheme.ink3)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 8)
+            if let actionTitle, let onAction {
+                FMButton(title: actionTitle, variant: .primary, fullWidth: false, action: onAction)
+                    .padding(.top, 14)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 36)
+        .padding(.horizontal, 28)
+    }
+}
+
+struct FMSkeletonBlock: View {
+    var width: CGFloat? = nil
+    var height: CGFloat = 14
+    @State private var pulse = false
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .fill(FMTheme.surface3.opacity(pulse ? 0.85 : 0.45))
+            .frame(width: width, height: height)
+            .frame(maxWidth: width == nil ? .infinity : nil, alignment: .leading)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
+                    pulse = true
+                }
+            }
+    }
+}
+
+struct FMSkeletonListScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 8) {
+                    FMSkeletonBlock(width: 130, height: 13)
+                    FMSkeletonBlock(width: 170, height: 22)
+                }
+                Spacer()
+                FMSkeletonBlock(width: 42, height: 42)
+                FMSkeletonBlock(width: 42, height: 42)
+            }
+            FMSkeletonBlock(height: 130)
+            HStack(spacing: 11) {
+                FMSkeletonBlock(height: 92)
+                FMSkeletonBlock(height: 92)
+            }
+            FMCard(padding: 6) {
+                ForEach(0..<3, id: \.self) { i in
+                    HStack(spacing: 14) {
+                        FMSkeletonBlock(width: 40, height: 40)
+                        VStack(alignment: .leading, spacing: 7) {
+                            FMSkeletonBlock(width: 140, height: 14)
+                            FMSkeletonBlock(width: 90, height: 11)
+                        }
+                        Spacer()
+                        FMSkeletonBlock(width: 56, height: 20)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 13)
+                    if i < 2 { Divider() }
+                }
+            }
+        }
+    }
+}
+
+struct FMErrorScreen: View {
+    let title: String
+    let message: String
+    var primaryAction: String = "Try again"
+    var onPrimaryAction: () -> Void
+    var secondaryAction: String? = nil
+    var onSecondaryAction: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Image(systemName: "wifi.slash")
+                .font(.system(size: 50))
+                .foregroundStyle(FMTheme.neg)
+                .frame(width: 110, height: 110)
+                .background(FMTheme.neg.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+            Text(title)
+                .font(.system(size: 23, weight: .heavy))
+                .foregroundStyle(FMTheme.ink)
+                .padding(.top, 26)
+            Text(message)
+                .font(.system(size: 15))
+                .foregroundStyle(FMTheme.ink3)
+                .multilineTextAlignment(.center)
+                .padding(.top, 10)
+            VStack(spacing: 11) {
+                FMButton(title: primaryAction, action: onPrimaryAction)
+                if let secondaryAction, let onSecondaryAction {
+                    FMButton(title: secondaryAction, variant: .outline, action: onSecondaryAction)
+                }
+            }
+            .padding(.top, 30)
+        }
+        .padding(.horizontal, 36)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+struct FMLoadingState: View {
+    var message: String = "Loading…"
+
+    var body: some View {
+        VStack(spacing: 12) {
+            ProgressView()
+            Text(message)
+                .font(.system(size: 13))
+                .foregroundStyle(FMTheme.ink3)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 24)
+    }
+}
+
+// MARK: - Dialog
+
+struct FMDialog<Content: View>: View {
+    let title: String
+    let confirmLabel: String
+    let dismissLabel: String
+    var confirmBusy: Bool = false
+    let onConfirm: () -> Void
+    let onDismiss: () -> Void
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Text(title)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(FMTheme.ink)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 12)
+
+            content()
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            HStack(spacing: 12) {
+                Button(dismissLabel, action: onDismiss)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(FMTheme.ink3)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .disabled(confirmBusy)
+
+                Button(confirmBusy ? "Saving…" : confirmLabel, action: onConfirm)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(FMTheme.brand)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .disabled(confirmBusy)
+            }
+            .padding(.top, 20)
+        }
+        .padding(22)
+        .background(FMTheme.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .shadow(color: .black.opacity(0.15), radius: 24, y: 8)
+        .padding(.horizontal, 28)
     }
 }

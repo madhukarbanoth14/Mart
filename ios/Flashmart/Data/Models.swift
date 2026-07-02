@@ -25,6 +25,27 @@ struct AuthMe: Codable {
     let email: String
     let role: String
     let companyId: String?
+    var name: String?
+    var phone: String?
+    var documentUploaded: Bool?
+    var canPlaceOrders: Bool?
+    var documentStatus: String?
+    var area: UserAreaBrief?
+    var assignedDealer: UserBrief?
+}
+
+struct SessionUser: Codable, Equatable, Identifiable {
+    let id: String
+    let name: String
+    let email: String
+    let role: String
+    var companyId: String?
+    var canPlaceOrders: Bool = true
+    var documentStatus: String = "NOT_UPLOADED"
+    var areaName: String? = nil
+    var assignedDealer: UserBrief? = nil
+
+    var userRole: UserRole { UserRole(apiRole: role) }
 }
 
 struct ForgotPasswordRequest: Codable { let email: String }
@@ -44,19 +65,63 @@ struct ResetPasswordRequest: Codable {
 
 struct ResetPasswordResponse: Codable { let message: String }
 
-struct EmptyResponse: Codable {}
+struct SendOtpRequest: Codable {
+    let phone: String
+    var purpose: String = "REGISTER"
+}
 
-// MARK: - Session
+struct SendOtpResponse: Codable {
+    let success: Bool
+    let message: String
+    var expiresInSeconds: Int?
+    var devOtp: String?
+}
 
-struct SessionUser: Codable, Equatable, Identifiable {
+struct VerifyOtpRequest: Codable {
+    let phone: String
+    let code: String
+}
+
+struct VerifyOtpResponse: Codable {
+    let success: Bool
+    let verificationToken: String
+    let phone: String
+}
+
+struct RegistrationGeoResponse: Codable {
+    let states: [RegistrationState]
+}
+
+struct RegistrationState: Codable, Equatable {
+    let name: String
+    let districts: [String]
+}
+
+struct RegistrationArea: Codable, Identifiable, Equatable {
     let id: String
     let name: String
-    let email: String
-    let role: String
-    var companyId: String?
-
-    var userRole: UserRole { UserRole(apiRole: role) }
+    var state: String?
+    var district: String?
+    var dealerId: String?
 }
+
+struct SelfRegisterRequest: Codable {
+    var verificationToken: String?
+    var phone: String?
+    let name: String
+    var email: String?
+    var password: String?
+    let areaId: String
+    let state: String
+    let district: String
+    let address: String
+    let shopName: String
+    var latitude: Double?
+    var longitude: Double?
+    var referralCode: String?
+}
+
+struct EmptyResponse: Codable {}
 
 // MARK: - Product
 
@@ -154,6 +219,10 @@ struct Order: Codable, Identifiable, Equatable {
     var items: [OrderItem]?
     var shopkeeper: UserBrief?
     var dealer: UserBrief?
+    var returnReason: String?
+    var returnRequestedAt: String?
+    var returnedAt: String?
+    var refundedAt: String?
 }
 
 struct OrderItem: Codable, Identifiable, Equatable {
@@ -229,6 +298,8 @@ struct PendingRazorpayCheckout: Equatable {
     let amountPaise: Int
     let currency: String
     let userEmail: String
+    let userPhone: String?
+    let paymentMethod: String?
 }
 
 struct ShopkeeperSummary: Codable {
@@ -257,10 +328,28 @@ struct InvoiceDocument: Codable {
 
 struct StockRow: Codable, Identifiable {
     let id: String
-    let quantity: Int
+    var quantity: Int
     let product: Product?
     var dealer: UserBrief?
 }
+
+struct UpdateStockRequest: Codable { let quantity: Int }
+
+struct UpsertStockRequest: Codable {
+    let productId: String
+    let quantity: Int
+}
+
+struct CreateAreaRequest: Codable { let name: String }
+
+struct UpdateAreaRequest: Codable {
+    var name: String?
+    var dealerId: String?
+}
+
+struct OrderReturnRequest: Codable { let reason: String }
+
+struct OrderReturnRejectRequest: Codable { var note: String? }
 
 // MARK: - Users & areas
 
@@ -290,6 +379,11 @@ struct UserRow: Codable, Identifiable, Equatable {
     var status: String
     var statusReason: String?
     var approvedAt: String?
+    var documentUploaded: Bool?
+    var canPlaceOrders: Bool?
+    var documentStatus: String?
+    var lastFollowUpAt: String?
+    var totalOrders: Int?
     var onboardedBy: UserBrief?
     var approvedBy: UserBrief?
 }
@@ -363,9 +457,13 @@ struct OnboardingDocument: Codable, Identifiable, Equatable {
     let id: String
     let label: String
     let fileName: String
+    var documentType: String?
     var mimeType: String?
     var fileSize: Int64?
     var uploadedAt: String?
+    var verificationStatus: String?
+    var verifiedAt: String?
+    var rejectionReason: String?
 }
 
 // MARK: - API value helper
@@ -406,6 +504,32 @@ enum APIValue: Codable, Equatable, Hashable {
     }
 }
 
+// MARK: - Ordering config & reorder
+
+struct OrderingConfig: Codable {
+    let minOrderQuantity: Int
+    let maxOrderQuantity: Int
+    let quickQuantityChips: [Int]
+}
+
+struct ReorderPreviewItem: Codable {
+    let productId: String
+    let quantity: Int
+    let product: Product?
+}
+
+struct ReorderSkippedItem: Codable {
+    let productId: String
+    let productName: String?
+    let reason: String
+}
+
+struct ReorderPreview: Codable {
+    let items: [ReorderPreviewItem]
+    let warnings: [String]
+    let skipped: [ReorderSkippedItem]
+}
+
 // MARK: - Cart
 
 struct CartLine: Identifiable, Equatable {
@@ -413,6 +537,312 @@ struct CartLine: Identifiable, Equatable {
     var quantity: Int
 
     var id: String { product.id }
+}
+
+// MARK: - Finance & settlements
+
+struct FinanceOverview: Codable {
+    let period: FinancePeriod?
+    let collections: FinanceCollections?
+    let revenue: FinanceRevenue?
+}
+
+struct FinancePeriod: Codable {
+    let from: String?
+    let to: String?
+    let filter: String?
+}
+
+struct FinanceCollections: Codable {
+    let total: Double?
+    let successful: Int?
+    let failed: Int?
+    let refunded: Int?
+    let pending: Int?
+}
+
+struct FinanceRevenue: Codable {
+    let gmv: Double?
+    let platformCommission: Double?
+    let dealerPayables: Double?
+    let settledAmount: Double?
+    let pendingSettlement: Double?
+    let netPlatformEarnings: Double?
+    let refunds: Double?
+}
+
+struct InvestorDashboard: Codable {
+    let period: FinancePeriod?
+    let collections: FinanceCollections?
+    let revenue: FinanceRevenue?
+    let business: InvestorBusiness?
+    let charts: InvestorCharts?
+}
+
+struct InvestorBusiness: Codable {
+    let totalOrders: Int?
+    let deliveredOrders: Int?
+    let activeDealers: Int?
+    let activeShopkeepers: Int?
+    let activeEmployees: Int?
+}
+
+struct InvestorCharts: Codable {
+    let dailyRevenueTrend: [FinanceTrendPoint]?
+}
+
+struct FinanceTrendPoint: Codable {
+    let date: String
+    let gmv: Double?
+    let commission: Double?
+}
+
+struct CommissionRule: Codable, Identifiable {
+    let id: String
+    let ruleType: String
+    let rate: APIValue
+    let dealerId: String?
+    let productId: String?
+    let active: Bool?
+    let dealer: FinanceUserBrief?
+    let product: FinanceProductBrief?
+}
+
+struct FinanceUserBrief: Codable {
+    let id: String
+    let name: String
+    let shopName: String?
+    let phone: String?
+    let email: String?
+}
+
+struct FinanceProductBrief: Codable {
+    let id: String
+    let name: String
+}
+
+struct UpsertCommissionRuleRequest: Encodable {
+    let ruleType: String
+    let rate: Double
+    let dealerId: String?
+    let productId: String?
+}
+
+struct DealerSettlement: Codable, Identifiable {
+    let id: String
+    let settlementCode: String
+    let dealerId: String
+    let settlementStartDate: String
+    let settlementEndDate: String
+    let totalOrders: Int?
+    let totalQuantity: Int?
+    let grossSales: APIValue?
+    let gstAmount: APIValue?
+    let commissionAmount: APIValue?
+    let dealerPayable: APIValue?
+    let settledAmount: APIValue?
+    let balanceAmount: APIValue?
+    let settlementStatus: String
+    let paymentMethod: String?
+    let transactionReference: String?
+    let utrNumber: String?
+    let paymentDate: String?
+    let remarks: String?
+    let dealer: FinanceUserBrief?
+    let payments: [DealerPaymentHistory]?
+}
+
+struct DealerPaymentHistory: Codable, Identifiable {
+    let id: String
+    let amount: APIValue
+    let paymentMethod: String
+    let utrNumber: String?
+    let transactionReference: String?
+    let paymentDate: String
+    let remarks: String?
+}
+
+struct GenerateSettlementRequest: Encodable {
+    let dealerId: String
+    let startDate: String
+    let endDate: String
+}
+
+struct RecordSettlementPaymentRequest: Encodable {
+    let amount: Double
+    let paymentMethod: String
+    let utrNumber: String?
+    let transactionReference: String?
+    let paymentDate: String
+    let remarks: String?
+}
+
+struct BackfillRevenuesResponse: Decodable {
+    let created: Int?
+}
+
+struct DealerPerformance: Codable {
+    let period: FinancePeriod?
+    let summary: DealerPerformanceSummary?
+    let topProducts: [DealerTopProduct]?
+    let dailySales: [FinanceTrendPoint]?
+}
+
+struct DealerPerformanceSummary: Codable {
+    let ordersDelivered: Int?
+    let ordersTotal: Int?
+    let grossSales: Double?
+    let commissionDeducted: Double?
+    let dealerEarnings: Double?
+    let pendingSettlement: Double?
+}
+
+struct DealerTopProduct: Codable, Identifiable {
+    var id: String { name }
+    let name: String
+    let qty: Int?
+    let revenue: Double?
+}
+
+struct FinanceAuditLog: Codable, Identifiable {
+    let id: String
+    let action: String
+    let entityType: String
+    let entityId: String
+    let createdAt: String
+    let actor: FinanceUserBrief?
+}
+
+// MARK: - Returns & refunds
+
+struct ReturnRequestItem: Codable, Identifiable {
+    let id: String
+    let productId: String
+    let productName: String
+    let quantity: Int
+    let unitAmount: Double?
+    let lineAmount: Double?
+}
+
+struct RefundRequestSummary: Codable, Identifiable {
+    let id: String
+    let refundCode: String
+    let status: String
+    let amount: Double?
+}
+
+struct ReturnRequestSummary: Codable, Identifiable {
+    let id: String
+    let returnCode: String
+    let reason: String
+    let reasonText: String?
+    let status: String
+    let refundAmount: Double?
+    let shopkeeper: FinanceUserBrief?
+}
+
+struct ReturnRequest: Codable, Identifiable {
+    let id: String
+    let returnCode: String
+    let orderId: String
+    let reason: String
+    let reasonText: String?
+    let comments: String?
+    let status: String
+    let dealerRemarks: String?
+    let refundAmount: Double?
+    let createdAt: String?
+    let items: [ReturnRequestItem]?
+    let shopkeeper: FinanceUserBrief?
+    let dealer: FinanceUserBrief?
+    let refundRequest: RefundRequestSummary?
+}
+
+struct RefundRequest: Codable, Identifiable {
+    let id: String
+    let refundCode: String
+    let returnRequestId: String
+    let orderId: String
+    let amount: Double?
+    let status: String
+    let dealerRemarks: String?
+    let adminRemarks: String?
+    let refundMethod: String?
+    let transactionReference: String?
+    let refundDate: String?
+    let createdAt: String?
+    let dealer: FinanceUserBrief?
+    let returnRequest: ReturnRequestSummary?
+}
+
+struct CreateReturnItemRequest: Codable {
+    let productId: String
+    let quantity: Int
+}
+
+struct CreateReturnRequest: Codable {
+    let reason: String
+    let reasonText: String?
+    let comments: String?
+    let items: [CreateReturnItemRequest]
+}
+
+struct ReturnActionRequest: Codable { let remarks: String? }
+
+struct ProcessRefundRequest: Codable {
+    let refundMethod: String
+    let transactionReference: String
+    let remarks: String?
+}
+
+struct DealerRevenueSummary: Codable {
+    let todayRevenue: Double?
+    let weeklyRevenue: Double?
+    let monthlyRevenue: Double?
+    let totalOrdersReceived: Int?
+    let totalOrdersDelivered: Int?
+    let totalProductsSold: Int?
+    let totalQuantitySold: Int?
+    let pendingOrders: Int?
+    let returnedOrders: Int?
+    let pendingSettlementAmount: Double?
+    let amountReceivedFromFlashMart: Double?
+}
+
+struct DealerTrendPoint: Codable {
+    let date: String
+    let amount: Double?
+}
+
+struct DealerProductSale: Codable, Identifiable {
+    var id: String { productId ?? name }
+    let productId: String?
+    let name: String
+    let quantity: Int?
+    let revenue: Double?
+}
+
+struct DealerRevenueCharts: Codable {
+    let dailyRevenue: [DealerTrendPoint]?
+    let topSellingProducts: [DealerProductSale]?
+}
+
+struct DealerRevenueDashboard: Codable {
+    let summary: DealerRevenueSummary?
+    let charts: DealerRevenueCharts?
+}
+
+struct DealerShopkeeperRow: Codable, Identifiable {
+    var id: String { shopkeeperId }
+    let shopkeeperId: String
+    let name: String
+    let area: String?
+    let totalOrders: Int?
+    let totalPurchaseValue: Double?
+    let outstandingOrders: Int?
+    let returnedOrders: Int?
+    let totalRevenue: Double?
+    let lastOrderDate: String?
 }
 
 // MARK: - Navigation routes
@@ -424,18 +854,31 @@ enum AppRoute: Hashable {
     case payment(String)
     case invoice(String)
     case tracking(String)
+    case orderConfirmation(String)
     case resetPassword(token: String?)
     case onboardShopkeeper
     case onboardDealer
     case createEmployee
     case skuManagement
     case brandsManagement
+    case areasManagement
     case checkout
+    case wallet
     case profileStoreAddress
     case profilePaymentMethods
     case profileGstDetails
     case profileNotifications
     case profileHelp
+    case profileDocuments
+    case privacyPolicy
+    case adminReview(String)
+    case financeSettlement(String)
+    case financeDealer(String, String)
+    case dealerRevenue
+    case dealerShopkeepers
+    case dealerReturns
+    case dealerReturnDetail(String)
+    case adminRefundDetail(String)
 }
 
 // MARK: - Load state

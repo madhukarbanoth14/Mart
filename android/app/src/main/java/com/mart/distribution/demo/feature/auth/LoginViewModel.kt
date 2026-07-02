@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mart.distribution.demo.BuildConfig
 import com.mart.distribution.demo.data.api.MartApi
+import com.mart.distribution.demo.data.cart.CartRepository
 import com.mart.distribution.demo.data.api.dto.ForgotPasswordRequest
 import com.mart.distribution.demo.data.api.dto.ForgotPasswordResponse
 import com.mart.distribution.demo.data.api.dto.LoginRequest
@@ -11,9 +12,11 @@ import com.mart.distribution.demo.data.api.dto.ResetPasswordRequest
 import com.mart.distribution.demo.data.demo.LocalDemoAuthConfig
 import com.mart.distribution.demo.data.demo.LocalDemoMartStore
 import com.mart.distribution.demo.data.network.NetworkConfigRepository
+import com.mart.distribution.demo.data.push.PushTokenRegistrar
 import com.mart.distribution.demo.data.session.SessionManager
 import com.mart.distribution.demo.data.session.SessionRepository
 import com.mart.distribution.demo.data.session.SessionUser
+import com.mart.distribution.demo.util.ApiErrorMessages
 import com.mart.distribution.demo.util.FieldValidators
 import com.mart.distribution.demo.util.isProbablyEmulator
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +44,8 @@ class LoginViewModel(
     private val martApi: MartApi,
     private val localDemoMartStore: LocalDemoMartStore,
     private val networkConfigRepository: NetworkConfigRepository,
+    private val pushTokenRegistrar: PushTokenRegistrar,
+    private val cartRepository: CartRepository,
 ) : ViewModel() {
     private val _ui = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _ui.asStateFlow()
@@ -94,6 +99,7 @@ class LoginViewModel(
         demoUser: SessionUser,
         onSuccess: () -> Unit,
     ) {
+        cartRepository.clear()
         localDemoMartStore.resetForNewSession()
         sessionRepository.saveLocalDemoSession(demoUser)
         _ui.value = _ui.value.copy(loading = false, error = null)
@@ -157,6 +163,7 @@ class LoginViewModel(
                             )
                         return@launch
                     }
+                    cartRepository.clear()
                     localDemoMartStore.resetForNewSession()
                     sessionRepository.saveLocalDemoSession(demoUser)
                     _ui.value = _ui.value.copy(loading = false)
@@ -164,7 +171,7 @@ class LoginViewModel(
                     return@launch
                 }
 
-                if (!isProbablyEmulator()) {
+                if (BuildConfig.SHOW_BACKEND_URL && !isProbablyEmulator()) {
                     if (s.serverUrl.isBlank() &&
                         BuildConfig.API_BASE_URL.contains("10.0.2.2", ignoreCase = true)
                     ) {
@@ -189,6 +196,14 @@ class LoginViewModel(
                 }
 
                 val res = martApi.login(LoginRequest(s.identifier.trim(), s.password))
+                if (res.accessToken.isBlank()) {
+                    _ui.value =
+                        _ui.value.copy(
+                            loading = false,
+                            error = "Login failed — server did not return an access token.",
+                        )
+                    return@launch
+                }
                 val user =
                     SessionUser(
                         id = res.user.id,
@@ -197,11 +212,15 @@ class LoginViewModel(
                         role = res.user.role,
                         companyId = res.user.companyId,
                     )
+                cartRepository.clear()
                 sessionRepository.saveSession(res.accessToken, user)
                 _ui.value = _ui.value.copy(loading = false)
                 onSuccess()
                 viewModelScope.launch {
                     sessionManager.refreshProfileFromServerIfNeeded()
+                }
+                viewModelScope.launch {
+                    pushTokenRegistrar.registerCurrentToken()
                 }
             } catch (e: Exception) {
                 if (BuildConfig.USE_LOCAL_DEMO_AUTH && isNetworkError(e)) {
@@ -214,7 +233,7 @@ class LoginViewModel(
                 _ui.value =
                     _ui.value.copy(
                         loading = false,
-                        error = e.message ?: "Login failed",
+                        error = ApiErrorMessages.fromThrowable(e, "Login failed"),
                     )
             }
         }

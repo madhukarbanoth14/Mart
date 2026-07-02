@@ -4,8 +4,10 @@ export declare class OrderItemsService {
     constructor(prisma: PrismaService);
     findByOrderId(orderId: string): import("@prisma/client").Prisma.PrismaPromise<({
         product: {
+            name: string;
             id: string;
             companyId: string | null;
+            createdAt: Date;
             brandId: string | null;
             imageUrl: string | null;
             sku: string | null;
@@ -15,7 +17,6 @@ export declare class OrderItemsService {
             caseQty: number | null;
             gstRate: import("@prisma/client-runtime-utils").Decimal;
             isActive: boolean;
-            name: string;
             brandType: import("@prisma/client").$Enums.BrandType;
             shelf: import("@prisma/client").$Enums.ProductShelf;
             basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -24,16 +25,15 @@ export declare class OrderItemsService {
             shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
             bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
             bulkShippingMinQty: number;
-            createdAt: Date;
         };
     } & {
         id: string;
-        productId: string;
-        quantity: number;
+        orderId: string;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
-        orderId: string;
+        productId: string;
+        quantity: number;
         price: import("@prisma/client-runtime-utils").Decimal;
     })[]>;
 }

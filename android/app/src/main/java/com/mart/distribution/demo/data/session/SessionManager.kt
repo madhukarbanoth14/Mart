@@ -46,10 +46,16 @@ class SessionManager(
             repository.patchSessionUser(
                 SessionUser(
                     id = me.userId,
-                    name = prev.name,
+                    name = me.name ?: prev.name,
                     email = me.email,
                     role = me.role,
                     companyId = me.companyId,
+                    phone = me.phone,
+                    areaName = me.area?.name,
+                    assignedDealer = me.assignedDealer,
+                    documentUploaded = me.documentUploaded,
+                    canPlaceOrders = me.canPlaceOrders,
+                    documentStatus = me.documentStatus,
                 ),
             )
         } catch (_: Exception) {

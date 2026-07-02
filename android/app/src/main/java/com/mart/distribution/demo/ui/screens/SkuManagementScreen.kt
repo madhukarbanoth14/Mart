@@ -10,32 +10,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -43,10 +29,26 @@ import com.mart.distribution.demo.data.api.dto.CreateProductRequest
 import com.mart.distribution.demo.data.api.dto.ProductDto
 import com.mart.distribution.demo.feature.home.LoadState
 import com.mart.distribution.demo.feature.home.MainViewModel
-import com.mart.distribution.demo.ui.components.GradientGoldButton
-import com.mart.distribution.demo.ui.components.MartElevatedCard
+import com.mart.distribution.demo.ui.flashmart.FmButton
+import com.mart.distribution.demo.ui.flashmart.FmButtonVariant
+import com.mart.distribution.demo.ui.flashmart.FmCard
+import com.mart.distribution.demo.ui.flashmart.FmDataRow
+import com.mart.distribution.demo.ui.flashmart.FmDialog
+import com.mart.distribution.demo.ui.flashmart.FmEmptyState
+import com.mart.distribution.demo.ui.flashmart.FmErrorBanner
+import com.mart.distribution.demo.ui.flashmart.FmInfoBanner
+import com.mart.distribution.demo.ui.flashmart.FmLoadingState
+import com.mart.distribution.demo.ui.flashmart.FmScreen
+import com.mart.distribution.demo.ui.flashmart.FmChipRow
+import com.mart.distribution.demo.ui.flashmart.FmSectionLabel
+import com.mart.distribution.demo.ui.flashmart.FmTextField
 import com.mart.distribution.demo.ui.shopkeeper.FmcgShelfCatalog
+import androidx.compose.material3.Text
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.mart.distribution.demo.ui.theme.FmSpacing
 import com.mart.distribution.demo.ui.theme.MartFieldDefaults
+import com.mart.distribution.demo.ui.theme.WholesaleText
 import com.mart.distribution.demo.util.FieldFilters
 import com.mart.distribution.demo.util.FieldValidators
 
@@ -60,13 +62,14 @@ private data class ProductFormState(
     val shopkeeperDisc: String = "5",
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SkuManagementScreen(
-    navController: NavHostController,
+    navController: NavHostController? = null,
     mainViewModel: MainViewModel,
+    embeddedInTab: Boolean = false,
 ) {
     val ui by mainViewModel.uiState.collectAsState()
+    LaunchedEffect(Unit) { mainViewModel.loadProducts() }
     var createBusy by remember { mutableStateOf(false) }
     var editBusyId by remember { mutableStateOf<String?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -82,38 +85,29 @@ fun SkuManagementScreen(
             else -> emptyList()
         }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("SKU management") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                    ),
-            )
-        },
-    ) { padding ->
+    val infoMessage =
+        if (embeddedInTab) {
+            "Add your products and set pricing. Shopkeepers in your area order from this catalog."
+        } else {
+            "Create, edit, or delete SKUs. Pricing, GST, and discounts are applied automatically in order calculations."
+        }
+
+    @Composable
+    fun SkuManagementBody(modifier: Modifier = Modifier) {
         Column(
             modifier =
-                Modifier
+                modifier
                     .fillMaxSize()
-                    .padding(padding)
-                    .padding(horizontal = 20.dp),
+                    .then(
+                        if (embeddedInTab) {
+                            Modifier.padding(horizontal = FmSpacing.listH)
+                        } else {
+                            Modifier
+                        },
+                    ),
         ) {
-            MartElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    "Create, edit, or delete SKUs. Pricing, GST, and discount settings are applied server-side in order calculations.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Spacer(Modifier.height(12.dp))
+            FmInfoBanner(message = infoMessage)
+            Spacer(Modifier.height(FmSpacing.sectionGap))
             ProductForm(
                 title = "Add product",
                 form = form,
@@ -142,64 +136,64 @@ fun SkuManagementScreen(
                 busy = createBusy,
                 submitText = "Add SKU",
             )
-            Spacer(Modifier.height(8.dp))
-            OutlinedButton(
+            Spacer(Modifier.height(FmSpacing.itemGap))
+            FmButton(
+                text = "Import from CSV",
                 onClick = { csvDialogOpen = true; error = null },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Upload SKU sheet (CSV demo)")
-            }
+                variant = FmButtonVariant.Outline,
+            )
             error?.let {
-                Spacer(Modifier.height(8.dp))
-                Text(it, color = MaterialTheme.colorScheme.error)
+                Spacer(Modifier.height(FmSpacing.itemGap))
+                FmErrorBanner(message = it)
             }
-            Spacer(Modifier.height(12.dp))
-            Text("Products", style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(FmSpacing.sectionGap))
+            FmSectionLabel(title = "Catalog")
             when (val p = ui.products) {
-                is LoadState.Loading -> Text("Loading products…", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                is LoadState.Err -> Text(p.message, color = MaterialTheme.colorScheme.error)
+                is LoadState.Loading -> FmLoadingState(message = "Loading catalog…")
+                is LoadState.Err -> FmErrorBanner(message = p.message)
                 is LoadState.Ok ->
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        items(products, key = { it.id }) { row ->
-                            MartElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                                Text(row.name, style = MaterialTheme.typography.titleMedium)
-                                Text(
-                                    "${row.brandType} · ${FmcgShelfCatalog.label(row.shelf)} · Price ${row.basePrice} · GST ${row.gstPercentage}%",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    if (products.isEmpty()) {
+                        FmEmptyState(
+                            icon = Icons.Outlined.Inventory2,
+                            title = "No products yet",
+                            message = "Add your first SKU above. Set base price, GST, and discount tiers before shopkeepers can order.",
+                        )
+                    } else {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(FmSpacing.itemGap),
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            items(products, key = { it.id }) { row ->
+                                SkuProductRow(
+                                    row = row,
+                                    editBusy = editBusyId == row.id,
+                                    onEdit = { editing = row },
+                                    onDelete = {
+                                        editBusyId = row.id
+                                        mainViewModel.deleteProduct(row.id) { err ->
+                                            editBusyId = null
+                                            if (err != null) error = err
+                                        }
+                                    },
                                 )
-                                Text(
-                                    "Dealer ${row.dealerDiscount}% · Shopkeeper ${row.shopkeeperDiscount}%",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                                Spacer(Modifier.height(8.dp))
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    OutlinedButton(
-                                        onClick = { editing = row },
-                                        modifier = Modifier.weight(1f),
-                                    ) { Text("Edit") }
-                                    OutlinedButton(
-                                        onClick = {
-                                            editBusyId = row.id
-                                            mainViewModel.deleteProduct(row.id) { err ->
-                                                editBusyId = null
-                                                if (err != null) error = err
-                                            }
-                                        },
-                                        modifier = Modifier.weight(1f),
-                                        enabled = editBusyId != row.id,
-                                    ) { Text(if (editBusyId == row.id) "Deleting…" else "Delete") }
-                                }
                             }
+                            item { Spacer(Modifier.height(24.dp)) }
                         }
                     }
                 else -> {}
             }
+        }
+    }
+
+    if (embeddedInTab) {
+        SkuManagementBody()
+    } else {
+        FmScreen(
+            title = "SKU management",
+            subtitle = "Products, pricing & discounts",
+            onBack = { navController?.popBackStack() },
+        ) { modifier ->
+            SkuManagementBody(modifier.verticalScroll(rememberScrollState()))
         }
     }
 
@@ -217,102 +211,114 @@ fun SkuManagementScreen(
                 ),
             )
         }
-        AlertDialog(
-            onDismissRequest = { editing = null },
-            title = { Text("Edit SKU") },
-            text = {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
-                ) {
-                    ProductFields(form = editForm, onFormChange = { editForm = it })
+        FmDialog(
+            title = "Edit SKU",
+            onDismiss = { editing = null },
+            confirmLabel = "Save changes",
+            confirmBusy = editBusyId == row.id,
+            onConfirm = {
+                validateForm(editForm)?.let { error = it; return@FmDialog }
+                val parsed = parseForm(editForm)!!
+                editBusyId = row.id
+                mainViewModel.updateProduct(
+                    productId = row.id,
+                    name = editForm.name,
+                    brandType = editForm.brandType,
+                    shelf = editForm.shelf,
+                    basePrice = parsed.basePrice,
+                    gstPct = parsed.gstPct,
+                    dealerDisc = parsed.dealerDisc,
+                    shopkeeperDisc = parsed.shopkeeperDisc,
+                ) { err ->
+                    editBusyId = null
+                    if (err != null) {
+                        error = err
+                    } else {
+                        editing = null
+                    }
                 }
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        validateForm(editForm)?.let { error = it; return@TextButton }
-                        val parsed = parseForm(editForm)!!
-                        editBusyId = row.id
-                        mainViewModel.updateProduct(
-                            productId = row.id,
-                            name = editForm.name,
-                            brandType = editForm.brandType,
-                            shelf = editForm.shelf,
-                            basePrice = parsed.basePrice,
-                            gstPct = parsed.gstPct,
-                            dealerDisc = parsed.dealerDisc,
-                            shopkeeperDisc = parsed.shopkeeperDisc,
-                        ) { err ->
-                            editBusyId = null
-                            if (err != null) {
-                                error = err
-                            } else {
-                                editing = null
-                            }
-                        }
-                    },
-                ) { Text(if (editBusyId == row.id) "Saving…" else "Save") }
-            },
-            dismissButton = {
-                TextButton(onClick = { editing = null }) { Text("Cancel") }
-            },
-        )
+        ) {
+            ProductFields(form = editForm, onFormChange = { editForm = it })
+        }
     }
 
     if (csvDialogOpen) {
-        AlertDialog(
-            onDismissRequest = { if (!csvBusy) csvDialogOpen = false },
-            title = { Text("CSV import (demo)") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        "Paste CSV rows (one per line):\n" +
-                            "• With shelf: name,brandType,shelf,basePrice,gstPercentage,dealerDiscount,shopkeeperDiscount\n" +
-                            "• Legacy 6 columns default shelf to STAPLES",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    OutlinedTextField(
-                        value = csvText,
-                        onValueChange = { csvText = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 6,
-                        maxLines = 10,
-                        placeholder = {
-                            Text("KNSR Premium Rice,OWN,STAPLES,1549,18,10,5")
-                        },
-                        colors = MartFieldDefaults.outlinedColors(),
-                    )
+        FmDialog(
+            title = "CSV import",
+            onDismiss = { if (!csvBusy) csvDialogOpen = false },
+            confirmLabel = "Import rows",
+            confirmBusy = csvBusy,
+            dismissLabel = "Close",
+            onConfirm = {
+                val parsed = parseCsvRows(csvText)
+                if (parsed.isEmpty()) {
+                    error = "No valid CSV rows found"
+                    return@FmDialog
+                }
+                csvBusy = true
+                mainViewModel.bulkCreateProducts(parsed) { err ->
+                    csvBusy = false
+                    if (err != null) {
+                        error = err
+                    } else {
+                        csvText = ""
+                        csvDialogOpen = false
+                    }
                 }
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val parsed = parseCsvRows(csvText)
-                        if (parsed.isEmpty()) {
-                            error = "No valid CSV rows found"
-                            return@TextButton
-                        }
-                        csvBusy = true
-                        mainViewModel.bulkCreateProducts(parsed) { err ->
-                            csvBusy = false
-                            if (err != null) {
-                                error = err
-                            } else {
-                                csvText = ""
-                                csvDialogOpen = false
-                            }
-                        }
-                    },
-                ) { Text(if (csvBusy) "Importing…" else "Import") }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { if (!csvBusy) csvDialogOpen = false },
-                ) { Text("Close") }
-            },
+        ) {
+            FmInfoBanner(
+                message =
+                    "One row per line: name, brandType, shelf, basePrice, gstPercentage, dealerDiscount, shopkeeperDiscount. " +
+                        "Legacy 6-column rows default shelf to STAPLES.",
+                tint = com.mart.distribution.demo.ui.theme.WholesaleSurface2,
+                accent = com.mart.distribution.demo.ui.theme.WholesaleInk2,
+            )
+            FmTextField(
+                value = csvText,
+                onValueChange = { csvText = it },
+                label = "CSV data",
+                placeholder = "KNSR Premium Rice,OWN,STAPLES,1549,18,10,5",
+                singleLine = false,
+                minLines = 6,
+                maxLines = 10,
+                keyboardOptions = MartFieldDefaults.englishMultilineKeyboard,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SkuProductRow(
+    row: ProductDto,
+    editBusy: Boolean,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    FmCard(modifier = Modifier.fillMaxWidth()) {
+        FmDataRow(
+            title = row.name,
+            subtitle =
+                "${row.brandType} · ${FmcgShelfCatalog.label(row.shelf)} · ₹${row.basePrice} · GST ${row.gstPercentage}% · " +
+                    "Dealer ${row.dealerDiscount}% · Shop ${row.shopkeeperDiscount}%",
         )
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FmButton(
+                text = "Edit",
+                onClick = onEdit,
+                variant = FmButtonVariant.Outline,
+                modifier = Modifier.weight(1f),
+            )
+            FmButton(
+                text = if (editBusy) "Deleting…" else "Delete",
+                onClick = onDelete,
+                variant = FmButtonVariant.Ghost,
+                enabled = !editBusy,
+                modifier = Modifier.weight(1f),
+            )
+        }
     }
 }
 
@@ -325,12 +331,12 @@ private fun ProductForm(
     busy: Boolean,
     submitText: String,
 ) {
-    MartElevatedCard(modifier = Modifier.fillMaxWidth()) {
-        Text(title, style = MaterialTheme.typography.titleSmall)
-        Spacer(Modifier.height(8.dp))
-        ProductFields(form = form, onFormChange = onFormChange)
+    FmCard(modifier = Modifier.fillMaxWidth()) {
+        Text(title, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = WholesaleText)
         Spacer(Modifier.height(10.dp))
-        GradientGoldButton(
+        ProductFields(form = form, onFormChange = onFormChange)
+        Spacer(Modifier.height(12.dp))
+        FmButton(
             text = if (busy) "Saving…" else submitText,
             onClick = onSubmit,
             enabled = !busy,
@@ -343,77 +349,55 @@ private fun ProductFields(
     form: ProductFormState,
     onFormChange: (ProductFormState) -> Unit,
 ) {
-    OutlinedTextField(
-        value = form.name,
-        onValueChange = { onFormChange(form.copy(name = FieldFilters.businessName(it, maxLen = 120))) },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("Product name") },
-        singleLine = true,
-        colors = MartFieldDefaults.outlinedColors(),
-    )
-    OutlinedTextField(
-        value = form.brandType,
-        onValueChange = { onFormChange(form.copy(brandType = FieldFilters.brandType(it))) },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("Brand type (OWN/OTHER)") },
-        singleLine = true,
-        colors = MartFieldDefaults.outlinedColors(),
-    )
-    Text("FMCG shelf", style = MaterialTheme.typography.labelLarge)
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        FmcgShelfCatalog.ids.forEach { sid ->
-            FilterChip(
-                selected = form.shelf == sid,
-                onClick = { onFormChange(form.copy(shelf = sid)) },
-                label = { Text(FmcgShelfCatalog.label(sid)) },
+    Column(verticalArrangement = Arrangement.spacedBy(FmSpacing.fieldGap)) {
+        FmTextField(
+            value = form.name,
+            onValueChange = { onFormChange(form.copy(name = FieldFilters.businessName(it, maxLen = 120))) },
+            label = "Product name",
+        )
+        FmTextField(
+            value = form.brandType,
+            onValueChange = { onFormChange(form.copy(brandType = FieldFilters.brandType(it))) },
+            label = "Brand type",
+            placeholder = "OWN or OTHER",
+        )
+        FmChipRow(
+            options = FmcgShelfCatalog.ids.map { it to FmcgShelfCatalog.label(it) },
+            selectedId = form.shelf,
+            onSelect = { onFormChange(form.copy(shelf = it)) },
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FmTextField(
+                value = form.basePrice,
+                onValueChange = { onFormChange(form.copy(basePrice = FieldFilters.decimal(it))) },
+                label = "Base price",
+                modifier = Modifier.weight(1f),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            )
+            FmTextField(
+                value = form.gstPct,
+                onValueChange = { onFormChange(form.copy(gstPct = FieldFilters.percentage(it))) },
+                label = "GST %",
+                modifier = Modifier.weight(1f),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
             )
         }
-    }
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedTextField(
-            value = form.basePrice,
-            onValueChange = { onFormChange(form.copy(basePrice = FieldFilters.decimal(it))) },
-            modifier = Modifier.weight(1f),
-            label = { Text("Price") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            singleLine = true,
-            colors = MartFieldDefaults.outlinedColors(),
-        )
-        OutlinedTextField(
-            value = form.gstPct,
-            onValueChange = { onFormChange(form.copy(gstPct = FieldFilters.percentage(it))) },
-            modifier = Modifier.weight(1f),
-            label = { Text("GST %") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            singleLine = true,
-            colors = MartFieldDefaults.outlinedColors(),
-        )
-    }
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedTextField(
-            value = form.dealerDisc,
-            onValueChange = { onFormChange(form.copy(dealerDisc = FieldFilters.percentage(it))) },
-            modifier = Modifier.weight(1f),
-            label = { Text("Dealer disc %") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            singleLine = true,
-            colors = MartFieldDefaults.outlinedColors(),
-        )
-        OutlinedTextField(
-            value = form.shopkeeperDisc,
-            onValueChange = { onFormChange(form.copy(shopkeeperDisc = FieldFilters.percentage(it))) },
-            modifier = Modifier.weight(1f),
-            label = { Text("Shopkeeper disc %") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            singleLine = true,
-            colors = MartFieldDefaults.outlinedColors(),
-        )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FmTextField(
+                value = form.dealerDisc,
+                onValueChange = { onFormChange(form.copy(dealerDisc = FieldFilters.percentage(it))) },
+                label = "Dealer disc %",
+                modifier = Modifier.weight(1f),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            )
+            FmTextField(
+                value = form.shopkeeperDisc,
+                onValueChange = { onFormChange(form.copy(shopkeeperDisc = FieldFilters.percentage(it))) },
+                label = "Shopkeeper disc %",
+                modifier = Modifier.weight(1f),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            )
+        }
     }
 }
 

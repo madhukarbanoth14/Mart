@@ -78,26 +78,46 @@ struct ProfileGstDetailsView: View {
 }
 
 struct ProfileNotificationsView: View {
+    @Environment(AppEnvironment.self) private var env
     @Binding var path: NavigationPath
-    @State private var orderAlerts = ShopkeeperProfileStore.orderAlerts
-    @State private var deliveryAlerts = ShopkeeperProfileStore.deliveryAlerts
-    @State private var promoAlerts = ShopkeeperProfileStore.promoAlerts
+    @State private var readIds: Set<String> = []
 
     var body: some View {
-        profileFormScreen(title: "Notifications", subtitle: "Alert preferences", path: $path) {
-            FMCard {
-                Toggle("Order updates", isOn: $orderAlerts)
-                Divider()
-                Toggle("Delivery alerts", isOn: $deliveryAlerts)
-                Divider()
-                Toggle("Promotions", isOn: $promoAlerts)
+        let role = env.sessionStore.user?.userRole
+        let groups: [FMNotificationGroup] = {
+            let orders: [Order] = {
+                if case .ok(let list) = env.mainViewModel.orders { return list }
+                return []
+            }()
+            let docs: [OnboardingDocument] = {
+                if case .ok(let list) = env.mainViewModel.myDocuments { return list }
+                return []
+            }()
+            if role == .dealer {
+                let stock: [StockRow] = {
+                    if case .ok(let rows) = env.mainViewModel.stock { return rows }
+                    return []
+                }()
+                return FlashmartNotificationBuilder.dealer(orders: orders, stock: stock, docs: docs, readIds: readIds)
             }
-            FMButton(title: "Save") {
-                ShopkeeperProfileStore.orderAlerts = orderAlerts
-                ShopkeeperProfileStore.deliveryAlerts = deliveryAlerts
-                ShopkeeperProfileStore.promoAlerts = promoAlerts
-                path.removeLast()
+            return FlashmartNotificationBuilder.shopkeeper(orders: orders, docs: docs, readIds: readIds)
+        }()
+
+        FMNotificationsInbox(
+            groups: groups,
+            onMarkAllRead: {
+                readIds.formUnion(groups.flatMap { $0.items.map(\.id) })
+            },
+            path: $path
+        )
+        .task {
+            if env.sessionStore.user?.userRole == .dealer {
+                await env.mainViewModel.loadDealerOrders()
+                await env.mainViewModel.loadStock()
+            } else {
+                await env.mainViewModel.loadMyOrders()
             }
+            await env.mainViewModel.loadMyDocuments()
         }
     }
 }

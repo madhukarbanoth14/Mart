@@ -1,12 +1,16 @@
 package com.mart.distribution.demo
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
+import com.razorpay.Checkout
 import java.util.Locale
 
 class MartApplication : Application(), ImageLoaderFactory {
@@ -20,7 +24,27 @@ class MartApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         Locale.setDefault(Locale.ENGLISH)
+        Checkout.preload(applicationContext)
         container = AppContainer(this)
+        createNotificationChannel()
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+        val channel =
+            NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "Order updates",
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply {
+                description = "Order status, approvals and stock alerts"
+            }
+        getSystemService(NotificationManager::class.java)
+            ?.createNotificationChannel(channel)
+    }
+
+    companion object {
+        const val NOTIFICATION_CHANNEL_ID = "default"
     }
 
     private fun wrapEnglish(context: Context): Context {

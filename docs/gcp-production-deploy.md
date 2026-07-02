@@ -26,6 +26,20 @@ RAZORPAY_KEY_ID=rzp_test_xxxx
 RAZORPAY_KEY_SECRET=xxxx
 ```
 
+Sync Razorpay into **Secret Manager** (recommended — not plain env vars on Cloud Run):
+
+```bash
+cd Mart/backend
+set -a && source .env.production && set +a
+./scripts/sync-gcp-secrets.sh
+```
+
+Then deploy:
+
+```bash
+./scripts/deploy-cloud-run.sh
+```
+
 For **Cloud SQL** from Cloud Run, Google often uses the Unix socket form:
 
 ```text
@@ -60,12 +74,53 @@ Then rebuild the release APK.
 
 ## 4. Migrate DB and load 185 products (production)
 
-**Same machine**, with `DATABASE_URL` pointing at **production** (not Docker 5435):
+**Same machine**, with `DATABASE_URL` pointing at **production** (not Docker 5435).
+
+### Option A — Cloud SQL Auth Proxy (recommended)
+
+No IP allowlist changes. Uses your gcloud login.
+
+```bash
+brew install cloud-sql-proxy   # once
+gcloud auth application-default login   # once
+
+cd Mart/backend
+set -a && source .env.production && set +a
+./scripts/prod-db-setup-via-proxy.sh
+```
+
+**Important:** In `.env.production`, set two URLs:
+
+```env
+DATABASE_URL="postgresql://APP_USER:...@HOST:5432/mart?schema=public"
+MIGRATE_DATABASE_URL="postgresql://postgres:...@HOST:5432/mart?schema=public"
+```
+
+Migrations must run as **postgres** (table owner). Using only `APP_USER` causes `must be owner of table User`.
+
+If a migration failed (P3018), recover then re-run setup:
+
+```bash
+./scripts/prod-migrate-recover-via-proxy.sh
+./scripts/prod-db-setup-via-proxy.sh
+```
+
+### Option B — Direct public IP (must allowlist your Mac)
+
+Cloud SQL `mart-pg` only accepts IPs in **Authorized networks**. If you see `P1001` at `34.93.71.44:5432`:
+
+```bash
+cd Mart/backend
+./scripts/authorize-my-ip-cloudsql.sh
+set -a && source .env.production && set +a
+./scripts/prod-db-setup.sh
+```
+
+### Option C — manual
 
 ```bash
 cd Mart/backend
 set -a && source .env.production && set +a
-
 ./scripts/prod-db-setup.sh
 ```
 
@@ -100,3 +155,5 @@ Use the project where `mart-api` appears.
 | App shows HTTP 404 on scroll | Redeploy latest backend; app now uses `GET /products` fallback |
 | No images | Fill `imageUrl` in Excel; re-run `products:replace-from-template-xls` on prod DB |
 | Login 500 | Wrong `DATABASE_URL` on Cloud Run — check Cloud Run env vars / logs |
+| `P1001` at `34.93.71.44:5432` on `prod-db-setup` | Your Mac IP is not in Cloud SQL authorized networks — use `./scripts/prod-db-setup-via-proxy.sh` or `./scripts/authorize-my-ip-cloudsql.sh` |
+| `must be owner of table User` (P3018) | Set `MIGRATE_DATABASE_URL` to **postgres** user; run `./scripts/prod-migrate-recover-via-proxy.sh` then `./scripts/prod-db-setup-via-proxy.sh` |

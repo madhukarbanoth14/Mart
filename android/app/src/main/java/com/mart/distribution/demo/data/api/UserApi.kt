@@ -8,6 +8,8 @@ import com.mart.distribution.demo.data.api.dto.CreateEmployeeResponse
 import com.mart.distribution.demo.data.api.dto.CreateShopkeeperRequest
 import com.mart.distribution.demo.data.api.dto.OnboardingDocumentDto
 import com.mart.distribution.demo.data.api.dto.PendingCountResponse
+import com.mart.distribution.demo.data.api.dto.RegisterFcmTokenRequest
+import com.mart.distribution.demo.data.api.dto.SimpleSuccessResponse
 import com.mart.distribution.demo.data.api.dto.UpdateUserStatusRequest
 import com.mart.distribution.demo.data.api.dto.UserRowDto
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -15,6 +17,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -25,6 +28,14 @@ import retrofit2.http.Query
 import java.io.File
 
 interface UserApi {
+    @POST("users/me/fcm-token")
+    suspend fun registerFcmToken(
+        @Body body: RegisterFcmTokenRequest,
+    ): SimpleSuccessResponse
+
+    @DELETE("users/me/fcm-token")
+    suspend fun unregisterFcmToken(): SimpleSuccessResponse
+
     @GET("users")
     suspend fun users(
         @Query("role") role: String? = null,
@@ -76,6 +87,34 @@ interface UserApi {
 
     @PATCH("users/{id}/reactivate")
     suspend fun reactivateUser(
+        @Path("id") id: String,
+    ): UserRowDto
+
+    @GET("users/me/documents")
+    suspend fun myDocuments(): List<OnboardingDocumentDto>
+
+    @Multipart
+    @POST("users/me/documents")
+    suspend fun uploadMyDocument(
+        @Part("documentType") documentType: okhttp3.RequestBody,
+        @Part file: MultipartBody.Part,
+    ): OnboardingDocumentDto
+
+    @PATCH("users/{userId}/documents/{documentId}/verify")
+    suspend fun verifyDocument(
+        @Path("userId") userId: String,
+        @Path("documentId") documentId: String,
+    ): OnboardingDocumentDto
+
+    @PATCH("users/{userId}/documents/{documentId}/reject")
+    suspend fun rejectDocument(
+        @Path("userId") userId: String,
+        @Path("documentId") documentId: String,
+        @Body body: UpdateUserStatusRequest,
+    ): OnboardingDocumentDto
+
+    @PATCH("users/{id}/follow-up")
+    suspend fun recordFollowUp(
         @Path("id") id: String,
     ): UserRowDto
 }

@@ -9,6 +9,10 @@ import {
   CreateOrderDto,
   CreateOrderWithPaymentDto,
 } from './dto/create-order.dto';
+import {
+  OrderReturnRejectDto,
+  OrderReturnRequestDto,
+} from './dto/order-return.dto';
 import { OrdersService } from './orders.service';
 
 @Controller('orders')
@@ -48,6 +52,13 @@ export class OrdersController {
   @Roles(UserRole.ADMIN, UserRole.EMPLOYEE, UserRole.DEALER)
   dealerSummary(@CurrentUser() user: AuthUser) {
     return this.ordersService.dealerSummary(user);
+  }
+
+  @Get(':id/reorder-preview')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SHOPKEEPER)
+  previewReorder(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+    return this.ordersService.previewReorder(id, user);
   }
 
   @Get(':id')
@@ -126,9 +137,38 @@ export class OrdersController {
     return this.ordersService.cancelOrder(id, user);
   }
 
+  @Patch(':id/return-request')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SHOPKEEPER)
+  requestReturn(
+    @Param('id') id: string,
+    @Body() dto: OrderReturnRequestDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.ordersService.requestReturn(id, dto, user);
+  }
+
+  @Patch(':id/return/approve')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.EMPLOYEE, UserRole.DEALER)
+  approveReturn(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+    return this.ordersService.approveReturn(id, user);
+  }
+
+  @Patch(':id/return/reject')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.EMPLOYEE, UserRole.DEALER)
+  rejectReturn(
+    @Param('id') id: string,
+    @Body() dto: OrderReturnRejectDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.ordersService.rejectReturn(id, dto, user);
+  }
+
   @Post(':id/payment/mock')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.SHOPKEEPER, UserRole.ADMIN, UserRole.EMPLOYEE)
+  @Roles(UserRole.SHOPKEEPER, UserRole.ADMIN, UserRole.EMPLOYEE, UserRole.DEALER)
   mockPayment(@Param('id') id: string) {
     return this.ordersService.mockPaymentSuccess(id);
   }

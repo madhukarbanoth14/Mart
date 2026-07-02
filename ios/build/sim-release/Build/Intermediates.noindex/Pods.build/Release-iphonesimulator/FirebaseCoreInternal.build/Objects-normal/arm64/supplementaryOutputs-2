@@ -1,0 +1,12 @@
+{
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Pods/FirebaseCoreInternal/FirebaseCore/Internal/Sources/HeartbeatLogging/_ObjC_HeartbeatController.swift" : {
+    "abi-baseline-json" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Pods.build/Release-iphonesimulator/FirebaseCoreInternal.build/Objects-normal/arm64/FirebaseCoreInternal.abi.json",
+    "const-values" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Pods.build/Release-iphonesimulator/FirebaseCoreInternal.build/Objects-normal/arm64/FirebaseCoreInternal-primary.swiftconstvalues",
+    "dependencies" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Pods.build/Release-iphonesimulator/FirebaseCoreInternal.build/Objects-normal/arm64/FirebaseCoreInternal-primary.d",
+    "diagnostics" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Pods.build/Release-iphonesimulator/FirebaseCoreInternal.build/Objects-normal/arm64/FirebaseCoreInternal-primary.dia",
+    "objc-header" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Pods.build/Release-iphonesimulator/FirebaseCoreInternal.build/Objects-normal/arm64/FirebaseCoreInternal-Swift.h",
+    "swiftdoc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Pods.build/Release-iphonesimulator/FirebaseCoreInternal.build/Objects-normal/arm64/FirebaseCoreInternal.swiftdoc",
+    "swiftmodule" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Pods.build/Release-iphonesimulator/FirebaseCoreInternal.build/Objects-normal/arm64/FirebaseCoreInternal.swiftmodule",
+    "swiftsourceinfo" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Pods.build/Release-iphonesimulator/FirebaseCoreInternal.build/Objects-normal/arm64/FirebaseCoreInternal.swiftsourceinfo"
+  }
+}

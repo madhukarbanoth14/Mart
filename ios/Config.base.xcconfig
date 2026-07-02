@@ -1,6 +1,6 @@
 // Shared Flashmart build settings (included by Debug + Release)
 
-MART_RAZORPAY_KEY_ID = rzp_test_YOUR_KEY_HERE
+MART_RAZORPAY_KEY_ID = rzp_test_T4hbQSalEmxnql
 
 INFOPLIST_KEY_MART_USE_LOCAL_DEMO_AUTH = $(MART_USE_LOCAL_DEMO_AUTH)
 INFOPLIST_KEY_MART_DEMO_MODE = $(MART_DEMO_MODE)

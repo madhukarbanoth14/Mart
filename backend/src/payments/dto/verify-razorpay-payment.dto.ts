@@ -1,4 +1,4 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class VerifyRazorpayPaymentDto {
   @IsUUID()
@@ -10,6 +10,8 @@ export class VerifyRazorpayPaymentDto {
   @IsString()
   razorpayPaymentId!: string;
 
+  /** Optional when the mobile SDK omits it; server will confirm via Razorpay API. */
+  @IsOptional()
   @IsString()
-  razorpaySignature!: string;
+  razorpaySignature?: string;
 }

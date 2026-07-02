@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
+import com.mart.distribution.demo.data.api.dto.UserBriefDto
 import com.mart.distribution.demo.data.demo.LocalDemoAuthConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,12 @@ data class SessionUser(
     val email: String,
     val role: String,
     val companyId: String? = null,
+    val phone: String? = null,
+    val areaName: String? = null,
+    val assignedDealer: UserBriefDto? = null,
+    val documentUploaded: Boolean = false,
+    val canPlaceOrders: Boolean = true,
+    val documentStatus: String = "NOT_UPLOADED",
 )
 
 class SessionRepository(

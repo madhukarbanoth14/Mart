@@ -17,6 +17,9 @@ import { BrandsModule } from './brands/brands.module';
 import { PaymentsModule } from './payments/payments.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { EmailModule } from './email/email.module';
+import { AppConfigModule } from './config/app-config.module';
+import { FinanceModule } from './finance/finance.module';
+import { ReturnsModule } from './returns/returns.module';
 
 @Module({
   imports: [
@@ -27,6 +30,7 @@ import { EmailModule } from './email/email.module';
     }),
     PrismaModule,
     EmailModule,
+    AppConfigModule,
     HealthModule,
     AuthModule,
     UsersModule,
@@ -40,6 +44,8 @@ import { EmailModule } from './email/email.module';
     BrandsModule,
     PaymentsModule,
     NotificationsModule,
+    FinanceModule,
+    ReturnsModule,
   ],
 })
 export class AppModule {}

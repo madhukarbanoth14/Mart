@@ -12,7 +12,7 @@ struct ShopkeeperTabHost: View {
     var body: some View {
         switch selectedTab {
         case "products": CatalogView(path: $path, buyerRole: "SHOPKEEPER", title: "Catalog", subtitle: nil)
-        case "orders": ShopkeeperOrdersView(path: $path)
+        case "orders": ShopkeeperOrdersView(selectedTab: $selectedTab, path: $path)
         case "profile": ShopkeeperProfileView(path: $path, user: user, onLogout: onLogout)
         default: ShopkeeperHomeView(selectedTab: $selectedTab, path: $path, user: user)
         }
@@ -32,19 +32,20 @@ struct ShopkeeperHomeView: View {
                 kicker: greeting,
                 trailing: AnyView(
                     HStack(spacing: 8) {
-                        FMGlyphButton(systemName: "bell", badge: 1)
+                        FMGlyphButton(systemName: "bell", badge: pendingCount > 0 ? pendingCount : nil)
                         Button { selectedTab = "profile" } label: {
                             FMAvatar(name: user.name)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Open profile")
                     }
                 )
             )
 
             VStack(spacing: 16) {
-                heroCard
-                quickActions
+                outstandingHero
+                statGrid
+                quickActionsFour
+                promoBanner
                 recentOrders
             }
             .padding(.horizontal, 16)
@@ -57,83 +58,122 @@ struct ShopkeeperHomeView: View {
         return "\(part), \(user.name.split(separator: " ").first.map(String.init) ?? user.name)"
     }
 
-    private var heroCard: some View {
+    private var outstandingHero: some View {
         ZStack(alignment: .leading) {
             RoundedRectangle(cornerRadius: FMTheme.heroRadius, style: .continuous)
                 .fill(FMTheme.heroGradient)
-                .shadow(color: FMTheme.brand.opacity(0.25), radius: 12, y: 6)
+                .shadow(color: FMTheme.brand.opacity(0.22), radius: 12, y: 6)
             Circle()
                 .fill(.white.opacity(0.08))
-                .frame(width: 160, height: 160)
-                .offset(x: 220, y: -40)
+                .frame(width: 150, height: 150)
+                .offset(x: 220, y: -50)
 
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Ready to restock?")
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Outstanding balance")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white.opacity(0.85))
-
-                HStack(spacing: 26) {
-                    statBlock(value: "\(orderCount)", label: "Total orders")
-                    Rectangle().fill(.white.opacity(0.2)).frame(width: 1, height: 44)
-                    statBlock(value: "\(inProgress)", label: "In progress")
-                }
-
-                FMButton(title: "New order", variant: .outline, icon: "plus") {
-                    if env.mainViewModel.cartCount > 0 {
-                        path.append(AppRoute.checkout)
-                    } else {
-                        selectedTab = "products"
+                Text(FMTheme.inr(outstanding))
+                    .font(.system(size: 34, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white)
+                HStack(spacing: 10) {
+                    Button { path.append(AppRoute.wallet) } label: {
+                        Text("Pay now")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(FMTheme.goldInk)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(FMTheme.gold)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
+                    .buttonStyle(.plain)
+                    Button { path.append(AppRoute.wallet) } label: {
+                        Text("View ledger")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .background(.white)
-                .clipShape(RoundedRectangle(cornerRadius: FMTheme.buttonRadius))
             }
             .padding(20)
-            .foregroundStyle(.white)
         }
     }
 
-    private func statBlock(value: String, label: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(value).font(.system(size: 30, weight: .bold, design: .monospaced))
-            Text(label).font(.system(size: 12)).opacity(0.8)
+    private var statGrid: some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 11) {
+            homeStat(icon: "clock", label: "Pending", value: "\(pendingCount)", bg: FMTheme.goldTint, fg: FMTheme.goldInk)
+            homeStat(icon: "checkmark.circle", label: "Delivered", value: "\(deliveredCount)", bg: FMTheme.brandTint, fg: FMTheme.brand)
+            homeStat(icon: "doc.text", label: "Invoices", value: "\(invoiceCount)", bg: FMTheme.dealerBlueTint, fg: FMTheme.dealerBlue)
+            homeStat(icon: "creditcard", label: "This month", value: FMTheme.inr(monthSpend), bg: FMTheme.surface3, fg: FMTheme.ink)
         }
     }
 
-    private var quickActions: some View {
-        HStack(spacing: 10) {
-            quickTile(icon: "square.grid.2x2", label: "Browse") { selectedTab = "products" }
-            quickTile(icon: "doc.text", label: "Invoices") {
+    private func homeStat(icon: String, label: String, value: String, bg: Color, fg: Color) -> some View {
+        FMCard(padding: 15) {
+            Image(systemName: icon)
+                .font(.system(size: 17))
+                .foregroundStyle(fg)
+                .frame(width: 36, height: 36)
+                .background(bg)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            Text(value)
+                .font(.system(size: 22, weight: .bold, design: .monospaced))
+                .foregroundStyle(FMTheme.ink)
+                .padding(.top, 10)
+            Text(label)
+                .font(.system(size: 12.5, weight: .semibold))
+                .foregroundStyle(FMTheme.ink3)
+        }
+    }
+
+    private var quickActionsFour: some View {
+        HStack(spacing: 8) {
+            quickIconTile(icon: "square.grid.2x2", label: "Browse") { selectedTab = "products" }
+            quickIconTile(icon: "bag", label: "My orders") { selectedTab = "orders" }
+            quickIconTile(icon: "doc.text", label: "Invoices") {
                 if case .ok(let list) = env.mainViewModel.orders, let paid = list.first(where: { $0.paymentStatus?.uppercased() == "PAID" }) {
                     path.append(AppRoute.invoice(paid.id))
-                }
+                } else { selectedTab = "orders" }
             }
-            quickTile(icon: "shippingbox", label: "Track") {
-                if case .ok(let list) = env.mainViewModel.orders, let active = list.first {
-                    path.append(AppRoute.tracking(active.id))
-                }
-            }
+            quickIconTile(icon: "phone", label: "Support") { path.append(AppRoute.profileHelp) }
         }
     }
 
-    private func quickTile(icon: String, label: String, action: @escaping () -> Void) -> some View {
+    private func quickIconTile(icon: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            FMCard(padding: 14) {
-                VStack(spacing: 9) {
-                    Image(systemName: icon)
-                        .font(.system(size: 18))
-                        .foregroundStyle(FMTheme.brand)
-                        .frame(width: 40, height: 40)
-                        .background(FMTheme.brandTint)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                    Text(label)
-                        .font(.system(size: 12.5, weight: .semibold))
-                        .foregroundStyle(FMTheme.ink2)
-                }
-                .frame(maxWidth: .infinity)
+            VStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 22))
+                    .foregroundStyle(FMTheme.brand)
+                    .frame(width: 56, height: 56)
+                    .background(FMTheme.brandTint)
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                Text(label)
+                    .font(.system(size: 11.5, weight: .semibold))
+                    .foregroundStyle(FMTheme.ink3)
             }
+            .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
+    }
+
+    private var promoBanner: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("THIS WEEK")
+                    .font(.system(size: 11, weight: .heavy))
+                    .foregroundStyle(FMTheme.goldInk)
+                Text("Extra 8% off staples")
+                    .font(.system(size: 16, weight: .heavy))
+                    .foregroundStyle(FMTheme.ink)
+                Text("On orders above ₹5,000")
+                    .font(.system(size: 12.5))
+                    .foregroundStyle(FMTheme.goldInk)
+            }
+            Spacer()
+        }
+        .padding(16)
+        .background(FMTheme.goldTint)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 
     private var recentOrders: some View {
@@ -175,6 +215,34 @@ struct ShopkeeperHomeView: View {
         return env.mainViewModel.shopkeeperSummary?.openOrders ?? 0
     }
 
+    private var pendingCount: Int {
+        guard case .ok(let list) = env.mainViewModel.orders else { return 0 }
+        return list.filter { $0.status.uppercased() == "PENDING" }.count
+    }
+
+    private var deliveredCount: Int {
+        guard case .ok(let list) = env.mainViewModel.orders else { return 0 }
+        return list.filter { $0.status.uppercased() == "DELIVERED" }.count
+    }
+
+    private var invoiceCount: Int {
+        if let ready = env.mainViewModel.shopkeeperSummary?.invoicesReady { return ready }
+        guard case .ok(let list) = env.mainViewModel.orders else { return 0 }
+        return list.filter { $0.paymentStatus?.uppercased() == "PAID" }.count
+    }
+
+    private var outstanding: Double {
+        guard case .ok(let list) = env.mainViewModel.orders else { return 0 }
+        return list
+            .filter { ($0.paymentStatus?.uppercased() ?? "") != "PAID" && $0.status.uppercased() != "CANCELLED" }
+            .reduce(0) { $0 + ($1.finalAmount?.doubleValue ?? $1.totalAmount?.doubleValue ?? 0) }
+    }
+
+    private var monthSpend: Double {
+        guard case .ok(let list) = env.mainViewModel.orders else { return 0 }
+        return list.reduce(0) { $0 + ($1.finalAmount?.doubleValue ?? $1.totalAmount?.doubleValue ?? 0) } * 0.15
+    }
+
     private var inProgress: Int {
         env.mainViewModel.shopkeeperSummary?.inDelivery ?? 0
     }
@@ -187,40 +255,41 @@ struct CatalogView: View {
     let title: String
     let subtitle: String?
     @State private var search = ""
+    @State private var quantityPickerProduct: Product?
+    @State private var showQuantityPicker = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
             FMScreen(showNav: true) {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(title)
-                                .font(.system(size: 25, weight: .bold))
-                                .foregroundStyle(FMTheme.ink)
-                            if let subtitle {
-                                Text(subtitle)
-                                    .font(.system(size: 13))
-                                    .foregroundStyle(FMTheme.ink3)
-                            }
-                        }
+                        Text(buyerRole == "SHOPKEEPER" ? "Products" : title)
+                            .font(.system(size: 26, weight: .heavy))
+                            .foregroundStyle(FMTheme.ink)
+                            .tracking(-0.5)
                         Spacer()
+                        FMGlyphButton(systemName: "line.3.horizontal.decrease.circle", accent: FMTheme.brand) {}
                         FMGlyphButton(systemName: "cart", badge: env.mainViewModel.cartCount) {
                             path.append(AppRoute.cart)
                         }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
 
                     HStack(spacing: 10) {
                         Image(systemName: "magnifyingglass").foregroundStyle(FMTheme.ink4)
                         TextField("Search products or brands", text: $search)
-                            .onSubmit { Task { env.mainViewModel.searchText = search; await env.mainViewModel.loadProducts() } }
+                            .onChange(of: search) { _, v in
+                                env.mainViewModel.searchText = v
+                                Task { await env.mainViewModel.loadProducts() }
+                            }
+                        Image(systemName: "square.grid.2x2")
+                            .foregroundStyle(FMTheme.ink4)
                     }
-                    .padding(.horizontal, 14)
-                    .frame(height: 46)
-                    .background(FMTheme.surface)
-                    .clipShape(RoundedRectangle(cornerRadius: 13))
-                    .overlay(RoundedRectangle(cornerRadius: 13).stroke(FMTheme.line))
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
+                    .frame(height: 52)
+                    .background(FMTheme.surface3)
+                    .clipShape(Capsule())
+                    .padding(.horizontal, 16)
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
@@ -234,14 +303,14 @@ struct CatalogView: View {
                                         .font(.system(size: 13, weight: .semibold))
                                         .padding(.horizontal, 14)
                                         .padding(.vertical, 8)
-                                        .background(selected ? FMTheme.ink : FMTheme.surface)
-                                        .foregroundStyle(selected ? .white : FMTheme.ink2)
-                                        .clipShape(RoundedRectangle(cornerRadius: 11))
-                                        .overlay(RoundedRectangle(cornerRadius: 11).stroke(selected ? .clear : FMTheme.line2))
+                                        .background(selected ? FMTheme.brandTint : FMTheme.surface)
+                                        .foregroundStyle(selected ? FMTheme.brandInk : FMTheme.ink2)
+                                        .clipShape(Capsule())
+                                        .overlay(Capsule().stroke(selected ? FMTheme.brand.opacity(0.35) : FMTheme.line2))
                                 }
                             }
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 16)
                     }
 
                     productList
@@ -262,6 +331,19 @@ struct CatalogView: View {
             }
         }
         .task { await env.mainViewModel.loadProducts() }
+        .sheet(isPresented: $showQuantityPicker) {
+            if let product = quantityPickerProduct {
+                FMQuantityPickerSheet(
+                    productName: product.name,
+                    max: env.mainViewModel.maxOrderQuantity,
+                    quickChips: env.mainViewModel.quickQuantityChips,
+                    onConfirm: { qty in
+                        env.mainViewModel.addToCart(product, qty: qty)
+                        quantityPickerProduct = nil
+                    }
+                )
+            }
+        }
     }
 
     @ViewBuilder
@@ -301,18 +383,27 @@ struct CatalogView: View {
                             .font(.system(size: 15, weight: .bold, design: .monospaced))
                         Text("\(Int(product.discountPercent(forRole: buyerRole)))% off")
                             .font(.system(size: 10.5, weight: .bold))
-                            .foregroundStyle(FMTheme.pos)
-                            .padding(.horizontal, 6)
+                            .foregroundStyle(FMTheme.goldInk)
+                            .padding(.horizontal, 7)
                             .padding(.vertical, 2)
-                            .background(FMTheme.posTint)
+                            .background(FMTheme.goldTint)
                             .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
                 }
                 Spacer()
                 if qty > 0 {
-                    FMStepper(value: qty) { env.mainViewModel.setCartQty(productId: product.id, qty: $0) }
+                    FMQuantityInput(
+                        value: qty,
+                        onChange: { env.mainViewModel.setCartQty(productId: product.id, qty: $0) },
+                        min: 0,
+                        max: env.mainViewModel.maxOrderQuantity,
+                        compact: true
+                    )
                 } else {
-                    Button { env.mainViewModel.addToCart(product) } label: {
+                    Button {
+                        quantityPickerProduct = product
+                        showQuantityPicker = true
+                    } label: {
                         Image(systemName: "plus")
                             .font(.system(size: 18, weight: .bold))
                             .foregroundStyle(.white)
@@ -335,14 +426,82 @@ struct ShopkeeperCatalogView: View {
 
 struct ShopkeeperOrdersView: View {
     @Environment(AppEnvironment.self) private var env
+    @Binding var selectedTab: String
     @Binding var path: NavigationPath
+    @State private var reorderAlert: String?
+    @State private var segment = "All"
+
+    private var filteredOrders: [Order] {
+        guard case .ok(let list) = env.mainViewModel.orders else { return [] }
+        switch segment {
+        case "Pending":
+            return list.filter {
+                let s = $0.status.uppercased()
+                return s == "PENDING" || s == "PLACED" || s == "DEALER_CONFIRMED" || s == "OUT_FOR_DELIVERY"
+            }
+        case "Delivered":
+            return list.filter { $0.status.uppercased() == "DELIVERED" }
+        case "Cancelled":
+            return list.filter { $0.status.uppercased() == "CANCELLED" }
+        default:
+            return list
+        }
+    }
 
     var body: some View {
         FMScreen(showNav: true) {
-            FMTopBar(title: "Orders", subtitle: "Your order history")
-            ordersList(env.mainViewModel.orders, path: $path)
+            FMTopBar(title: "My orders", subtitle: env.sessionStore.user?.name)
+            FMSegmented(options: ["All", "Pending", "Delivered", "Cancelled"], selection: $segment)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+
+            switch env.mainViewModel.orders {
+            case .loading:
+                FMSkeletonListScreen()
+                    .padding(.horizontal, 16)
+            case .err(let msg):
+                FMErrorScreen(
+                    title: "Couldn't load orders",
+                    message: msg,
+                    onPrimaryAction: { Task { await env.mainViewModel.loadMyOrders() } }
+                )
+            case .ok:
+                if filteredOrders.isEmpty {
+                    FMEmptyStateHero(
+                        icon: "bag",
+                        title: segment == "All" ? "No orders yet" : "No \(segment.lowercased()) orders",
+                        message: segment == "All"
+                            ? "When you place your first order, it'll show up here with live delivery tracking."
+                            : "Try another filter or browse the catalog to place an order.",
+                        actionTitle: segment == "All" ? "Browse catalog" : nil,
+                        onAction: segment == "All" ? { selectedTab = "products" } : nil
+                    )
+                } else {
+                    shopkeeperOrdersList(filteredOrders, path: $path) { orderId in
+                        Task {
+                            let result = await env.mainViewModel.reorderFromOrder(orderId: orderId)
+                            if result.success {
+                                path.append(AppRoute.cart)
+                                if let msg = result.message { reorderAlert = msg }
+                            } else {
+                                reorderAlert = result.message ?? "Could not reorder"
+                            }
+                        }
+                    }
+                }
+            case .idle:
+                EmptyView()
+            }
         }
         .task { await env.mainViewModel.loadMyOrders() }
+        .alert("Reorder", isPresented: Binding(
+            get: { reorderAlert != nil },
+            set: { if !$0 { reorderAlert = nil } }
+        )) {
+            Button("OK", role: .cancel) { reorderAlert = nil }
+        } message: {
+            Text(reorderAlert ?? "")
+        }
     }
 }
 
@@ -372,6 +531,127 @@ struct ShopkeeperProfileView: View {
         }()
         let active = max(0, count - delivered)
         return [("Orders", "\(count)"), ("Delivered", "\(delivered)"), ("Active", "\(active)")]
+    }
+}
+
+func shopkeeperOrdersList(
+    _ orders: [Order],
+    path: Binding<NavigationPath>,
+    onReorder: @escaping (String) -> Void
+) -> some View {
+    VStack(spacing: 10) {
+        if orders.isEmpty {
+            Text("No orders yet").foregroundStyle(FMTheme.ink3).padding()
+        } else {
+            ForEach(orders) { order in
+                shopkeeperOrderCard(order, path: path, onReorder: { onReorder(order.id) })
+            }
+        }
+    }
+    .padding(.horizontal, 16)
+}
+
+func shopkeeperOrderCard(_ order: Order, path: Binding<NavigationPath>, onReorder: @escaping () -> Void) -> some View {
+    let items = order.items ?? []
+    let delivered = order.status.uppercased() == "DELIVERED"
+    return FMCard {
+        Button { path.wrappedValue.append(AppRoute.orderDetail(order.id)) } label: {
+            HStack(spacing: 11) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(FMTheme.surface3)
+                        .frame(width: 40, height: 40)
+                    Image(systemName: "bag")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(FMTheme.ink3)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(order.id.suffix(8).uppercased())
+                        .font(.system(size: 14.5, weight: .bold, design: .monospaced))
+                    Text("\(order.createdAt?.prefix(10).description ?? "—") · \(items.count) items")
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundStyle(FMTheme.ink3)
+                }
+                Spacer()
+                FMBadge(status: order.status)
+            }
+        }
+        .buttonStyle(.plain)
+
+        if !items.isEmpty {
+            FlowLayout(spacing: 6) {
+                ForEach(items.prefix(3), id: \.productId) { item in
+                    let name = item.product?.name.split(separator: " ").prefix(2).joined(separator: " ") ?? "Item"
+                    Text("\(item.quantity)× \(name)")
+                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(FMTheme.ink3)
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 4)
+                        .background(FMTheme.surface3)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }
+            .padding(.top, 4)
+        }
+
+        HStack {
+            Text(FMTheme.inr(ProductPricing.orderMath(order: order).total))
+                .font(.system(size: 15, weight: .bold, design: .monospaced))
+            Spacer()
+            HStack(spacing: 8) {
+                if delivered {
+                    FMButton(title: "Invoice", variant: .outline, fullWidth: false) {
+                        path.wrappedValue.append(AppRoute.invoice(order.id))
+                    }
+                    FMButton(title: "Reorder", variant: .soft, fullWidth: false, action: onReorder)
+                } else {
+                    FMButton(title: "Track", variant: .primary, fullWidth: false) {
+                        path.wrappedValue.append(AppRoute.tracking(order.id))
+                    }
+                }
+            }
+        }
+        .padding(.top, 12)
+        .overlay(alignment: .top) {
+            Rectangle().fill(FMTheme.line).frame(height: 1)
+        }
+    }
+}
+
+/// Simple horizontal flow for item chips (iOS 16+).
+private struct FlowLayout: Layout {
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = arrange(proposal: proposal, subviews: subviews)
+        return result.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = arrange(proposal: proposal, subviews: subviews)
+        for (index, frame) in result.frames.enumerated() {
+            subviews[index].place(at: CGPoint(x: bounds.minX + frame.minX, y: bounds.minY + frame.minY), proposal: .unspecified)
+        }
+    }
+
+    private func arrange(proposal: ProposedViewSize, subviews: Subviews) -> (size: CGSize, frames: [CGRect]) {
+        let maxWidth = proposal.width ?? .infinity
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var frames: [CGRect] = []
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x + size.width > maxWidth, x > 0 {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            frames.append(CGRect(origin: CGPoint(x: x, y: y), size: size))
+            rowHeight = max(rowHeight, size.height)
+            x += size.width + spacing
+        }
+        return (CGSize(width: maxWidth, height: y + rowHeight), frames)
     }
 }
 
@@ -457,6 +737,9 @@ func profileContent(user: SessionUser, path: Binding<NavigationPath>, onLogout: 
         }
 
         FMCard(padding: 6) {
+            FMRow(icon: "doc.badge.plus", title: "Documents", subtitle: user.documentStatus.replacingOccurrences(of: "_", with: " ").capitalized, showDivider: true) {
+                path.wrappedValue.append(AppRoute.profileDocuments)
+            }
             FMRow(icon: "mappin.and.ellipse", title: "Store address", subtitle: ShopkeeperProfileStore.storeAddress, showDivider: true) {
                 path.wrappedValue.append(AppRoute.profileStoreAddress)
             }

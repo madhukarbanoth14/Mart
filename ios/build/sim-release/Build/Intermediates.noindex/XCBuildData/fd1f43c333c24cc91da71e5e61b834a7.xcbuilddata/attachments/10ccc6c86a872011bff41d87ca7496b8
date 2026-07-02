@@ -1,0 +1,226 @@
+{
+  "" : {
+    "const-values" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Flashmart-primary.swiftconstvalues",
+    "dependencies" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Flashmart-primary.d",
+    "diagnostics" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Flashmart-primary.dia",
+    "emit-module-dependencies" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Flashmart-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Flashmart-primary-emit-module.dia",
+    "pch" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Flashmart-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Flashmart-primary.swiftdeps"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/App/AppConfig.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AppConfig.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AppConfig.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AppConfig.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/App/AppDelegate.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AppDelegate.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AppDelegate.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AppDelegate.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/App/AppEnvironment.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AppEnvironment.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AppEnvironment.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AppEnvironment.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/CartStore.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/CartStore.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/CartStore.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/CartStore.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/InvoicePdfExporter.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/InvoicePdfExporter.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/InvoicePdfExporter.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/InvoicePdfExporter.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/LocalDemoAuth.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/LocalDemoAuth.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/LocalDemoAuth.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/LocalDemoAuth.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/LocalDemoStore.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/LocalDemoStore.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/LocalDemoStore.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/LocalDemoStore.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/MartAPIClient.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/MartAPIClient.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/MartAPIClient.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/MartAPIClient.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/Models.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Models.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Models.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/Models.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/OnboardingDocumentStorage.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingDocumentStorage.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingDocumentStorage.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingDocumentStorage.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/OnboardingPreferences.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingPreferences.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingPreferences.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingPreferences.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/ProductPricing.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ProductPricing.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ProductPricing.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ProductPricing.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/PushTokenRegistrar.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/PushTokenRegistrar.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/PushTokenRegistrar.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/PushTokenRegistrar.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/RazorpayCheckoutOptions.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RazorpayCheckoutOptions.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RazorpayCheckoutOptions.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RazorpayCheckoutOptions.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/RazorpayPaymentCoordinator.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RazorpayPaymentCoordinator.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RazorpayPaymentCoordinator.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RazorpayPaymentCoordinator.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/SessionStore.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/SessionStore.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/SessionStore.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/SessionStore.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Data/ShopkeeperProfileStore.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShopkeeperProfileStore.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShopkeeperProfileStore.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShopkeeperProfileStore.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/FlashmartApp.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartApp.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartApp.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartApp.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Theme/FlashmartComponents.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartComponents.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartComponents.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartComponents.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Theme/FlashmartTheme.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartTheme.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartTheme.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartTheme.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/ViewModels/AuthViewModel.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AuthViewModel.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AuthViewModel.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AuthViewModel.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/ViewModels/FinanceViewModel.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FinanceViewModel.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FinanceViewModel.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FinanceViewModel.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/ViewModels/MainViewModel.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/MainViewModel.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/MainViewModel.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/MainViewModel.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Admin/AdminFinanceViews.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminFinanceViews.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminFinanceViews.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminFinanceViews.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Admin/AdminManagementViews.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminManagementViews.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminManagementViews.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminManagementViews.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Admin/AdminOnboardingReviewView.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminOnboardingReviewView.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminOnboardingReviewView.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminOnboardingReviewView.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Admin/AdminViews.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminViews.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminViews.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/AdminViews.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Auth/LoginView.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/LoginView.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/LoginView.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/LoginView.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Auth/OnboardingView.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingView.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingView.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingView.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Auth/ResetPasswordView.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ResetPasswordView.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ResetPasswordView.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ResetPasswordView.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Auth/SplashView.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/SplashView.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/SplashView.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/SplashView.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Dealer/DealerViews.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/DealerViews.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/DealerViews.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/DealerViews.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Employee/EmployeeViews.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/EmployeeViews.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/EmployeeViews.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/EmployeeViews.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Navigation/RoleShellView.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RoleShellView.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RoleShellView.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RoleShellView.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Profile/ProfileViews.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ProfileViews.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ProfileViews.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ProfileViews.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/RootView.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RootView.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RootView.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/RootView.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shared/FlashmartSharedViews.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartSharedViews.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartSharedViews.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/FlashmartSharedViews.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shared/OnboardingDocumentsSection.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingDocumentsSection.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingDocumentsSection.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/OnboardingDocumentsSection.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shared/ProfileDocumentsView.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ProfileDocumentsView.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ProfileDocumentsView.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ProfileDocumentsView.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shared/ShareSheet.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShareSheet.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShareSheet.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShareSheet.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shared/SharedViews.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/SharedViews.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/SharedViews.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/SharedViews.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shopkeeper/ShopkeeperCheckoutView.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShopkeeperCheckoutView.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShopkeeperCheckoutView.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShopkeeperCheckoutView.o"
+  },
+  "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shopkeeper/ShopkeeperViews.swift" : {
+    "index-unit-output-path" : "/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShopkeeperViews.o",
+    "llvm-bc" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShopkeeperViews.bc",
+    "object" : "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/build/sim-release/Build/Intermediates.noindex/Flashmart.build/Release-iphonesimulator/Flashmart.build/Objects-normal/x86_64/ShopkeeperViews.o"
+  }
+}

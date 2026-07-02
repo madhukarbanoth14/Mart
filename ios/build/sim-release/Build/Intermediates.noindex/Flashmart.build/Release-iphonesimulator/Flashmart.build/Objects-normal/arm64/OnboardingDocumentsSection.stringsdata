@@ -1,0 +1,48 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Shared/OnboardingDocumentsSection.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Upload KYC and business documents. Admin will review these before approval.",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 20
+        }
+      },
+      {
+        "comment": "",
+        "key": "Attach documents if available. Uploads are mandatory in production builds.",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "Upload",
+        "location": {
+          "startingColumn": 37,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "Replace",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "Not uploaded",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 63
+        }
+      }
+    ]
+  },
+  "version": 1
+}

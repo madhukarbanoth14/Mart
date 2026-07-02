@@ -1,26 +1,37 @@
 import type { AuthUser } from '../auth/types/auth-user.type';
 import { CreateOrderDto, CreateOrderWithPaymentDto } from './dto/create-order.dto';
+import { OrderReturnRejectDto, OrderReturnRequestDto } from './dto/order-return.dto';
 import { OrdersService } from './orders.service';
 export declare class OrdersController {
     private readonly ordersService;
     constructor(ordersService: OrdersService);
-    findAll(user: AuthUser): import("@prisma/client").Prisma.PrismaPromise<({
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
+    findAll(user: AuthUser): Promise<({
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -30,7 +41,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -39,16 +49,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -62,35 +71,49 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     })[]>;
-    findMine(user: AuthUser): import("@prisma/client").Prisma.PrismaPromise<({
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
+    findMine(user: AuthUser): Promise<({
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -100,7 +123,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -109,16 +131,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -132,17 +153,21 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     })[]>;
     mySummary(user: AuthUser): Promise<{
         openOrders: number;
@@ -150,23 +175,33 @@ export declare class OrdersController {
         lastTotal: number | null;
         invoicesReady: number;
     }>;
-    findDealer(user: AuthUser): import("@prisma/client").Prisma.PrismaPromise<({
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
+    findDealer(user: AuthUser): Promise<({
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -176,7 +211,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -185,16 +219,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -208,40 +241,55 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     })[]>;
     dealerSummary(user: AuthUser): Promise<{
         pendingOrders: number;
         todaysDeliveries: number;
         weeklyRevenue: number;
     }>;
+    previewReorder(id: string, user: AuthUser): Promise<import("./dto/order-reorder.dto").ReorderPreviewDto>;
     findOne(id: string, user: AuthUser): Promise<{
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -251,7 +299,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -260,16 +307,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -283,35 +329,49 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     }>;
     create(dto: CreateOrderDto, user: AuthUser): Promise<{
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -321,7 +381,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -330,16 +389,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -353,17 +411,21 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     }>;
     createWithPayment(dto: CreateOrderWithPaymentDto, user: AuthUser): Promise<{
         orderId: string;
@@ -377,22 +439,32 @@ export declare class OrdersController {
         message: string;
     }>;
     createDealerRestock(dto: CreateOrderDto, user: AuthUser): Promise<{
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -402,7 +474,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -411,16 +482,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -434,17 +504,21 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     }>;
     createDealerRestockWithPayment(dto: CreateOrderWithPaymentDto, user: AuthUser): Promise<{
         orderId: string;
@@ -464,22 +538,32 @@ export declare class OrdersController {
         keyId?: undefined;
     }>;
     confirm(id: string, user: AuthUser): Promise<({
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -489,7 +573,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -498,16 +581,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -521,35 +603,49 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     }) | null>;
     outForDelivery(id: string, user: AuthUser): Promise<{
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -559,7 +655,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -568,16 +663,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -591,35 +685,49 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     }>;
     dispatch(id: string, user: AuthUser): Promise<{
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -629,7 +737,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -638,16 +745,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -661,35 +767,49 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     }>;
     deliver(id: string, user: AuthUser): Promise<{
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -699,7 +819,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -708,16 +827,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -731,35 +849,49 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     }>;
     cancel(id: string, user: AuthUser): Promise<{
-        dealer: {
-            id: string;
-            name: string;
-            email: string;
-            phone: string | null;
-        };
         shopkeeper: {
-            id: string;
             name: string;
+            id: string;
             email: string;
             phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
         };
         items: ({
             product: {
+                name: string;
                 id: string;
                 companyId: string | null;
+                createdAt: Date;
                 brandId: string | null;
                 imageUrl: string | null;
                 sku: string | null;
@@ -769,7 +901,6 @@ export declare class OrdersController {
                 caseQty: number | null;
                 gstRate: import("@prisma/client-runtime-utils").Decimal;
                 isActive: boolean;
-                name: string;
                 brandType: import("@prisma/client").$Enums.BrandType;
                 shelf: import("@prisma/client").$Enums.ProductShelf;
                 basePrice: import("@prisma/client-runtime-utils").Decimal;
@@ -778,16 +909,15 @@ export declare class OrdersController {
                 shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
                 bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
                 bulkShippingMinQty: number;
-                createdAt: Date;
             };
         } & {
             id: string;
-            productId: string;
-            quantity: number;
+            orderId: string;
             gstAmount: import("@prisma/client-runtime-utils").Decimal;
             discountAmount: import("@prisma/client-runtime-utils").Decimal;
             finalAmount: import("@prisma/client-runtime-utils").Decimal;
-            orderId: string;
+            productId: string;
+            quantity: number;
             price: import("@prisma/client-runtime-utils").Decimal;
         })[];
         invoice: {
@@ -801,17 +931,267 @@ export declare class OrdersController {
     } & {
         id: string;
         companyId: string | null;
-        createdAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        dealerId: string;
+        createdAt: Date;
         updatedAt: Date;
         shopkeeperId: string;
+        dealerId: string;
         kind: import("@prisma/client").$Enums.OrderKind;
         totalAmount: import("@prisma/client-runtime-utils").Decimal;
         gstAmount: import("@prisma/client-runtime-utils").Decimal;
         discountAmount: import("@prisma/client-runtime-utils").Decimal;
         finalAmount: import("@prisma/client-runtime-utils").Decimal;
         paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
+    }>;
+    requestReturn(id: string, dto: OrderReturnRequestDto, user: AuthUser): Promise<{
+        shopkeeper: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        items: ({
+            product: {
+                name: string;
+                id: string;
+                companyId: string | null;
+                createdAt: Date;
+                brandId: string | null;
+                imageUrl: string | null;
+                sku: string | null;
+                weight: string;
+                mrp: import("@prisma/client-runtime-utils").Decimal | null;
+                dealerPrice: import("@prisma/client-runtime-utils").Decimal | null;
+                caseQty: number | null;
+                gstRate: import("@prisma/client-runtime-utils").Decimal;
+                isActive: boolean;
+                brandType: import("@prisma/client").$Enums.BrandType;
+                shelf: import("@prisma/client").$Enums.ProductShelf;
+                basePrice: import("@prisma/client-runtime-utils").Decimal;
+                gstPercentage: import("@prisma/client-runtime-utils").Decimal;
+                dealerDiscount: import("@prisma/client-runtime-utils").Decimal;
+                shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
+                bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
+                bulkShippingMinQty: number;
+            };
+        } & {
+            id: string;
+            orderId: string;
+            gstAmount: import("@prisma/client-runtime-utils").Decimal;
+            discountAmount: import("@prisma/client-runtime-utils").Decimal;
+            finalAmount: import("@prisma/client-runtime-utils").Decimal;
+            productId: string;
+            quantity: number;
+            price: import("@prisma/client-runtime-utils").Decimal;
+        })[];
+        invoice: {
+            id: string;
+            companyId: string | null;
+            orderId: string;
+            invoiceNumber: string;
+            generatedAt: Date;
+            pdfUrl: string | null;
+        } | null;
+    } & {
+        id: string;
+        companyId: string | null;
+        status: import("@prisma/client").$Enums.OrderStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        shopkeeperId: string;
+        dealerId: string;
+        kind: import("@prisma/client").$Enums.OrderKind;
+        totalAmount: import("@prisma/client-runtime-utils").Decimal;
+        gstAmount: import("@prisma/client-runtime-utils").Decimal;
+        discountAmount: import("@prisma/client-runtime-utils").Decimal;
+        finalAmount: import("@prisma/client-runtime-utils").Decimal;
+        paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
+    }>;
+    approveReturn(id: string, user: AuthUser): Promise<{
+        shopkeeper: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        items: ({
+            product: {
+                name: string;
+                id: string;
+                companyId: string | null;
+                createdAt: Date;
+                brandId: string | null;
+                imageUrl: string | null;
+                sku: string | null;
+                weight: string;
+                mrp: import("@prisma/client-runtime-utils").Decimal | null;
+                dealerPrice: import("@prisma/client-runtime-utils").Decimal | null;
+                caseQty: number | null;
+                gstRate: import("@prisma/client-runtime-utils").Decimal;
+                isActive: boolean;
+                brandType: import("@prisma/client").$Enums.BrandType;
+                shelf: import("@prisma/client").$Enums.ProductShelf;
+                basePrice: import("@prisma/client-runtime-utils").Decimal;
+                gstPercentage: import("@prisma/client-runtime-utils").Decimal;
+                dealerDiscount: import("@prisma/client-runtime-utils").Decimal;
+                shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
+                bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
+                bulkShippingMinQty: number;
+            };
+        } & {
+            id: string;
+            orderId: string;
+            gstAmount: import("@prisma/client-runtime-utils").Decimal;
+            discountAmount: import("@prisma/client-runtime-utils").Decimal;
+            finalAmount: import("@prisma/client-runtime-utils").Decimal;
+            productId: string;
+            quantity: number;
+            price: import("@prisma/client-runtime-utils").Decimal;
+        })[];
+        invoice: {
+            id: string;
+            companyId: string | null;
+            orderId: string;
+            invoiceNumber: string;
+            generatedAt: Date;
+            pdfUrl: string | null;
+        } | null;
+    } & {
+        id: string;
+        companyId: string | null;
+        status: import("@prisma/client").$Enums.OrderStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        shopkeeperId: string;
+        dealerId: string;
+        kind: import("@prisma/client").$Enums.OrderKind;
+        totalAmount: import("@prisma/client-runtime-utils").Decimal;
+        gstAmount: import("@prisma/client-runtime-utils").Decimal;
+        discountAmount: import("@prisma/client-runtime-utils").Decimal;
+        finalAmount: import("@prisma/client-runtime-utils").Decimal;
+        paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
+    }>;
+    rejectReturn(id: string, dto: OrderReturnRejectDto, user: AuthUser): Promise<{
+        shopkeeper: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        dealer: {
+            name: string;
+            id: string;
+            email: string;
+            phone: string | null;
+            shopName: string | null;
+            address: string | null;
+            latitude: number | null;
+            longitude: number | null;
+        };
+        items: ({
+            product: {
+                name: string;
+                id: string;
+                companyId: string | null;
+                createdAt: Date;
+                brandId: string | null;
+                imageUrl: string | null;
+                sku: string | null;
+                weight: string;
+                mrp: import("@prisma/client-runtime-utils").Decimal | null;
+                dealerPrice: import("@prisma/client-runtime-utils").Decimal | null;
+                caseQty: number | null;
+                gstRate: import("@prisma/client-runtime-utils").Decimal;
+                isActive: boolean;
+                brandType: import("@prisma/client").$Enums.BrandType;
+                shelf: import("@prisma/client").$Enums.ProductShelf;
+                basePrice: import("@prisma/client-runtime-utils").Decimal;
+                gstPercentage: import("@prisma/client-runtime-utils").Decimal;
+                dealerDiscount: import("@prisma/client-runtime-utils").Decimal;
+                shopkeeperDiscount: import("@prisma/client-runtime-utils").Decimal;
+                bulkShippingFee: import("@prisma/client-runtime-utils").Decimal | null;
+                bulkShippingMinQty: number;
+            };
+        } & {
+            id: string;
+            orderId: string;
+            gstAmount: import("@prisma/client-runtime-utils").Decimal;
+            discountAmount: import("@prisma/client-runtime-utils").Decimal;
+            finalAmount: import("@prisma/client-runtime-utils").Decimal;
+            productId: string;
+            quantity: number;
+            price: import("@prisma/client-runtime-utils").Decimal;
+        })[];
+        invoice: {
+            id: string;
+            companyId: string | null;
+            orderId: string;
+            invoiceNumber: string;
+            generatedAt: Date;
+            pdfUrl: string | null;
+        } | null;
+    } & {
+        id: string;
+        companyId: string | null;
+        status: import("@prisma/client").$Enums.OrderStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        shopkeeperId: string;
+        dealerId: string;
+        kind: import("@prisma/client").$Enums.OrderKind;
+        totalAmount: import("@prisma/client-runtime-utils").Decimal;
+        gstAmount: import("@prisma/client-runtime-utils").Decimal;
+        discountAmount: import("@prisma/client-runtime-utils").Decimal;
+        finalAmount: import("@prisma/client-runtime-utils").Decimal;
+        paymentStatus: import("@prisma/client").$Enums.OrderPaymentStatus;
+        returnReason: string | null;
+        returnRequestedAt: Date | null;
+        returnedAt: Date | null;
+        refundedAt: Date | null;
     }>;
     mockPayment(id: string): {
         orderId: string;

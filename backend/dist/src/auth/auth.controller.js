@@ -19,7 +19,9 @@ const jwt_auth_guard_1 = require("./guards/jwt-auth.guard");
 const auth_service_1 = require("./auth.service");
 const forgot_password_dto_1 = require("./dto/forgot-password.dto");
 const login_dto_1 = require("./dto/login.dto");
+const otp_dto_1 = require("./dto/otp.dto");
 const reset_password_dto_1 = require("./dto/reset-password.dto");
+const self_register_dto_1 = require("./dto/self-register.dto");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -28,6 +30,24 @@ let AuthController = class AuthController {
     login(dto) {
         return this.authService.login(dto);
     }
+    sendOtp(dto) {
+        return this.authService.sendRegisterOtp(dto.phone);
+    }
+    verifyOtp(dto) {
+        return this.authService.verifyRegisterOtp(dto.phone, dto.code);
+    }
+    registrationAreas(state, district) {
+        return this.authService.registrationAreas(state, district);
+    }
+    registrationGeo() {
+        return this.authService.registrationGeo();
+    }
+    registerShopkeeper(dto) {
+        return this.authService.registerShopkeeper(dto);
+    }
+    registerDealer(dto) {
+        return this.authService.registerDealer(dto);
+    }
     forgotPassword(dto) {
         return this.authService.forgotPassword(dto.email);
     }
@@ -35,7 +55,7 @@ let AuthController = class AuthController {
         return this.authService.resetPassword(dto.token, dto.newPassword);
     }
     me(user) {
-        return user;
+        return this.authService.me(user);
     }
 };
 exports.AuthController = AuthController;
@@ -46,6 +66,48 @@ __decorate([
     __metadata("design:paramtypes", [login_dto_1.LoginDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Post)('otp/send'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [otp_dto_1.SendOtpDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "sendOtp", null);
+__decorate([
+    (0, common_1.Post)('otp/verify'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [otp_dto_1.VerifyOtpDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "verifyOtp", null);
+__decorate([
+    (0, common_1.Get)('registration/areas'),
+    __param(0, (0, common_1.Query)('state')),
+    __param(1, (0, common_1.Query)('district')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "registrationAreas", null);
+__decorate([
+    (0, common_1.Get)('registration/geo'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "registrationGeo", null);
+__decorate([
+    (0, common_1.Post)('register/shopkeeper'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [self_register_dto_1.SelfRegisterShopkeeperDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "registerShopkeeper", null);
+__decorate([
+    (0, common_1.Post)('register/dealer'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [self_register_dto_1.SelfRegisterDealerDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "registerDealer", null);
 __decorate([
     (0, common_1.Post)('forgot-password'),
     __param(0, (0, common_1.Body)()),

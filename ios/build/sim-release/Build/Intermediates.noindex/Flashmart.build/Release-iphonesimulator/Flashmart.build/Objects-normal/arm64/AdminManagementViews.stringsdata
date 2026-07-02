@@ -1,0 +1,208 @@
+{
+  "source": "/Users/madhukarbanoth/Document Local/KNSR-Mart/Mart/ios/Flashmart/Views/Admin/AdminManagementViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Brand type",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 72
+        }
+      },
+      {
+        "comment": "",
+        "key": "Brand type",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 75
+        }
+      },
+      {
+        "comment": "",
+        "key": "Own brand",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "Other brand",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 77
+        }
+      },
+      {
+        "comment": "",
+        "key": "Shelf category",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 83
+        }
+      },
+      {
+        "comment": "",
+        "key": "Shelf",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "CSV import (demo)",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "Pricing, GST, and discount settings are applied server-side in order calculations.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 137
+        }
+      },
+      {
+        "comment": "",
+        "key": "No products yet. Add your first SKU above.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 208
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit SKU",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 185
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 189
+        }
+      },
+      {
+        "comment": "",
+        "key": "Paste CSV rows",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 196
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 197
+        }
+      },
+      {
+        "comment": "",
+        "key": "Importing…",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 198
+        }
+      },
+      {
+        "comment": "",
+        "key": "Import",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 198
+        }
+      },
+      {
+        "comment": "",
+        "key": "One row per line:\nname,brandType,shelf,basePrice,gstPercentage,dealerDiscount,shopkeeperDiscount\nLegacy 6-column rows default shelf to STAPLES.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 200
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %@ · GST %lld%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 232
+        }
+      },
+      {
+        "comment": "",
+        "key": "Dealer %lld%% · Shop %lld%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 235
+        }
+      },
+      {
+        "comment": "",
+        "key": "New brand",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 412
+        }
+      },
+      {
+        "comment": "",
+        "key": "Brand name",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 413
+        }
+      },
+      {
+        "comment": "",
+        "key": "Logo URL (optional)",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 414
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 415
+        }
+      },
+      {
+        "comment": "",
+        "key": "Saving…",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 416
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 45,
+          "startingLine": 416
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add area",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 445
+        }
+      }
+    ]
+  },
+  "version": 1
+}

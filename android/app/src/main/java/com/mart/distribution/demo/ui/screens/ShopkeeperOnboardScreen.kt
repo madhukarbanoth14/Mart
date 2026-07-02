@@ -3,6 +3,7 @@ package com.mart.distribution.demo.ui.screens
 import com.mart.distribution.demo.data.onboarding.OnboardingDocumentStorage
 import com.mart.distribution.demo.data.onboarding.PendingOnboardingDocument
 import com.mart.distribution.demo.ui.onboarding.OnboardingDocumentsSection
+import com.mart.distribution.demo.ui.onboarding.OnboardingShopLocationSection
 import com.mart.distribution.demo.util.FieldFilters
 import com.mart.distribution.demo.util.FieldValidators
 import com.mart.distribution.demo.ui.onboarding.OnboardingDocumentsSection
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mart.distribution.demo.BuildConfig
+import com.mart.distribution.demo.data.api.dto.ProductDto
 import com.mart.distribution.demo.data.demo.LocalDemoAuthConfig
 import com.mart.distribution.demo.feature.home.LoadState
 import com.mart.distribution.demo.feature.home.MainViewModel
@@ -65,7 +67,15 @@ fun ShopkeeperOnboardScreen(
 
     LaunchedEffect(Unit) {
         mainViewModel.loadAreas()
+        mainViewModel.ensureCatalogLoaded()
     }
+
+    val catalogProducts =
+        when (val p = ui.products) {
+            is LoadState.Ok -> p.data
+            else -> emptyList()
+        }
+    val shopkeeperDiscountText = remember(catalogProducts) { roleDiscountText(catalogProducts, dealer = false) }
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -87,6 +97,10 @@ fun ShopkeeperOnboardScreen(
     var error by remember { mutableStateOf<String?>(null) }
     var successInfo by remember { mutableStateOf<String?>(null) }
     var onboardingNotesText by remember { mutableStateOf("") }
+    var shopName by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+    var latitude by remember { mutableStateOf<Double?>(null) }
+    var longitude by remember { mutableStateOf<Double?>(null) }
     var pendingDocuments by remember { mutableStateOf<List<PendingOnboardingDocument>>(emptyList()) }
     val documentSlots = remember { OnboardingDocumentStorage.shopkeeperDocumentSlots() }
 
@@ -131,6 +145,25 @@ fun ShopkeeperOnboardScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            MartElevatedCard(modifier = Modifier.fillMaxWidth()) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        "Shopkeeper discount",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Text(
+                        "$shopkeeperDiscountText on own-brand SKUs",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    Text(
+                        "Applied automatically at checkout per SKU.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = FieldFilters.personName(it); error = null },
@@ -171,12 +204,23 @@ fun ShopkeeperOnboardScreen(
                     colors = MartFieldDefaults.outlinedColors(),
                 )
             }
+            OnboardingShopLocationSection(
+                shopName = shopName,
+                onShopNameChange = { shopName = it; error = null },
+                address = address,
+                onAddressChange = { address = it; error = null },
+                latitude = latitude,
+                longitude = longitude,
+                onLocationCaptured = { lat, lng -> latitude = lat; longitude = lng },
+                modifier = Modifier.fillMaxWidth(),
+                shopNameLabel = "Shop name (optional)",
+            )
             OutlinedTextField(
                 value = onboardingNotesText,
                 onValueChange = { onboardingNotesText = it; error = null },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Onboarding notes (optional)") },
-                placeholder = { Text("ID checks, shop address, remarks…") },
+                placeholder = { Text("ID checks, remarks…") },
                 keyboardOptions = MartFieldDefaults.englishMultilineKeyboard,
                 minLines = 2,
                 colors = MartFieldDefaults.outlinedColors(),
@@ -226,6 +270,34 @@ fun ShopkeeperOnboardScreen(
                     }
                 else -> {}
             }
+            val assignedDealerName =
+                areas.firstOrNull { it.id == selectedAreaId }?.dealer?.name
+            if (selectedAreaId.isNotBlank()) {
+                MartElevatedCard(modifier = Modifier.fillMaxWidth()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(
+                            "Assigned dealer",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        Text(
+                            assignedDealerName ?: "No dealer mapped to this area yet",
+                            style = MaterialTheme.typography.titleMedium,
+                            color =
+                                if (assignedDealerName != null) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.error
+                                },
+                        )
+                        Text(
+                            "Orders from this shopkeeper route to the dealer of the selected area.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
             error?.let {
                 Text(it, color = MaterialTheme.colorScheme.error)
             }
@@ -258,6 +330,10 @@ fun ShopkeeperOnboardScreen(
                         areaId = selectedAreaId,
                         onboardingNotes = combinedOnboardingNotes(),
                         documents = pendingDocuments,
+                        shopName = shopName.takeIf { it.isNotBlank() },
+                        address = address.takeIf { it.isNotBlank() },
+                        latitude = latitude,
+                        longitude = longitude,
                     ) { err, info ->
                         busy = false
                         if (err != null) {
@@ -293,5 +369,26 @@ fun ShopkeeperOnboardScreen(
                 }
             },
         )
+    }
+}
+
+private fun parseDiscount(value: Any?): Double? =
+    (value as? Number)?.toDouble() ?: (value as? String)?.toDoubleOrNull()
+
+private fun formatPercent(value: Double): String =
+    if (value % 1.0 == 0.0) value.toInt().toString() else value.toString()
+
+/** Discount range across the catalog for a role; falls back to default business rule. */
+fun roleDiscountText(products: List<ProductDto>, dealer: Boolean): String {
+    val values =
+        products
+            .mapNotNull { parseDiscount(if (dealer) it.dealerDiscount else it.shopkeeperDiscount) }
+            .filter { it > 0 }
+            .distinct()
+            .sorted()
+    return when {
+        values.isEmpty() -> if (dealer) "10%" else "5%"
+        values.size == 1 -> "${formatPercent(values.first())}%"
+        else -> "${formatPercent(values.first())}–${formatPercent(values.last())}%"
     }
 }
