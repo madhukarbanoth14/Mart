@@ -18,7 +18,7 @@ settings:
     INFOPLIST_FILE: Flashmart/Info.plist
   configs:
     Debug:
-      MART_API_BASE_URL: http://127.0.0.1:3005
+      MART_API_BASE_URL: https://mart-api-95628498734.asia-south1.run.app
     Release:
       MART_API_BASE_URL: https://mart-api-95628498734.asia-south1.run.app
 configs:
@@ -41,3 +41,18 @@ targets:
     configFiles:
       Debug: Config.xcconfig
       Release: Config.Release.xcconfig
+schemes:
+  Flashmart:
+    build:
+      targets:
+        Flashmart: all
+    run:
+      config: Release
+    test:
+      config: Release
+    profile:
+      config: Release
+    analyze:
+      config: Release
+    archive:
+      config: Release

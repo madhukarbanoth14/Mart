@@ -19,6 +19,8 @@ open Flashmart.xcworkspace   # not .xcodeproj — use workspace after pod instal
 
 In Xcode, select the **Flashmart** scheme and an **iPhone 15** (or newer) simulator, then **⌘R**.
 
+The **Flashmart** scheme uses the **Release** configuration (production API, no demo mode). For local backend development, temporarily switch the scheme Run action to **Debug** in **Product → Scheme → Edit Scheme**.
+
 Without CocoaPods, the app still builds from `Flashmart.xcodeproj`, but Razorpay live checkout shows a fallback message. Demo/mock payments work without the SDK.
 
 If `pod install` warns about base configuration, ensure `Config.xcconfig` and `Config.Release.xcconfig` include the Pods xcconfig files (already set up in this repo).
@@ -34,11 +36,12 @@ New users see a **3-screen onboarding carousel** (Order → Deliver → Bill) fr
 
 ## Configuration
 
-| Setting | Debug (Xcode ⌘R) | Release / simulator zip |
-|---------|------------------|-------------------------|
-| `MART_API_BASE_URL` | `http://127.0.0.1:3005` | `https://mart-api-95628498734.asia-south1.run.app` |
-| `MART_USE_LOCAL_DEMO_AUTH` | `YES` | `NO` |
-| `MART_DEMO_MODE` | `YES` | `NO` |
+| Setting | Debug (local dev) | Release (Xcode ⌘R / App Store) |
+|---------|-------------------|----------------------------------|
+| `MART_API_BASE_URL` | `https://mart-api-95628498734.asia-south1.run.app` | `https://mart-api-95628498734.asia-south1.run.app` |
+| `MART_USE_LOCAL_DEMO_AUTH` | `NO` | `NO` |
+| `MART_DEMO_MODE` | `NO` | `NO` |
+| `MART_REQUIRE_ONBOARDING_DOCUMENTS` | `NO` | `YES` |
 | `MART_RAZORPAY_KEY_ID` | `rzp_test_YOUR_KEY_HERE` | your Razorpay test/live key |
 
 Edit `Config.xcconfig` / `Config.Release.xcconfig`, then regenerate the project.
@@ -82,9 +85,11 @@ Password for all seed accounts: **Password@123**
 | Shopkeeper | shop1@martdemo.com |
 | Shopkeeper | shop2@martdemo.com |
 
-With `MART_USE_LOCAL_DEMO_AUTH = YES` (Debug only), login works offline (in-memory demo store). Release builds and the simulator zip script use the production API — no local backend required.
+With `MART_USE_LOCAL_DEMO_AUTH = YES` (optional local override), login works offline. By default both Debug and Release hit the production API — no local backend required.
 
-## Backend (optional, Debug builds only)
+## Backend (optional, local dev only)
+
+To test against a local Nest server, set `MART_API_BASE_URL = http://127.0.0.1:3005` in `Config.xcconfig`, then:
 
 ```bash
 cd Mart/backend
@@ -92,3 +97,32 @@ npm install && npm run start:dev
 ```
 
 Simulator uses `127.0.0.1:3005` (not `localhost` — ATS allows loopback).
+
+## App Store release (physical device IPA)
+
+Prerequisites:
+
+1. Sign in to Xcode → **Settings** → **Accounts** with your Apple Developer account.
+2. Open `Flashmart.xcworkspace` → target **Flashmart** → **Signing & Capabilities** → select your Team and enable automatic signing.
+3. Create the app record in [App Store Connect](https://appstoreconnect.apple.com) with bundle ID `com.knsrmart.flashmart`.
+
+Build an App Store–uploadable IPA:
+
+```bash
+cd Mart/ios
+IOS_EXPORT_METHOD=app-store ./scripts/build-release-device.sh
+```
+
+Outputs:
+
+- `Mart/FlashMart-appstore.ipa`
+- `Mart/FlashMart-appstore.zip`
+
+Upload via **Transporter** or Xcode Organizer. For TestFlight, process the build in App Store Connect after upload.
+
+### Archive from Xcode (GUI)
+
+1. Open `Flashmart.xcworkspace`
+2. Select **Any iOS Device (arm64)** as destination (not simulator)
+3. **Product → Archive** (uses Release automatically)
+4. In Organizer → **Distribute App** → App Store Connect

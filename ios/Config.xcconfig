@@ -1,8 +1,9 @@
-// Debug — local Nest API on Mac, production auth (no offline demo)
+// Debug (Xcode ⌘R) — production Cloud Run API by default.
+// For local backend dev, temporarily set MART_API_BASE_URL to http://127.0.0.1:3005
 #include? "Pods/Target Support Files/Pods-Flashmart/Pods-Flashmart.debug.xcconfig"
 #include "Config.base.xcconfig"
 
-MART_API_BASE_URL = http:/$()/127.0.0.1:3005
+MART_API_BASE_URL = https:/$()/mart-api-95628498734.asia-south1.run.app
 MART_USE_LOCAL_DEMO_AUTH = NO
 MART_DEMO_MODE = NO
 MART_REQUIRE_ONBOARDING_DOCUMENTS = NO
